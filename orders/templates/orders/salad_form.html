@@ -1,0 +1,13 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Salads</h1>
+  <p class="TODO">Change h1 to reflect action</p>
+  <p class="TODO">Format Price</p>
+  <form action="" method="post">
+    {% csrf_token %}
+    {{form}}
+    <input type="submit" value="Submit">
+  </form>
+  <a href="{% url 'index' %}">Cancel </a>
+{% endblock %}

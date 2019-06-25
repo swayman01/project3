@@ -1,0 +1,22 @@
+{% extends "base_generic.html" %}
+{% block title %}<title>Menu</title>{% endblock %}
+{% block content %}
+<h1>Menu</h1>
+{% for a in foodtypes %} <!-- Loop 1 -->
+<h2>{{a.menutype}}</h2>
+
+<ul>
+  {% for b in a.QuerySet %}  <!-- Loop 2 -->
+  <li>
+    <a href="{{b.get_absolute_url}}">{{b.id}} {{b.name}} $ {{b.price}}</a>
+     - <a href="{{b.get_absolute_url}}update">Edit</a>
+    <a href="{{b.get_absolute_url}}delete">Delete</a>
+  </li>
+  {% endfor %}  <!-- Loop 2 -->
+</ul>
+
+<a href="/{{a.foodname}}/create">Add a {{a.foodname}}</a>
+{% endfor %}  <!-- Loop 1 -->
+
+<p>You have visited this page {{ num_visits }}{% if num_visits == 1 %} time{% else %} times{% endif %}.</p>
+{% endblock %}

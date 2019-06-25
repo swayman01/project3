@@ -1,0 +1,14 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Add a Pasta</h1>
+  <p class="TODO">Format Price</p>
+  <p class="TODO">Change h1 for action and menu item</p>
+  <p class="TODO">Change price label</p>
+  <form action="" method="post">
+    {% csrf_token %}
+    {{form}}
+    <input type="submit" value="Submit">
+  </form>
+  <a href="{% url 'index' %}">Cancel </a>
+{% endblock %}

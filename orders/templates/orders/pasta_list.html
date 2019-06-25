@@ -1,0 +1,17 @@
+{% extends "base_generic.html" %}
+{% block title %}<title>Pasta Building Block</title>{% endblock %}
+{% block content %}
+<h1>Pasta List</h1>
+{% if pasta_list %}
+<ul>
+  {% for pasta in pasta_list %}
+    <li>
+      <a href="{{pasta.get_absolute_url}}">{{pasta.name}} {{pasta.price}}</a>
+    </li>
+  {% endfor %}
+</ul>
+{% else %}
+  <p>There are no pastas in the library.</p>
+{% endif %}
+
+{% endblock %}

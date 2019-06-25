@@ -1,0 +1,128 @@
+/* Other white colors: https://encycolorpedia.com/fdf5e8 */
+h1, h2, h1 + h5, h2 + h5, h6 {
+  text-align: center; }
+
+ul {
+  list-style-type: none;
+  padding-left: 0; }
+
+/* TODO Use a variable for margin and colors*/
+body {
+  background-color: #fbfbf8; }
+
+section {
+  margin: 0 10% 0 10%; }
+
+nav {
+  background: lightgray;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem; }
+
+.onerow {
+  display: inline-block; }
+
+.navbuttons {
+  margin: 2%; }
+
+.navbar {
+  width: 100%;
+  text-align: center; }
+
+.flex-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  justify-content: space-around;
+  align-items: center; }
+
+.flex-container-left {
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: left;
+  align-items: left; }
+
+.flex-container-right {
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: right; }
+
+.flex-container-left-vert {
+  display: inline-flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: left;
+  text-align: left;
+  background: lightgray; }
+
+.flex-container-form {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  justify-content: space-around;
+  align-items: center;
+  /*  Why doesn't this behave the same as flex-container*/ }
+
+.simpleborder, .redborder {
+  border-style: solid;
+  border-color: black;
+  border-width: 2px;
+  padding: .5rem; }
+
+.simpleborder {
+  border-color: black; }
+
+.redborder {
+  border-color: red; }
+
+.botmargin {
+  margin-bottom: .5rem; }
+
+.text-center {
+  text-align: center; }
+
+.msghead {
+  margin-bottom: 0;
+  margin-left: 0;
+  margin-right: 0;
+  color: gray;
+  /*try grayscale($color)*/ }
+
+.msgtext {
+  margin-top: 0; }
+
+.msgdate {
+  text-align: right; }
+
+.clock {
+  width: 100px;
+  height: 43px;
+  color: white;
+  box-sizing: border-box;
+  background-color: white;
+  text-align: center;
+  border-radius: 10px; }
+
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s; }
+
+#closebtn:hover {
+  color: black; }
+
+.TODO {
+  color: red; }
+
+/*# sourceMappingURL=p3.css.map */
