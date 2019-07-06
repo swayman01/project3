@@ -1,0 +1,17 @@
+{% extends "base_generic.html" %}
+{% block title %}<title>Toppings</title>{% endblock %}
+{% block content %}
+<h1>Topping List</h1>
+{% if topping_list %}
+<ul>
+  {% for topping in topping_list %}
+    <li>
+      <a href="{{topping.get_absolute_url}}">{{topping.name}} {{topping.priority}}</a>
+    </li>
+  {% endfor %}
+</ul>
+{% else %}
+  <p>There are no toppings in the library.</p>
+{% endif %}
+
+{% endblock %}
