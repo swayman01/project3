@@ -1,0 +1,95 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<p class="TODO">Add Add to Order Button for case with no toppings</p>
+<p class="TODO">Fix add to order button activation logic to come on after button is changed
+and when size is selectd after button</p>
+<table id="pizzabuttons">
+  <tr>
+    <td class="pizzabutton">Small Pizzas:
+    </td>
+    <td id="smallpizza">
+      <button class="qty blabel" type="button" data-func="plus" data-field="field1">+</button>
+      <input id="qtysmallpizza" class= "btn-default" type="text" name="field1" value="0" />
+      <button id="minus" class="qty blabel" type="button" data-func="minus" data-field="field1">-</button>
+    </td>
+    <td class="pizzabutton">Large Pizzas:</td>
+    <td>
+      <button class="qty blabel" type="button" data-func="plus" data-field="field2">+</button>
+      <input id="qtylargepizza" class= "btn-default" type="text" name="field2" value="0" />
+      <button id="minus" class="qty blabel" type="button" data-func="minus" data-field="field2">-</button>
+    </td>
+
+    </tr>
+  </table>
+  <br>
+  {% ifnotequal numtoppings 0 %}
+  <table id="add_topping_frame">
+    <tr >
+      {% ifequal numtoppings 1 %}
+      <th id="regpizzatitle" colspan="3" class="thfoods">Select {{numtoppings}} Topping</th>
+      {% else %}
+      <th id="regpizzatitle" colspan="3" class="thfoods">Select {{numtoppings}} Toppings</th>
+      {% endifequal %}
+    </tr>
+    <tr class="toppingheader">
+      <td colspan="3"></td>
+    </tr>
+    <tr class="toppingpage">
+      <td class="toppingpage_left"></td>
+      <td class="toppingpage_middle">
+        <div style="overflow-y:auto;">
+        <table id="select toppings" class="addtopping">
+          {% for b in toppings_all %}
+          <tr class=addtopping>
+            <td class="addtopping_name">
+              {{b.name}}
+            </td>
+            <td class="addtopping_button">
+              <form id = "{{b.id}}" action = ""
+              method = "POST" class = "">
+              <input type="button"  value="Select" title="Click to increase quantity"
+              onclick="toggleselecttopping({{b.id}},{{numtoppings}})"
+              class="btn btn-default tooltipqtytip selectbutton">
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </td>
+    </tr>
+  </table>
+  </div>
+          {% endifnotequal %}
+
+  <td class="toppingpage_right"></td>
+</tr>
+<tr class="toppingheader">
+  <td colspan="3"></td>
+</tr>
+</table>
+          <p class="TODO">Ended here</p>
+<a href="{% url 'add_toppings' b.id %}" style="color:white">Add to Order</a>
+<table id="menucontrol">
+  <tr>
+    <td id="add_to_order" class="btn btn-default .disabled" style="color:white">
+      <td>
+        <form action="#" method="post">
+            {% csrf_token %}
+            <input type="submit" value="Add to Order" />
+        </form>
+        <p class="TODO">action="{% url 'add_toppings' b.id %}"</p>
+
+    </td>
+
+    <td class="toppingpage_middle">&nbsp &nbsp &nbsp &nbsp &nbsp</td>
+    <td id="returntomenu"  class="btn btn-primary" >
+      <p class="TODO">Cancel and Return to Menu</p>
+    </td>
+    </tr>
+  </table>
+
+{% load staticfiles %}
+<script src="{% static 'orders/common.js' %}"></script>
+<script src="{% static 'orders/p3toppings.js' %}"></script>
+
+{% endblock %}
