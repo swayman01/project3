@@ -6,9 +6,105 @@ ul {
   list-style-type: none;
   padding-left: 0; }
 
-/* TODO Use a variable for margin and colors*/
 body {
-  background-color: #fbfbf8; }
+  background-color: #fbfbf8;
+  font-family: Verdana,Arial,Helvetica,sans-serif;
+  font-size: 1.25em; }
+
+.thfoods {
+  width: 100%;
+  text-align: center; }
+
+#menuheader {
+  width: 100%;
+  cellspacing: 0;
+  cellpadding: 0; }
+
+#menutdheaderleft, #menutdheaderright {
+  width: 20%; }
+
+#menutdheaderleft {
+  background-color: #239346; }
+
+#menutdheaderright {
+  background-color: #be0027;
+  color: #be0027; }
+
+#menutdheadercenter {
+  width: 60%; }
+
+#qtysmallpizza, #qtylargepizza {
+  width: 10%;
+  text-align: center; }
+
+.foodmenu {
+  width: 100%; }
+
+.addtopping {
+  width: 50%; }
+
+.toppingheader {
+  width: 100%;
+  background-color: #239346; }
+
+.toppingpage {
+  width: 100%; }
+
+.toppingpage_left, .toppingpage_right {
+  width: 20%;
+  background-color: #239346; }
+
+.toppingpage_middle {
+  width: 60%; }
+
+.foodrow, .foodname, .foodname-1, .foodname-3, .foodprice, .foodprice-3, .foodbuttons, .resetbutton .placeholder {
+  text-align: left;
+  display: table-cell;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-collapse: collapse;
+  margin-top: 0;
+  margin-bottom: 0; }
+
+.foodrow, .foodrow-3, .foodrow-1, .foodname-0, .foodname, .foodname-1, .foodname-3, .simpleborder, .redborder {
+  border-style: solid;
+  border-color: black;
+  border-width: 2px;
+  padding: .1rem; }
+
+.foodrow-3, .foodrow-1, .foodrow-1 {
+  width: 100%; }
+
+.foodname-0 {
+  width: 50%;
+  /*padding-right:5%;*/ }
+
+.foodname, .foodname-1 {
+  width: 50%; }
+
+.foodname-3 {
+  width: 35%; }
+
+.foodprice {
+  width: 25%; }
+
+.foodprice-3 {
+  width: 20%; }
+
+.foodbuttons {
+  width: 25%; }
+
+.resetbutton .placeholder {
+  width: 10%;
+  display: none;
+  padding: 0;
+  margin: 0; }
+
+.addtopping_name, .addtopping_button {
+  width: 25%; }
+
+.addpizza {
+  color: #ffffff; }
 
 section {
   margin: 0 10% 0 10%; }
@@ -24,6 +120,44 @@ nav {
 
 .navbuttons {
   margin: 2%; }
+
+/* Tooltips from https://www.w3schools.com/css/css_tooltip.asp */
+/*TODO after formatting is complete*/
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+  /* If you want dots under the hoverable text */ }
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1; }
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible; }
+
+/* from https://stackoverflow.com/questions/45456543/make-text-show-up-on-hover-over-button */
+/*TODO Fix formatting based on above */
+.tooltipqty {
+  border: none;
+  width: 32px;
+  height: 32px;
+  background-color: #eee;
+  transition: all;
+  cursor: pointer; }
+
+.tooltipqty:hover {
+  border: 1px solid #888;
+  background-color: #ddd; }
 
 .navbar {
   width: 100%;
@@ -69,12 +203,6 @@ nav {
   align-items: center;
   /*  Why doesn't this behave the same as flex-container*/ }
 
-.simpleborder, .redborder {
-  border-style: solid;
-  border-color: black;
-  border-width: 2px;
-  padding: .5rem; }
-
 .simpleborder {
   border-color: black; }
 
@@ -99,15 +227,6 @@ nav {
 
 .msgdate {
   text-align: right; }
-
-.clock {
-  width: 100px;
-  height: 43px;
-  color: white;
-  box-sizing: border-box;
-  background-color: white;
-  text-align: center;
-  border-radius: 10px; }
 
 .closebtn {
   margin-left: 15px;

@@ -1,0 +1,54 @@
+{% extends "base_generic.html" %}
+
+
+{% block content %}
+
+<p class="TODO">index url: {% url 'index' %}</p>
+<div class="TODO">
+  <p>Clear session storage when last item is deleted</p>
+</div>
+    <table id="order_frame">
+      <tr >
+        <th>Heading (if needed) goes here</th>
+      </tr>
+      <tr class="toppingheader">
+        <td colspan="3"></td>
+      </tr>
+      <tr class="toppingpage">
+        <td class="toppingpage_left"></td>
+        <td class="toppingpage_middle">
+          <div style="overflow-y:auto;">
+            <table id="order">
+      </table>
+  <br>
+    <td class="toppingpage_right"></td>
+  </tr>
+  <tr class="toppingheader">
+    <td colspan="3"></td>
+  </tr>
+</table>
+<table id="menucontrol">
+  <tr>
+    <td >
+      <form action = ""
+      method = "POST" class = "">
+      <input id="place_order" type="button"  value="Place Order" class="btn btn-primary"
+      onclick="#"
+    </form>
+  </td>
+  <td class="toppingpage_middle">&nbsp &nbsp &nbsp &nbsp &nbsp</td>
+  <td class="btn btn-primary" onclick="add_more_to_order()">
+    Add More items
+    </td>
+  <td class="toppingpage_middle">&nbsp &nbsp &nbsp &nbsp &nbsp</td>
+  <td id="cancel"  class="btn btn-warning" >
+    <a href="{% url 'index' %}">Not Needed</a>
+  </td>
+</tr>
+</table>
+{% load staticfiles %}
+
+<script src="{% static 'orders/common.js' %}"></script>
+<script src="{% static 'orders/p3review_order.js' %}"></script>
+
+{% endblock %}

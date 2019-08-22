@@ -1,1 +1,2 @@
-Django==2.2.2 # Added for ERROR: no such table: main.auth_user__old
+Django==2.2.3 # Added for ERROR: no such table: main.auth_user__old
+#Sqlite==2.5.1 # Added to fix How to fix-no such table: main.auth_user__old error - did not work

@@ -70,58 +70,9 @@ function countselectedtoppings() {
 }
 //deactivate buttons when limit is reached, activate checkout button
 
-$('.qty').click(function() {
-  var $t = $(this),
-  $in = $('input[name="' + $t.data('field') + '"]'),
-  val = parseInt($in.val()),
-  valMax = 9,
-  valMin = 0;
+//Moved to common.js
+//
 
-  // Check if a number is in the field first
-  if (isNaN(val) || val < valMin) {
-    // If field value is NOT a number, or
-    // if field value is less than minimum,
-    // ...set value to 0 and exit function
-    $in.val(valMin);
-    return false;
-  }
-  else if (val > valMax) {
-    // If field value exceeds maximum,
-    // ...set value to max
-    $in.val(valMax);
-    return false;
-  }
-
-  // Perform increment or decrement logic
-  if ($t.data('func') == 'plus') {
-    if (val < valMax) $in.val(val + 1);
-  }
-  else {
-    if (val > valMin) $in.val(val - 1);
-  }
-  if ($t.data("field")=="field1") {
-    qtysmallpizza = parseInt($in.val());
-    if (qtysmallpizza > 0) {
-      document.getElementById("qtysmallpizza").classList.add('btn-info')
-      document.getElementById("qtysmallpizza").classList.remove('btn-default')
-    }
-    else {
-      document.getElementById("qtysmallpizza").classList.add('btn-default')
-      document.getElementById("qtysmallpizza").classList.remove('btn-info')
-    }
-  }
-  if ($t.data("field")=="field2") {
-    qtylargepizza = parseInt($in.val());
-    if (qtylargepizza > 0) {
-      document.getElementById("qtylargepizza").classList.add('btn-info')
-      document.getElementById("qtylargepizza").classList.remove('btn-default')
-    }
-    else {
-      document.getElementById("qtylargepizza").classList.add('btn-default')
-      document.getElementById("qtylargepizza").classList.remove('btn-info')
-    }
-  }
-});
 
 function add_pizza(pizzaID,pizzatype,numtoppings,smallprice,largeprice){
   //gather data
@@ -171,17 +122,20 @@ var toppingLIST = document.getElementsByClassName("selectbutton");
     var itemDICT = {}
   if (qtysmallpizza>0){
     itemDICT = {"foodtype":"Small "+pizzatypeSTR,"foodnameID":pizzaID,"foodprice":smallprice,"qty":qtysmallpizza,
-    toppings:toppings};
-    console.log("itemDICT:",itemDICT)
+    toppings:toppings,"foodname":"Small "+pizzatypeSTR+" with "+toppings};
+    //TODO: replace , with and in toppings
+    // console.log("itemDICT:",itemDICT)
     //if (firstitem)
     add_pizza_to_order(itemDICT)
 
   }
   if (qtylargepizza>0){
     itemDICT = {"foodtype":"Large "+pizzatypeSTR,"foodnameID":pizzaID,"foodprice":largeprice,"qty":qtylargepizza,
-    toppings:toppings};
+    toppings:toppings,"foodname":"Large "+pizzatypeSTR+" with "+toppings};
     console.log("itemDICT:",itemDICT)
+    add_pizza_to_order(itemDICT)
   }
+  window.history.go(-2)
 
   /*
 
@@ -203,7 +157,6 @@ function initializeOrderWithPizza(pizzaID){
   // console.log(document.getElementById(itemID).childNodes[1].value);
   sessionStorage.clear();
   var orderARRAY = [];
-  console.log("create orderARRAY here")
   // var orderSTR = JSON.stringify(orderARRAY);
   // sessionStorage.setItem("order",orderSTR);
   // document.getElementById(itemID).childNodes[1].value=qty;
@@ -211,25 +164,31 @@ function initializeOrderWithPizza(pizzaID){
   // console.log("TODO: Write code for pizza as first item");
   // TODO Open Pizza html
 }
+
 function add_pizza_to_order(itemDICT) {
   console.log(itemDICT)
-  if (document.getElementById('menutdheaderright').innerHTML=='initial') {
-    document.getElementById('menutdheaderright').innerHTML='Add Checkout Button';
-    document.getElementById('menutdheaderright').style.color='white';
+  console.log(window.location.pathname)
+  if (document.getElementById(sessionStorage.length<1)) {
+    console.log("sessionStorage.length <1:", sessionStorage.length)
     var orderARRAY = [];
     orderARRAY = [itemDICT];
     let orderSTR = JSON.stringify(orderARRAY);
     sessionStorage.setItem("order",orderSTR);
+    // return to main menu
+    window.history.go(-1);
   }
   else {
+    console.log("sessionStorage.length >0:", sessionStorage.length)
     let a = "test"
     //let itemID = a + "-" + pizzaID;
     let orderARRAY = jsonSTR_to_array(sessionStorage.getItem("order"));
     console.log(orderARRAY)
     orderARRAY.push(itemDICT);
     sessionStorage.setItem("order",JSON.stringify(orderARRAY));
+    //return to main menu
+    window.history.go(-1);
   }
-  console.log(window.location.pathname)
+
   //add_pizza("GET")
   //$.get("/orders/templates/orders/add_pizza.html")
 }

@@ -2,15 +2,10 @@
 
 
 {% block content %}
-<p class=TODO">foodnameID:{{foodnameID}}</p>
-<p class=TODO">pizzatype:{{pizzatype}}</p>
-{% for b in toppings_all %}
-{%endfor%}
-<p class="TODO">Add Add to Order Button for case with no toppings</p>
 <div class="TODO">
-  <p>Add flag for initial order on both pages</p>
-  <p>Add checkout button on menu.html</p>
-  <p>Do we need to key order items?</p>
+  <p>Add to Order Button for case with no toppings</p>
+  <p>Do we need to key order items? 8/20/19: Not yet, maybe for history</p>
+  <p>add_toppings.html - change name</p>
 </div>
   <table id="pizzabuttons">
     <tr>
@@ -99,11 +94,6 @@
   </td>
 </tr>
 </table>
-<div class="TODO">
-  <h6>passing variables</h6>
-  <p>foodnameID:{{foodnameID}}</p>
-  <p>pizzatype:{{pizzatype}}</p>
-</div>
 {% load staticfiles %}
 <!-- <script type="text/javascript" >
     var regularpizzaklugeJSON  = {{regularpizzaklugeJSON}}

@@ -2,7 +2,7 @@ import datetime
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
-
+print("Can we delete forms.py?")
 class EditSaladForm(forms.Form):
     #TODO Add Data Verification
     name = forms.CharField(label="Name")

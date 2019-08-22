@@ -1,11 +1,22 @@
 from django.contrib import admin
 
 # Register your models here.
-from orders.models import Salad
-@admin.register(Salad) # @ decorator does exactly the same thing as the admin.site.register() syntax
-class Salad(admin.ModelAdmin):
+from orders.models import Regularpizza, Topping, Pasta, Salad
+
+@admin.register(Regularpizza) # @ decorator does exactly the same thing as the admin.site.register() syntax
+class RegularpizzaAdmin(admin.ModelAdmin):
     pass
 
-# @admin.register(Salads) # @ added for rename error
-# class Salads(admin.ModelAdmin):
-#     pass
+@admin.register(Topping) # @ decorator does exactly the same thing as the admin.site.register() syntax
+class ToppingAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Salad) # @ decorator does exactly the same thing as the admin.site.register() syntax
+class SaladAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Pasta) # @ decorator does exactly the same thing as the admin.site.register() syntax
+class PastaAdmin(admin.ModelAdmin):
+    pass

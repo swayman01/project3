@@ -19,4 +19,17 @@ from django.urls import include, path
 urlpatterns = [
     path("", include("orders.urls")),
     path("admin/", admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),
+    #path('project3/templates/registration/login.html'),
+#project3/templates/registration
+
 ]
+
+# print("28 urlpatterns: ", urlpatterns)
+# BASE_DIR:  /Users/swayman/Documents/Classes/CS50/CS50_Web_Programming/project3
+
+# urlpatterns:  [<URLResolver <module 'orders.urls' from '/Users/swayman/Documents/Classes/CS50/CS50_Web_Programming/project3/orders/urls.py'> (None:None) ''>,
+# <URLResolver <URLPattern list> (admin:admin) 'admin/'>, <URLResolver <module 'django.contrib.auth.urls' from '/Users/swayman/anaconda3/lib/python3.7/site-packages/django/contrib/auth/urls.py'> (None:None) 'accounts/'>]
+
+# Result from Django Tutorial : http://127.0.0.1:8000/accounts/login/?next=/catalog/
+# <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>

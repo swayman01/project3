@@ -1,16 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
+  //console.log("experimental code - amenuheader:",amenuheader)
 });
-function add_to_order(foodtype,foodnameID,foodprice){
-  if (document.getElementById('menutdheaderright').innerHTML=='initial') {
-    document.getElementById('menutdheaderright').innerHTML='Add Checkout Button';
-    document.getElementById('menutdheaderright').style.color='white';
-    initializeOrders(foodtype,foodnameID,foodprice);
+function add_to_order(foodtype,foodnameID,foodname,foodprice){
+  if (sessionStorage.length>0) {
+    console.log("sessionStorage.length>0:", sessionStorage.length)
+    add_next_item_to_order(foodtype,foodnameID,foodname,foodprice);
   }
   else {
-    add_next_item_to_order(foodtype,foodnameID,foodprice);
+    console.log("sessionStorage.length <1:", sessionStorage.length)
+    initializeOrders(foodtype,foodnameID,foodname,foodprice);
+
   }
   var itemID = foodtype + '-' + foodnameID;
-    console.log(itemID+"-placeholder")
     document.getElementById(itemID+"-placeholder").style.display="inline-flex"
     document.getElementById(itemID+"-resetspan").style.display="inline-flex"
     document.getElementById(itemID).childNodes[1].classList.remove("btn-primary")
@@ -26,9 +27,8 @@ function add_to_order(foodtype,foodnameID,foodprice){
   Reset buttons and cart screen
   */
 
-  /* Checkout button
-  Open screen with summary of order
-  Allow editing, deleting, return to menu for update
+  /* Review Order button
+
   Allow login to save history
   */
 
@@ -39,75 +39,64 @@ function add_to_order(foodtype,foodnameID,foodprice){
   4. Pass order back to python
   */
 
-  /* Define item to return
-  Look at project 2
-  {"foodprice":foodprice, "key":User.id+"-"+orderitem.id}
-  Convert to JSON?
-  */
-
   /* In Python
-  Accumulate items
-  Shopping cart with modify, login for history
-
+  Verify order against price to prevent hacking
+  add to history
   */
 
-  /* Clear session storage on submit order */
+  /* Clear session storage on submit order and cancel order*/
 
 }
-function initializeOrders(a,b,c) {
+
+function initializeOrders(a,b,d,c) {
   var itemID = a + '-' + b;
   var qty = 1;
   // console.log(document.getElementById(itemID).childNodes[1].value);
   sessionStorage.clear();
   var orderARRAY = [];
-  var itemDICT = {foodtype:a,foodnameID:b,foodprice:c,qty:qty};
+  var itemDICT = {foodtype:a,foodnameID:b,foodname:d,foodprice:c,qty:qty};
   orderARRAY = [itemDICT];
   var orderSTR = JSON.stringify(orderARRAY);
   sessionStorage.setItem("order",orderSTR);
   document.getElementById(itemID).childNodes[1].value=qty;
-  // test = sessionStorage.getItem("order");
-  // console.log(test);
-  // test = jsonSTR_to_array(test);
-  // console.log(test);
 }
 
-function add_next_item_to_order(a,b,c) {
+function add_next_item_to_order(a,b,d,c) {
   var itemID = a + '-' + b;
   var orderARRAY = jsonSTR_to_array(sessionStorage.getItem("order"));
   console.log(orderARRAY)
   if (document.getElementById(itemID).childNodes[1].value=="Add to Order") {
     var qty =1;
-    itemDICT = {foodtype:a,foodnameID:b,foodprice:c,qty:qty};
+    itemDICT = {foodtype:a,foodnameID:b,foodname:d,foodprice:c,qty:qty};
     orderARRAY.push(itemDICT);
     console.log(orderARRAY);
   }
   else {
     qty = parseInt(document.getElementById(itemID).childNodes[1].value) + 1
-    //itemDICT = {foodtype:a,foodnameID:b,foodprice:c,qty:qty};
     var i;
     for (i = 0; i < orderARRAY.length; i++) {
-      console.log(i,"***",orderARRAY[i]["foodtype"]," *** ",orderARRAY[i]["foodname"])
+      //console.log(orderARRAY[i])
+      //console.log(i,"***",orderARRAY[i]["foodtype"]," *** ",orderARRAY[i]["foodnameID"])
       if ((orderARRAY[i]["foodtype"]==a)&&(orderARRAY[i]["foodnameID"]==b)) {
         orderARRAY[i]["qty"] = qty;
       }
     }
   }
   document.getElementById(itemID).childNodes[1].value=qty;
-  console.log(orderARRAY)
+  //console.log(orderARRAY)
   sessionStorage.setItem("order",JSON.stringify(orderARRAY));
 }
 
-function reset_item(a,b,c) {
-  //remove time from array
-  console.log("115 a,b,c: ",a,b,c)
+function reset_item(a,b,d,c) {
+  console.log("115 a,b,d,c: ",a,b,d,c)
   var orderARRAY = jsonSTR_to_array(sessionStorage.getItem("order"));
   var i;
-  for (i = 0; i < orderARRAY.length; i++) {odnameID"])
+  for (i = 0; i < orderARRAY.length; i++) {
     if ((orderARRAY[i]["foodtype"]==a)&&(orderARRAY[i]["foodnameID"]==String(b))) {
       orderARRAY.splice(i,1);
     }
   }
-  console.log("124 orderArray: ",orderARRAY);
+  //console.log("124 orderArray: ",orderARRAY);
   //reset display
   var itemID = a + '-' + b;
   document.getElementById(itemID+"-placeholder").style.display="none"
@@ -116,4 +105,13 @@ function reset_item(a,b,c) {
   document.getElementById(itemID).childNodes[1].classList.add("btn-primary")
   document.getElementById(itemID).childNodes[1].value="Add to Order"
   sessionStorage.setItem("order",JSON.stringify(orderARRAY));
+}
+
+function restore_menu() {
+console.log("TODO: Restore Menu")
+}
+
+function cancel_order() {
+  sessionStorage.clear();
+  document.location.reload()
 }

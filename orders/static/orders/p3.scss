@@ -8,8 +8,151 @@ h1,h2,h1+h5,h2+h5,h6 {text-align: center;}
 ul {list-style-type: none;
   padding-left: 0
 }
-/* TODO Use a variable for margin and colors*/
-body {background-color: $papercolor}
+body {
+  background-color: $papercolor;
+  font-family: Verdana,Arial,Helvetica,sans-serif;
+  font-size: 1.25em;
+}
+// TODO: Center headers
+.thfoods {
+  width:100%;
+  text-align: center;
+}
+
+#menuheader {
+  width:100%;
+  cellspacing: 0;
+  cellpadding: 0;
+}
+%menutdheader {
+  width:20%;
+}
+#menutdheaderleft {
+  @extend %menutdheader;
+  background-color: rgb(35,147,70);
+}
+#menutdheaderright {
+  @extend %menutdheader;
+  background-color: rgb(190,0,39);
+  color: rgb(190,0,39);
+}
+#menutdheadercenter{
+  width: 60%;
+}
+
+#qtysmallpizza, #qtylargepizza {
+  width: 10%;
+  text-align: center;
+}
+
+
+.foodmenu, {
+width: 100%;
+//TODO change to 50% when centering table
+}
+
+.addtopping {
+width: 50%;
+//TODO change to 50% when centering table
+}
+
+.toppingheader
+{
+  width: 100%;
+  background-color: rgb(35,147,70);
+}
+
+.toppingpage {
+  width: 100%;
+}
+
+.toppingpage_left, .toppingpage_right {
+  width: 20%;
+  background-color: rgb(35,147,70);
+}
+
+.toppingpage_middle {
+  width: 60%
+}
+
+%food-shared {
+  text-align: left;
+  display: table-cell;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-collapse: collapse;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+%borders {
+  border-style: solid;
+  border-color: black;
+  border-width: 2px;
+  padding: .1rem;
+
+}
+
+.foodrow {
+  @extend %food-shared;
+  @extend %borders;
+}
+
+.foodrow-3,.foodrow-1,.foodrow-1 {
+  @extend %borders;
+  width: 100%;
+}
+
+.foodname-0 {
+  @extend %borders;
+  width: 50%;
+  /*padding-right:5%;*/
+}
+
+.foodname, .foodname-1 {
+  @extend %food-shared;
+  @extend %borders;
+  width: 50%;
+}
+
+.foodname-3 {
+  @extend %food-shared;
+  @extend %borders;
+  width: 35%;
+}
+
+.foodprice{
+  @extend %food-shared;
+  width: 25%;
+}
+
+.foodprice-3 {
+  @extend %food-shared;
+  width: 20%;
+  // Try border without border-collapse
+}
+
+.foodbuttons{
+  @extend %food-shared;
+  width: 25%;
+}
+
+.resetbutton .placeholder {
+  @extend %food-shared;
+  width: 10%;
+  display: none;
+  padding: 0;
+  margin: 0;
+}
+
+.addtopping_name, .addtopping_button {
+  width: 25%;
+}
+
+.addpizza {
+  color: #ffffff;
+}
+
 section {margin:0 10% 0 10%}
 nav {
   background: lightgray;
@@ -18,11 +161,52 @@ nav {
   padding: 0.5rem;
 }
 .onerow {
-    display: inline-block; //Or display: inline;
+  display: inline-block; //Or display: inline;
 }
 .navbuttons {
   //padding:10px; commented out on 3/19/19 to make Open button look like other buttons
   margin:2%;
+}
+
+/* Tooltips from https://www.w3schools.com/css/css_tooltip.asp */
+/*TODO after formatting is complete*/
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+/* from https://stackoverflow.com/questions/45456543/make-text-show-up-on-hover-over-button */
+/*TODO Fix formatting based on above */
+.tooltipqty {
+  border: none;
+  width: 32px;
+  height: 32px;
+  background-color: #eee;
+  transition: all;
+  cursor: pointer;
+}
+.tooltipqty:hover {
+  border: 1px solid #888;
+  background-color: #ddd;
 }
 .navbar{
   width: 100%;
@@ -66,14 +250,9 @@ nav {
   justify-content: center;
   justify-content: space-around;
   align-items: center;
-/*  Why doesn't this behave the same as flex-container*/
+  /*  Why doesn't this behave the same as flex-container*/
 }
-%borders {
-  border-style: solid;
-  border-color: black;
-  border-width: 2px;
-  padding: .5rem;
-}
+
 .simpleborder {
   @extend %borders;
   border-color: black;
@@ -102,15 +281,7 @@ nav {
   text-align: right;
 
 }
-.clock {
-  width: 100px;
-  height: 43px;
-  color: white;
-  box-sizing: border-box;
-  background-color: white;
-  text-align: center;
-  border-radius: 10px;
-}
+
 .closebtn {
   margin-left: 15px;
   color: white;
