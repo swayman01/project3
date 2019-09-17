@@ -19,6 +19,14 @@ body {
   text-align: center;
 }
 
+a:visited {
+  color: white;
+}
+
+.white_text {
+  color: white;
+}
+
 #menuheader {
   width:100%;
   cellspacing: 0;
@@ -40,10 +48,16 @@ body {
   width: 60%;
 }
 
-#qtysmallpizza, #qtylargepizza {
+/*
+#qtylargepizza {
   width: 10%;
   text-align: center;
 }
+#qtysmallpizza {
+  width: 10%;
+  text-align: center;
+}
+*/
 
 
 .foodmenu, {
@@ -151,6 +165,7 @@ width: 50%;
 
 .addpizza {
   color: #ffffff;
+  color: white;
 }
 
 section {margin:0 10% 0 10%}

@@ -128,50 +128,14 @@ def add_toppings(request, foodnameID):
     12:2, # 1 signifies Regular Pizza Special
     }
     get1 = Regularpizza.objects.get(id=foodnameID)
-    print("136 get1:", get1)
+    # print("136 get1:", get1)
     numtoppings = get1.numtoppings
     smallprice = get1.smallprice
     largeprice = get1.largeprice
+    foodtype = get1.foodtype
+    # print("136 foodtype:",foodtype,", foodnameID:",foodnameID, "numtoppings:",numtoppings)
     # print("140 numtoppings, smallprice, largeprice:",numtoppings, smallprice, largeprice)
     pizzatype  = pizzatypeDICT[foodnameID]
-    #Was not able to pass the list -  loop through reqular pizza query set and creat a list
-    # reqularpizzadbLIST = []
-    # reqularpizzadbDICT = {}
-    # for e in Regularpizza.objects.all():
-    #     print(e.id,e.smallprice,e.largeprice,e.name,e.numtoppings)
-    #     f= {str(e.id): {"regularpizzaID": e.id,
-    #     "smallprice":str(e.smallprice),
-    #     "largeprice":str(e.largeprice),
-    #     "name":e.name,
-    #     "numtoppings":e.numtoppings,
-    #     }}
-    #     reqularpizzadbDICT.update(f)
-    #     #print("125 f:",f)
-    #     reqularpizzadbLIST.append(json.dumps(f))
-    #     #regularpizzadbSTR = json.dumps(f)
-    #     #print("regularpizzadbSTR ",regularpizzadbSTR,type(regularpizzadbSTR))
-    # #reqularpizzadbLIST = list(Regularpizza.objects.all())
-    # print("156 reqularpizzadbDICT:",reqularpizzadbDICT,type(reqularpizzadbDICT))
-    # print("***")
-    # regularpizzadbSTR = json.dumps(reqularpizzadbDICT, cls=DjangoJSONEncoder)
-    # #print("131 reqularpizzadbLIST:",reqularpizzadbLIST,type(reqularpizzadbLIST))
-    # #print("****")
-    # #print("132 regularpizzadbSTR ",regularpizzadbSTR,type(regularpizzadbSTR))
-    # regularpizzakluge = {
-    # 4: reqularpizzadbDICT["4"]
-    # }
-    # print("165 REMOVE regularpizzakluge:",regularpizzakluge)
-    # regularpizzaklugeJSON = json.dumps(regularpizzakluge, cls=DjangoJSONEncoder)
-    # print("167 regularpizzaklugeJSON:",regularpizzaklugeJSON)
-# Kluge until I can pass multiple items to json - check project 2
-
-# TODOs:
-#  add to order, cancel and return to menu, cart buttons
-#  add to order:
-#   check for initial item
-#   loop through toppings, update order object, return to menu
-    #foodnameID = "placholder, fix when passing ID"
-
     context = {
         'foodnameID': foodnameID,
         'reqularpizzas_all': Regularpizza.objects.all(),
@@ -180,18 +144,11 @@ def add_toppings(request, foodnameID):
         'pizzatype': pizzatype,
         'smallprice': smallprice,
         'largeprice': largeprice,
-        # 'reqularpizzadbLIST':reqularpizzadbLIST,
-        # 'reqularpizzadbSTR':regularpizzadbSTR,
-        # 'contextcheck':contextcheck,
-        # 'f':f,
-        # 'regularpizzakluge':regularpizzakluge,
-    }
-    #print("110:",context['reqularpizzas_all'])
-    #return render(request, 'menu.html/',context=context)
-    #return HttpResponseRedirect(reverse("add_toppings", args=(foodnameID,))) too many redirects
-    #return render(request, 'orders/add_toppings.html/', context=context)
+        # 'foodtype': foodtype,
+        }
     return render(request, 'orders/add_toppings_experiment.html/', context=context)
-    #return render(request, "flights/flight.html", context)
+
+
 def add_toppings_experiment(request):
     print("add_toppings_experiment: no argument")
     #TODO remove this here and from urls
@@ -229,7 +186,7 @@ def add_toppings_experiment(request):
     # return
     # return render(request, 'orders/add_pizza.html', context=context)
 
-def review_order(request):
+def review_order(request): # Commented out 8/26/19 and failed
     """Allows the customer to review and edit the order"""
     print("234: review_order")
     # Read the object

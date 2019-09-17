@@ -14,6 +14,7 @@ class Regularpizza(models.Model):
     smallprice = models.DecimalField(max_digits=5, decimal_places=2)
     largeprice = models.DecimalField(max_digits=5, decimal_places=2)
     numtoppings = models.IntegerField(default = 0)
+    foodtype = models.CharField(max_length=50, help_text='')
 
     class Meta:
         ordering = ['smallprice']

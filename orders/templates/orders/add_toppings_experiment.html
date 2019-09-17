@@ -6,6 +6,8 @@
   <p>Add to Order Button for case with no toppings</p>
   <p>Do we need to key order items? 8/20/19: Not yet, maybe for history</p>
   <p>add_toppings.html - change name</p>
+  <p>foodnameID,{{foodnameID}}</p>
+  <p>numtoppings,{{numtoppings}}</p>
 </div>
   <table id="pizzabuttons">
     <tr>
@@ -13,13 +15,13 @@
       </td>
       <td id="smallpizza">
         <button class="qty blabel" type="button" data-func="plus" data-field="field1">+</button>
-        <input id="qtysmallpizza" class= "btn-info" type="text" name="field1" value="1" />
+        <input id="qtysmallpizza" class= "btn btn-success" type="button" name="field1" value="1" />
         <button id="minus" class="qty blabel" type="button" data-func="minus" data-field="field1">-</button>
       </td>
       <td class="pizzabutton">Large Pizzas:</td>
       <td>
         <button class="qty blabel" type="button" data-func="plus" data-field="field2">+</button>
-        <input id="qtylargepizza" class= "btn-default" type="text" name="field2" value="0" />
+        <input id="qtylargepizza" class= "btn-default" type="button" name="field2" value="0" />
         <button id="minus" class="qty blabel" type="button" data-func="minus" data-field="field2">-</button>
       </td>
 
@@ -72,14 +74,27 @@
 </table>
 <table id="menucontrol">
   <tr>
+    {% ifnotequal numtoppings 0 %}
     <td >
       <form action = ""
       method = "POST" class = "">
       <input id="add_to_order" type="button"  value="Add to Order" class="btn btn-default disabled" style="color:white"
-      onclick="add_pizza({{foodnameID}},{{pizzatype}},{{numtoppings}},{{smallprice}},{{largeprice}})"
+      onclick="add_pizza({{foodnameID}},{{pizzatype}},{{numtoppings}},{{smallprice}},{{largeprice}},{{foodtype}})"
       class="btn btn-default">
     </form>
   </td>
+  {% endifnotequal %}
+  {% ifequal numtoppings 0 %}
+  <td >
+    <form action = ""
+    method = "POST" class = "">
+    <input id="add_to_order" type="button"  value="Add to Order" class="btn btn-primary" style="color:white"
+    onclick="add_pizza({{foodnameID}},{{pizzatype}},{{numtoppings}},{{smallprice}},{{largeprice}},{{foodtype}})"
+    class="btn btn-default">
+  </form>
+</td>
+{% endifequal %}
+
   <td class="toppingpage_middle">&nbsp &nbsp &nbsp &nbsp &nbsp</td>
   <td id="reset_toppings" class="foodbuttons">
     <form action="#" method="post" >

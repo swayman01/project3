@@ -22,3 +22,7 @@ orders/url_experiments.py
 orders/views with one line passed.py
 orders/static/orders/p3.css.map
 orders/templates/menu experiments.html
+orders/static/orders/scratch_pad.js
+orders/templates/orders/add_toppings_experiment_copy.html
+orders/templates/orders/review_orderJavaScriptVersion.html
+scratchPaper.js
