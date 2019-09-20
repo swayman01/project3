@@ -5,7 +5,7 @@ from . import views
 urlpatterns = [
     path("", views.index, name="index"), # This works
     path('index/', views.index, name='index'), # This works
-    path('menu/<str:menusNAME>', views.menu, name='menu'),
+    # path('menu/<str:menusNAME>', views.menu, name='menu'),
     path('regularpizzas/', views.RegularpizzaListView, name='regularpizzas'), # This works except for context
     path('regularpizza/<int:pk>/', views.RegularpizzaDetailView.as_view(), name='regularpizza_detail'),
     path('regularpizza/create/', views.RegularpizzaCreate.as_view(), name='regularpizza_form'),
@@ -21,13 +21,13 @@ urlpatterns = [
     path('salad/create/', views.SaladCreate.as_view(), name='salad_form'),
     path('salad/<int:pk>/update/', views.SaladUpdate.as_view(), name='salad_form'),
     path('salad/<int:pk>/delete/', views.SaladDelete.as_view(), name='salad_form'),
-    path('toppings/', views.ToppingListView, name='toppings'), # This works except for context
-    path('topping/<int:pk>/', views.ToppingDetailView.as_view(), name='topping_detail'),
+    # path('toppings/', views.ToppingListView, name='toppings'), # Commented out 9/19/19
+    path('topping/<int:pk>/', views.ToppingDetailView.as_view(), name='topping_detail'), # Needed 9/19/19
     path('topping/create/', views.ToppingCreate.as_view(), name='topping_form'),
     path('topping/<int:pk>/update/', views.ToppingUpdate.as_view(), name='topping_form'),
     path('topping/<int:pk>/delete/', views.ToppingDelete.as_view(), name='topping_form'),
-    path('<int:foodnameID>/orders/add_toppings.html', views.add_toppings, name="add_toppings"), # missiong positional argument
-    path('add_toppings_experiment.html', views.add_toppings_experiment, name="add_toppings_experiment"),
+    path('<int:foodnameID>/orders/add_toppings.html', views.add_toppings, name="add_toppings"), # needed 9/19/19
     path('orders/review_order.html', views.review_order, name="review_order"),
+    path('add_toppings_experiment.html', views.add_toppings_experiment, name="add_toppings_experiment"),
 ]
-print("33 urlpatterns\n:",urlpatterns[-1],"/n", urlpatterns[-2])
+# print("33 urlpatterns\n:",urlpatterns[-1],"\n", urlpatterns[-2])

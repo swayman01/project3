@@ -17,11 +17,12 @@ orders/static/orders/common_copy.js
 orders/static/orders/p3toppings copy.js
 orders/static/orders/p3toppings_copy.js
 orders/static/orders/p3toppings_copy1.js
-orders/templates/menu copy.html
+orders/templates/menu_copy_2.html
 orders/url_experiments.py
 orders/views with one line passed.py
 orders/static/orders/p3.css.map
 orders/templates/menu experiments.html
+	orders/templates/menu copy 2.html
 orders/static/orders/scratch_pad.js
 orders/templates/orders/add_toppings_experiment_copy.html
 orders/templates/orders/review_orderJavaScriptVersion.html

@@ -82,7 +82,8 @@ def index(request):
     # print("***")
     # regularpizzadbSTR = json.dumps(reqularpizzadbDICT, cls=DjangoJSONEncoder)
 
-
+    menuheader_display=["Pizzas","Pastas","Salads"]
+    menuheaders_displayedJSON = json.dumps(menuheader_display)
 
 
     context = {
@@ -94,32 +95,33 @@ def index(request):
         'foodtypes': foodtypes,
         'foodnames': foodnames,
         'manager': manager,
+        'menuheaders_displayedJSON': menuheaders_displayedJSON,
     }
     return render(request, 'menu.html/',context=context)
 
-def menu(request):
-    print("line 74 is def menu used?")
-    # Number of visits to this view, as counted in the session variable.
-    num_visits = request.session.get('num_visits', 0)
-    request.session['num_visits'] = num_visits + 1
-    context = {
-        'reqularpizzas_all': Regularpizza.objects.all(),
-        'toppings_all': Topping.objects.all(),
-        'pastas_all': Pasta.objects.all(),
-        'salads_all': Salad.objects.all(),
-        'num_visits': num_visits,
-    }
-    return render(request, 'menu.html', context=context)
+# def menu(request): # Commented out 9/19/19, works as long as url.py line is commented out
+#     print("line 74 is def menu used?")
+#     # Number of visits to this view, as counted in the session variable.
+#     num_visits = request.session.get('num_visits', 0)
+#     request.session['num_visits'] = num_visits + 1
+#     context = {
+#         'reqularpizzas_all': Regularpizza.objects.all(),
+#         'toppings_all': Topping.objects.all(),
+#         'pastas_all': Pasta.objects.all(),
+#         'salads_all': Salad.objects.all(),
+#         'num_visits': num_visits,
+#     }
+#     return render(request, 'menu.html', context=context)
+
+
+def menu_nav(request, menuheader_displayedJSON):
+    menuheader_display=["Pizzas","Pastas","Salads"]
+    menuheaders_displayedJSON = json.loads(menuheader_display)
+    # TODO: Access this file with an
+    return menuheaders_displayed;
+
 
 def add_toppings(request, foodnameID):
-    # numtoppingsDICT = {
-    #     4:0,
-    #     8:1,
-    #     9:2,
-    #     7:3,
-    #     12:'special',
-    # }
-    #Regular_Pizza = 'Regular Pizza'
     pizzatypeDICT = {
     4:0,  # 0 signifies Regular Pizza
     8:0,
@@ -172,23 +174,9 @@ def add_toppings_experiment(request):
 
     #return render(request, 'menu.html/',context=context)
     return render(request, 'orders/add_toppings_experiment.html/', context=context)
-# def add_pizza_to_order(request, foodnameID):
-#      print("116 request: ",request,foodnameID)
-#      context = "test"
-#      return render(request, 'add_pizza_to_order.html/', context=context)
-    #
-# Create html file
-# update urls.py
-# generate order and update orders object (in p3toppings.js)
-#  Allow duplicates of pizza (makes it easy to review)
-#   see if we need to regenerate quantities for other menu items
-
-    # return
-    # return render(request, 'orders/add_pizza.html', context=context)
 
 def review_order(request): # Commented out 8/26/19 and failed
     """Allows the customer to review and edit the order"""
-    print("234: review_order")
     # Read the object
     # TODO: decide on checks
     # Pass it to review_order.html
@@ -196,8 +184,6 @@ def review_order(request): # Commented out 8/26/19 and failed
     context = {
 
     }
-
-    print("247 context:",context)
     return render(request, 'orders/review_order.html', context=context)
 
 class RegularpizzaListView(generic.ListView):
@@ -230,7 +216,7 @@ class RegularpizzaUpdate(UpdateView):
 class RegularpizzaDelete(DeleteView):
     model = Regularpizza
     success_url = reverse_lazy('index')
-################################
+
 class ToppingListView(generic.ListView):
     model = Topping
 

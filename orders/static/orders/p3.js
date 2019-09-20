@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
   //console.log("pause 1");
+  //var menuheaders_displayedJSON_parsed = jQuery.parseJSON(menuheaders_displayedJSON);
+  menuheaders_displayedJSON = document.getElementById("menuheaders_displayedJSON").innerText;
+  console.log("menuheaders_displayedJSON:",menuheaders_displayedJSON);
   restore_menu();
 });
 
@@ -123,4 +126,8 @@ function reset_item(a,b,d,c) {
 function cancel_order() {
   sessionStorage.clear();
   document.location.reload()
+}
+
+function menu_navJS() {
+
 }
