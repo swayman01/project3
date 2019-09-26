@@ -1,10 +1,90 @@
 document.addEventListener('DOMContentLoaded', () => {
-  //console.log("pause 1");
-  //var menuheaders_displayedJSON_parsed = jQuery.parseJSON(menuheaders_displayedJSON);
-  menuheaders_displayedJSON = document.getElementById("menuheaders_displayedJSON").innerText;
-  console.log("menuheaders_displayedJSON:",menuheaders_displayedJSON);
+  menu_nav_init();
   restore_menu();
+  menu_nav_toggle();
 });
+
+function menu_nav_init() {
+  if (sessionStorage.getItem("menu_nav")==null) {
+    let menu_navSTR = document.getElementById("menu_nav_DICT").innerHTML;
+    var menu_navJSON = JSON.parse(document.getElementById("menu_nav_DICT").innerHTML);
+    sessionStorage.setItem("menu_nav",JSON.stringify(menu_navJSON));
+  }
+}
+
+function menu_nav(button) {
+  console.log(button);
+  if (sessionStorage.getItem("menu_nav")==null) menu_nav_init();
+  var menu_navJSON = JSON.parse(sessionStorage.getItem("menu_nav"));
+  if (button=="All") {
+    if(!menu_navJSON.All) {
+      for (let [key, value] of Object.entries(menu_navJSON)) {
+        menu_navJSON[key] = false;
+      }
+      menu_navJSON.All=true;
+    }
+    else {
+      for (let [key, value] of Object.entries(menu_navJSON)) {
+        menu_navJSON[key] = true;
+      }
+      menu_navJSON.All=false;
+    }
+  }
+  else {
+    if (menu_navJSON[button]) {
+      menu_navJSON.All=false;
+      menu_navJSON[button]=false;
+    }
+    else {
+      menu_navJSON[button]=true;
+      menu_navJSON.All=false;
+    }
+  }
+  var no_items_on = true;
+  for (let [key, value] of Object.entries(menu_navJSON)) {
+    if (menu_navJSON[key] == true) no_items_on = false;
+  }
+  if (no_items_on) {
+    alert("Please Select at least on menu");
+    return
+  }
+  sessionStorage.setItem("menu_nav",JSON.stringify(menu_navJSON));
+  menu_nav_toggle();
+}
+
+function menu_nav_toggle() {
+  var menu_navJSON = JSON.parse(sessionStorage.getItem("menu_nav"));
+  // change button colors
+  for (let [key, value] of Object.entries(menu_navJSON)) {
+    var buttonLIST = document.getElementsByClassName(key);
+    for (i = 0; i < buttonLIST.length; i++) {
+      if(menu_navJSON[key]) {
+        buttonLIST[i].classList.remove('btn-default');
+        buttonLIST[i].classList.add('btn-primary');
+      }
+      else {
+        buttonLIST[i].classList.remove('btn-primary');
+        buttonLIST[i].classList.add('btn-default');
+      }
+    }
+  }
+  // update display hidden settings
+  if (menu_navJSON["All"]) {
+    for (let [key, value] of Object.entries(menu_navJSON)) {
+      if (key!="All") document.getElementById(key).style.display="inline";
+    }
+    return
+  }
+  else {
+    for (let [key, value] of Object.entries(menu_navJSON)) {
+      if (key!="All") {
+        if (value) document.getElementById(key).style.display="inline";
+        else document.getElementById(key).style.display="none";
+      }
+    }
+  }
+}
+
 
 function add_to_order(foodtype,foodnameID,foodname,foodprice){
   if (sessionStorage.length>0) {
@@ -128,6 +208,12 @@ function cancel_order() {
   document.location.reload()
 }
 
-function menu_navJS() {
-
-}
+  /*TODOs
+fix division for Subs in html
+sepatate id for pastas and salads in html or make table display:hidden
+check for sessionStorage.length and replace with if null
+check html divisions for ids
+in p3.js initial sessionStorage("menu_nav") if null
+menu_navDICT = {"All": true,
+                "everything else":false}
+  */

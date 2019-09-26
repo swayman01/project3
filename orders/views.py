@@ -34,6 +34,7 @@ def index(request):
     'QuerySet': Regularpizza.objects.all(),
     'menutype': 'regularpizza',
     'menuheader': 'Regular Pizza',
+    'menuheader_no_blanks': 'Regular_Pizza', # for use in css class
     'menuformat': 3,
     'foodname': 'regularpizza',
     'toppings': 'topping'
@@ -42,6 +43,7 @@ def index(request):
     'QuerySet': Topping.objects.all(),
     'menutype': 'Topping',
     'menuheader': 'Toppings',
+    'menuheader_no_blanks': 'Toppings',
     'menuformat': 0,
     'foodname': 'topping',
     }
@@ -49,6 +51,7 @@ def index(request):
     'QuerySet': Pasta.objects.all(),
     'menutype': 'Pasta',
     'menuheader': 'Pastas',
+    'menuheader_no_blanks': 'Pastas',
     'menuformat': 1,
     'foodname': 'pasta',
     }
@@ -56,6 +59,7 @@ def index(request):
     'QuerySet': Salad.objects.all(),
     'menutype': 'Salad',
     'menuheader': 'Salads',
+    'menuheader_no_blanks': 'Salads',
     'menuformat': 1,
     'foodname': 'salad',
     }
@@ -81,9 +85,9 @@ def index(request):
     # print("81 reqularpizzadbDICT:",reqularpizzadbDICT,type(reqularpizzadbDICT))
     # print("***")
     # regularpizzadbSTR = json.dumps(reqularpizzadbDICT, cls=DjangoJSONEncoder)
-
-    menuheader_display=["Pizzas","Pastas","Salads"]
-    menuheaders_displayedJSON = json.dumps(menuheader_display)
+    # commented out 9/24/19
+    # menuheader_display=["Pizzas","Pastas","Salads"]
+    # menuheaders_displayedJSON = json.dumps(menuheader_display)
 
 
     context = {
@@ -95,7 +99,7 @@ def index(request):
         'foodtypes': foodtypes,
         'foodnames': foodnames,
         'manager': manager,
-        'menuheaders_displayedJSON': menuheaders_displayedJSON,
+        # 'menuheaders_displayedJSON': menuheaders_displayedJSON, commented out 9/24/19
     }
     return render(request, 'menu.html/',context=context)
 
