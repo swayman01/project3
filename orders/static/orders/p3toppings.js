@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log("DOMContentLoaded")
 });
-console.log("p3toppings.js running")
 var qtysmallpizza=0;
 var qtylargepizza=0;
 var add_to_order_flag=false
@@ -147,23 +146,6 @@ function add_pizza(pizzaID,pizzatype,numtoppings,smallprice,largeprice,foodtype)
   }
 }
 
-//window.history.go(-1);
-
-/*
-
-//enable shopping  button
-*/
-// Commented out before 9/16/19
-// if (document.getElementById('menutdheaderright').innerHTML=='initial') {
-//   document.getElementById('menutdheaderright').innerHTML='Add Checkout Button';
-//   document.getElementById('menutdheaderright').style.color='white';
-//   initializeOrderWithPizza(pizzaID);
-// }
-// else {
-//   add_pizza_to_order(pizzaID);
-// }
-
-
 function initializeOrderWithPizza(pizzaID){
   //var itemID = a + '-' + b;
   //var qty = 1;
@@ -182,21 +164,17 @@ function initializeOrderWithPizza(pizzaID){
 function add_pizza_to_order(itemDICT) {
   console.log(itemDICT)
   console.log(window.location.pathname)
-  if (sessionStorage.length<1) {
+  if(sessionStorage.getItem("order")==null){
     console.log("sessionStorage.length <1:", sessionStorage.length)
     var orderARRAY = [];
     orderARRAY = [itemDICT];
     let orderSTR = JSON.stringify(orderARRAY);
     sessionStorage.setItem("order",orderSTR);
     // return to main menu
-    window.history.go();
+    window.history.go(-1);
   }
   else {
-    console.log("sessionStorage.length >0:", sessionStorage.length)
-    let a = "test"
-    //let itemID = a + "-" + pizzaID;
-    //let orderARRAY = []
-    if(sessionStorage.getItem("order")!=null) orderARRAY = jsonSTR_to_array(sessionStorage.getItem("order"));
+    orderARRAY = jsonSTR_to_array(sessionStorage.getItem("order"));
     console.log(orderARRAY);
     orderARRAY.push(itemDICT);
     sessionStorage.setItem("order",JSON.stringify(orderARRAY));

@@ -1,0 +1,30 @@
+{% extends "orders/review_order.html" %}
+{% block title %}<title>Order Detail</title>{% endblock %}
+{# block content #}
+
+{% block menu_control %}
+<h1>Order Detail</h1>
+<div class="TODO">
+  <p>Add javascript to fix title</p>
+  <p>Add delete capability</p>
+  <p>Add other menu items</p>
+  <p>orderJSONSTR: {{orderJSONSTR}}</p
+  <p>context: {{context}}</p>
+  <p>order_list: {{order_list}}</p>
+</div>
+
+<ul>
+  {% for order in order_list %}
+    <li>
+      {{order.name}}
+    </li>
+  {% endfor %}
+</ul>
+{% load staticfiles %}
+
+<script src="{% static 'orders/common.js' %}"></script>
+<script src="{% static 'orders/p3order_list.js' %}"></script>
+
+
+{% endblock %}
+{# endblock #}

@@ -1,0 +1,56 @@
+{% extends "orders/review_order.html" %}
+{% block title %}<title>Order List</title>{% endblock %}
+{% block content %}
+
+{% block menu_control %}
+<h1 class="TODO">Order List for Debugging</h1>
+<div class="TODO">
+
+</div>
+
+<ul>
+  {% for order in current_order %}
+    <li>
+      {{order.id}}**{{order.name}}**{{order.foodname}}**{{order.foodprice}}**{{order.qty}}**{{order.test}}
+    </li>
+  {% endfor %}
+</ul>
+<h1>Current Order</h1>
+<table id="current_order_frame">
+  <tr >
+    <th>Heading (if needed) goes here</th>
+  </tr>
+  <tr class="toppingheader">
+    <td colspan="3"></td>
+  </tr>
+  <tr class="toppingpage">
+    <td class="toppingpage_left"></td>
+    <td class="toppingpage_middle">
+      <div style="overflow-y:auto;">
+        <table id="current_order">
+          {% for order in current_order %}
+          <tr class="orderitem">
+            <td>{{order.foodname}}</td>
+            <td>{{order.foodprice}}</td>
+            <td>{{order.qty}}</td>
+            <td class="TODO">Price</td>
+          </tr>
+            {% endfor %}
+        </table>
+      </div>
+    </td>
+    <br>
+    <td class="toppingpage_right"></td>
+  </tr>
+  <tr class="toppingheader">
+    <td colspan="3"></td>
+  </tr>
+  </table>
+  <p class="TODO">Calculate order price and place here</p>
+
+{% load staticfiles %}
+<script src="{% static 'orders/common.js' %}"></script>
+<script src="{% static 'orders/p3order_list.js' %}"></script>
+
+{% endblock %}
+{% endblock %}

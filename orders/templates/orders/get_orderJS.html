@@ -1,0 +1,16 @@
+{% extends "base_generic.html" %}
+{% block title %}<title>Experiment</title>{% endblock %}
+
+{% block content %}
+<h1>Stub for getting orderdata from javascript </h1>
+<p>test</p>
+<p>p3get_orderJS</p>
+<div class="TODO">
+
+</div>
+
+{% load staticfiles %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="{% static 'orders/common.js' %}"></script>
+<script src="{% static 'orders/p3get_orderJS.js' %}"></script>
+{% endblock %}

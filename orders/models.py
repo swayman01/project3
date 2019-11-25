@@ -5,8 +5,6 @@ from datetime import date
 import uuid # Required for unique instances
 
 
-
-
 class Regularpizza(models.Model):
     """Model contains all of the pizza"""
     name = models.CharField(max_length=50, help_text='')
@@ -43,20 +41,6 @@ class Salad(models.Model):
     def __str__(self):
         """String for representing the Model object."""
         return self.name
-
-
-# class SaladInstance(models.Model):
-#     """Model representing a specific copy of a salad """
-#     # TODO: Do we need this model? See what happens with Pasta
-#     # id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text='Unique ID for this salad')
-#     salad = models.ForeignKey('Salad', on_delete=models.SET_NULL, null=True)
-#
-#     # class Meta:
-#     #     ordering = ['name']
-#
-#     def __str__(self):
-#         """String for representing the Model object."""
-#         return f'{self.id} ({self.salad.title})'
 
 
 class Pasta(models.Model):
@@ -96,22 +80,20 @@ class Topping(models.Model):
 
 class Order(models.Model):
     """Model contains all of the orders"""
-    orderowner = models.IntegerField(default = 0)
+    name = models.CharField(max_length=50, help_text='')
+    customer_id = models.IntegerField(default = 0)
     #0: guest
-    orderdate = models.DateTimeField(auto_now=False, auto_now_add=True)
-    # auto_now_add automatically set the field to now when the object is first created.
-    """
-    A date and time, represented in Python by a datetime.datetime instance.
-    Takes the same extra arguments as DateField.
-    The default form widget for this field is a single TextInput.
-    The admin uses two separate TextInput widgets with JavaScript shortcuts.
-"""
+    orderdate = models.DateTimeField(auto_now=False, auto_now_add=False)
+    # Use customer_id and orderdate as keys
+    foodtype = models.CharField(max_length=50, help_text='', default = '')
     foodname = models.CharField(max_length=50, help_text='')
-    #TODO: Strategize toppings
+    foodnameID = models.IntegerField(default = 0)
+    toppings = models.CharField(max_length=50, default = '', help_text='', blank=True)
     foodprice = models.DecimalField(max_digits=5, decimal_places=2)
+    qty = models.IntegerField(default = 0)
     foodrating = models.IntegerField(default = 0)
     # 0: no rating, -1: thumbs down, -2: thumbs up
-    popularity = models.DecimalField(max_digits=5, decimal_places=2)
+    popularity = models.DecimalField(max_digits=5, decimal_places=2,default = 0)
 
     class Meta:
         ordering = ['-orderdate']
@@ -123,13 +105,19 @@ class Order(models.Model):
 
     def get_absolute_url(self):
         """Returns the url to access a particular pasta instance."""
-        return reverse('topping_detail', args=[str(self.id)])
+        return reverse('order', args=[str(self.id)])
 
     def __str__(self):
         """String for representing the Model object."""
+        #print("models 111: ",self)
         return self.name
 
-
+# Not Used 10/29/19
+class PostOrder(models.Model):
+    post_heading = models.CharField(max_length=200)
+    post_text = models.TextField()
+    def __unicode__(self):      # If python2 use __str__ if python3
+        return unicode(self.user)
 #TODO for Currency
 # class MyModelAdmin(admin.ModelAdmin):
 #     list_display = ('formatted_amount', ...other fields...,)

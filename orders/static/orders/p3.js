@@ -85,7 +85,6 @@ function menu_nav_toggle() {
   }
 }
 
-
 function add_to_order(foodtype,foodnameID,foodname,foodprice){
   if (sessionStorage.length>0) {
     console.log("sessionStorage.length>0:", sessionStorage.length)
@@ -97,10 +96,9 @@ function add_to_order(foodtype,foodnameID,foodname,foodprice){
     var orderARRAY = [];
     //add_next_item_to_order(foodtype,foodnameID,foodname,foodprice);
     initializeOrders(foodtype,foodnameID,foodname,foodprice);
-    /*
+    /* TODO
     if this works delete initializeOrders() function
     and look at deleting add_to_order() function
-
     */
 
   }
@@ -115,15 +113,6 @@ function add_to_order(foodtype,foodnameID,foodname,foodprice){
   Allow login to save history
   */
 
-  /*
-  3. Add go to cart button if it isn't already there
-  4. Pass order back to python
-  */
-
-  /* In Python
-  Verify order against price to prevent hacking
-  add to history
-  */
 
   /* Clear session storage on submit order and cancel order*/
 
@@ -132,11 +121,6 @@ function add_to_order(foodtype,foodnameID,foodname,foodprice){
 function initializeOrders(a,b,d,c) {
   var itemID = a + '_' + b;
   var qty = 1;
-  /* Commented out 9/16/19
-  let tr = document.getElementById(itemID);
-  let spantr = document.createElement("span");
-  spantr.appendChild(tr);
-  */
   var orderARRAY = [];
   var itemDICT = {foodtype:a,foodnameID:b,foodname:d,foodprice:c,qty:1};
   orderARRAY = [itemDICT];

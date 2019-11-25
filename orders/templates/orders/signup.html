@@ -1,0 +1,13 @@
+{% extends "base_generic.html" %}
+
+<!-- from https://simpleisbetterthancomplex.com/tutorial/2017/02/18/how-to-create-user-sign-up-view.html -->
+{% block content %}
+<p class="TODO">Delete if not used</p>
+<h2>Sign up</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Sign up</button>
+</form>
+
+{% endblock %}

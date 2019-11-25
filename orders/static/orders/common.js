@@ -111,6 +111,17 @@ function jsonSTR_to_array(jsonSTR){
   return jsonLIST;
 }
 
+//TODO run as part of update_orderARRAY or another function
+function delete_item(index) {
+  // update in case an item was changed
+  update_orderARRAY();
+  // offset index for header
+  index = index - 1;
+  orderARRAY.splice(index,1);
+  sessionStorage.setItem("order",JSON.stringify(orderARRAY));
+  location.reload();
+}
+
 function qty_plus_minus(td_id,j) {
   //This function increments quantities when clicking on the plus or minus keys
   // j of 1 signifies +, j of -1 signifies -
@@ -118,6 +129,7 @@ function qty_plus_minus(td_id,j) {
   let valMax = 9, valMin = 0;
   let val = td_id.childNodes[1].value;
   let menuitem_id = td_id.id.slice(0,-4);
+  let td_price_id = menuitem_id+"_PRICE"
   if (isNaN(val) || val < valMin) {
     td_id.childNodes[1].setAttribute("value",val);
   }
@@ -135,6 +147,7 @@ function qty_plus_minus(td_id,j) {
         if (val < valMax) val = parseInt(val)+1;
         orderARRAY[i]["qty"] = parseInt(val);
         td_id.childNodes[1].setAttribute("value",val);
+        update_item_price(td_price_id,orderARRAY[i]);
       }
     }
     sessionStorage.setItem("order",JSON.stringify(orderARRAY));
@@ -145,11 +158,22 @@ function qty_plus_minus(td_id,j) {
       if(menuitem_id==order_id) {
         val = parseInt(val)-1;
         orderARRAY[i]["qty"] = parseInt(val);
+        if (parseInt(val)<1) {
+          delete_item()
+        }
         td_id.childNodes[1].setAttribute("value",val);
-        // console.log(orderARRAY[i],val);
+        update_item_price(td_price_id,orderARRAY[i]);
       }
     }
     sessionStorage.setItem("order",JSON.stringify(orderARRAY));
+  }
+}
+function update_item_price(td_price_id,item){
+  //updates the price on a line item when changing quantity
+  console.log("160: ",td_price_id,item);
+  let price = item.qty*item.foodprice;
+  if (document.getElementById("td_price_id")!=null) {
+    document.getElementById(td_price_id).innerText=(" $ " + price.toFixed(2))
   }
 }
 

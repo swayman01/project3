@@ -16,16 +16,18 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+from django.conf.urls import url
+from orders import views as core_views
+
 urlpatterns = [
     path("", include("orders.urls")),
     path("admin/", admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
+    # url(r'^signup/$', core_views.signup, name='signup'),
     #path('project3/templates/registration/login.html'),
 #project3/templates/registration
-
 ]
-
-# print("28 urlpatterns: ", urlpatterns)
+# print("31 urlpatterns: ", urlpatterns)
 # BASE_DIR:  /Users/swayman/Documents/Classes/CS50/CS50_Web_Programming/project3
 
 # urlpatterns:  [<URLResolver <module 'orders.urls' from '/Users/swayman/Documents/Classes/CS50/CS50_Web_Programming/project3/orders/urls.py'> (None:None) ''>,

@@ -1,0 +1,20 @@
+{% extends "orders/review_order.html" %}
+{% block title %}<title>Checkout</title>{% endblock %}
+{% block content %}
+
+<td class="login_guest">
+  <span class="btn btn-info" style="color:white" onclick="confirm_orderjs('text_test')">
+    TODO: Logout and return to index
+  </span>
+</td>
+<div class="TODO">
+  <p>Receipt Goes here</p>
+</div>
+
+
+
+{% load staticfiles %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="{% static 'orders/common.js' %}"></script>
+<script src="{% static 'orders/p3create_post.js' %}"></script>
+{% endblock %}

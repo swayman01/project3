@@ -9,174 +9,203 @@
 
 <div class="TODO">
   <p>user.get_id: {{user.id}}</p>
-  <p>Center table with green background?</p>
-  <p>Add scrolling for overflow: Do we need container fluid here?</p>
   <p>Look at POST for some actions</p>
-  <p>Make sure final order is from Python to prevent changing of price in JavaScript</p>
-  <p>Figure out why some edit and delete buttons don't appear</p>
-  <p>add Cancel button to Confirm Delete </p>
-  <!-- <p class="TODO">foodtypes: {#{foodtypes}#}</p> -->
+  <p>add Add button for manager for each menu format</p>
+  <p>Special Pizza - rotate by day of the week</p>
+  <p>Have logout return to menu</p>
+  <p>Fix login and logout for every screen</p>
+  <p>Fix js line 77 error when no items are ordered</p>
 </div>
+
 <div id="menu_nav_DICT" style = display:none>{"All": true{% for m in foodtypes %},"{{m.menuheader}}": false{% endfor %}}</div>
 
-<!-- NOTE: Changing the following div to section shrinks the width -->
-<div id="menudisplay">
-  {% for a in foodtypes %} <!-- for a in foodtypes -->
-  <p class="TODO">a.menuheader:{{a.menuheader}}, a.menuformat:{{a.menuformat}}</p>
-      {% ifequal a.menuformat 0 %}   <!-- menuformat 0 is toppings -->
-  <div id="{{a.menuheader}}" >
-    <table class="foodmenu">
-      <th>{{a.menuheader}}</th>
-      {% for b in a.QuerySet %}  <!-- Loop 2-0 -->
-      <tr class="foodrow-0">
-        <td class="foodname-0">{{b.name}}</td>
-          {% if perms.orders.can_change_pasta or user.get_username == manager  %}
-          <!-- This is a workaround to test for manager permissions -->
-          <td class="foodbuttons"><a href="{{b.get_absolute_url}}update">Edit</a>
-            <a href="{{b.get_absolute_url}}delete">Delete</a></td>
-          {% endif %} <!-- perm.orders -->
-      </tr>
-          {%endfor%} <!-- Loop 2-0 -->
+<!-- <div id="order_frame_container"> -->
+<table id="order_frame">
+  <tr >
+    <th>Heading (if needed) goes here</th>
+  </tr>
+  <tr class="toppingheader">
+    <td colspan="3"></td>
+  </tr>
+  <tr class="toppingpage">
+    <td class="toppingpage_left"></td>
+    <td class="toppingpage_middle">
+      <div style="overflow-y:auto;">
+        <div id="menudisplay">
+          {% for a in foodtypes %} <!-- for a in foodtypes -->
+          <p class="TODO">a.menuheader:{{a.menuheader}}, a.menuformat:{{a.menuformat}}</p>
+          {% ifequal a.menuformat 0 %}   <!-- menuformat 0 is toppings -->
+          <div id="{{a.menuheader}}" >
+            <table class="foodmenu">
+              <th>{{a.menuheader}}</th>
+              {% for b in a.QuerySet %}  <!-- Loop 2-0 -->
+              <tr class="foodrow-0">
+                <td class="foodname-0">{{b.name}}</td>
+                {% if perms.orders.can_change_pasta or user.get_username == manager  %}
+                <!-- This is a workaround to test for manager permissions -->
+                <td class="foodbuttons"><a href="{{b.get_absolute_url}}update"
+                  class="btn btn-primary" style="color:white">Edit</a>
+                  <a href="{{b.get_absolute_url}}delete"
+                  class="btn btn-primary" style="color:white">Delete</a></td>
+                  {% endif %} <!-- perm.orders -->
+                </tr>
+                {%endfor%} <!-- Loop 2-0 -->
+              </table>
+              <p class="TODO">end menuformat 0</p>
+
+              <div class= "navbar flex-container">
+                <span class="btn btn-primary All" onclick="menu_nav('All')">All</span>
+                {% for c in foodtypes %} <!-- for c in foodtypes -->
+                <span class="btn btn-default {{c.menuheader}}" onclick="menu_nav('{{c.menuheader}}')">
+                  {{c.menuheader}}</span>
+                  {%endfor%}<!-- for c in foodtypes -->
+                </div>
+              </div> <!-- Toppings -->
+              {% endifequal %} <!-- menuformat 0 is toppings -->
+
+
+              {% ifequal a.menuformat 1 %}   <!-- menuformat 1 is pastas and salads -->
+              <div id="{{a.menuheader}}">
+                <table class="foodmenu">
+                  <th>{{a.menuheader}}</th>
+                  {% for b in a.QuerySet %}  <!-- Loop 2-1 -->
+                  <tr class="foodrow-1 menuitem">
+                    <td class="foodname-1">{{b.name}}</td>
+                    <td class="foodprice">$ {{b.price}}</td>
+                    {% if perms.orders.can_change_pasta or user.get_username == manager  %}
+                    <!-- This is a workaround to test for manager permissions -->
+                    <td class="foodbuttons"><a href="{{b.get_absolute_url}}update"
+                      class="btn btn-primary" style="color:white">Edit</a>
+                      <a href="{{b.get_absolute_url}}delete"
+                      class="btn btn-primary" style="color:white">Delete</a></td>
+                      {% else %} <!-- perm.orders -->
+                      <td class="foodbuttons">
+                        <span id = "{{a.foodname}}_{{b.id}}-placeholder" class = "placeholder"
+                        style = display:none> &nbsp &nbsp &nbsp &nbsp &nbsp
+                      </span>
+                      <span>
+                        <form id = "{{a.foodname}}_{{b.id}}" action = ""
+                        method = "POST" class = "foodbuttons">
+                        <input type="button"  value="Add to Order" title="Click to increase quantity"
+                        onclick="add_to_order('{{a.foodname}}','{{b.id}}','{{b.name}}','{{b.price}}')"
+                        class="btn btn-primary tooltipqtytip">
+                      </form>
+                    </span>
+                    <span id = "{{a.foodname}}_{{b.id}}_resetspan" class = "resetbutton"
+                    style = display:none>
+                    <form id = "{{a.foodname}}_{{b.id}}_resetbutton" action = ""
+                    method = "POST" class = "resetbutton">
+                    <input type="button"  value="Reset" title="Set quantity to 0"
+                    onclick="reset_item('{{a.foodname}}','{{b.id}}','{{b.price}}')"
+                    class="btn btn-warning tooltipqtytip">
+                  </form>
+                </span>
+              </td>
+              {% endif %}
+              {% if user.is_authenticated %}
+              {% endif %}
+            </tr>
+            {%endfor%} <!-- Loop 2-1 -->
+          </table>
+          <div class= "navbar flex-container">
+            <span class="btn btn-primary All" onclick="menu_nav('All')">All</span>
+            {% for c in foodtypes %} <!-- for c in foodtypes -->
+            <span class="btn btn-default {{c.menuheader}}" onclick="menu_nav('{{c.menuheader}}')">
+              {{c.menuheader}}</span>
+              {%endfor%}<!-- for c in foodtypes -->
+            </div>
+          </div>
+          {% endifequal %} <!-- menuformat 1 is pastas and salads -->
+
+
+          {% ifequal a.menuformat 2 %}
+          <div id="TBD2" class="TODO">
+            <p class="TODO">Dinner Platters</p>
+          </div>
+          {%endifequal%}
+
+          {% ifequal a.menuformat 3 %}   <!-- menuformat 3 is Pizzas and Subs -->
+          <div id="{{a.menuheader}}">
+            <p class="TODO">fix borders</p>
+            <table class="foodmenu">
+              <th>{{a.menuheader}}</th>
+              <tr class="foodrow-3 ">
+                <td class="foodname-3"></td>
+                <td class="foodprice-3">Small</td>
+                <td class="foodprice-3">Large</td>
+                <td class="foodbuttons"></td>
+              </tr>
+              {% for b in a.QuerySet %}  <!-- Loop 2-3 -->
+              <tr class="foodrow-3 menuitem">
+                <td class="foodname-3">{{b.name}}</td>
+                <td class="foodprice-3">$ {{b.smallprice}}</td>
+                <td class="foodprice-3">$ {{b.largeprice}}</td>
+
+                {% if perms.orders.can_change_pasta or user.get_username == manager  %}
+                <!-- This is a workaround to test for manager permissions -->
+                <td class="foodbuttons"><a href="{{b.get_absolute_url}}update"
+                  class="btn btn-primary" style="color:white">Edit</a>
+                  <a href="{{b.get_absolute_url}}delete"
+                  class="btn btn-primary" style="color:white">Delete</a></td>
+                  {% else %}
+                  <td id="{{a.foodname}}_{{b.numtoppings}}" class="btn btn-primary">
+                    <a href="{% url 'add_toppings' b.id %}"</a>
+                      <span style="color:white" >Add to Order</span>
+                    </td>
+                    {% endif %} <!-- perms.orders...permission to modify orders-->
+                  </tr>
+                  {%endfor%} <!-- Loop 2-3 -->
+                </table>
+                <div class= "navbar flex-container">
+                  <span class="btn btn-primary All" onclick="menu_nav('All')">All</span>
+                  {% for c in foodtypes %} <!-- for c in foodtypes -->
+                  <span class="btn btn-default {{c.menuheader}}" onclick="menu_nav('{{c.menuheader}}')">
+                    {{c.menuheader}}</span>
+                    {%endfor%}<!-- for c in foodtypes -->
+                  </div>
+                </div>
+                {% endifequal %} <!-- menuformat 1 is pastas and salads -->
+
+                {%endfor%} <!-- for a in foodtypes -->
+              </div>
+
+            </div>
+          </td>
+          <br>
+          <td class="toppingpage_right"></td>
+        </tr>
+        <tr class="toppingheader">
+          <td colspan="3"></td>
+        </tr>
       </table>
-      <p class="TODO">end menuformat 0</p>
-
-      <div class= "navbar flex-container">
-        <span class="btn btn-primary All" onclick="menu_nav('All')">All</span>
-        {% for c in foodtypes %} <!-- for c in foodtypes -->
-          <span class="btn btn-default {{c.menuheader}}" onclick="menu_nav('{{c.menuheader}}')">
-            {{c.menuheader}}</span>
-        {%endfor%}<!-- for c in foodtypes -->
-    </div>
-      </div> <!-- Toppings -->
-    {% endifequal %} <!-- menuformat 0 is toppings -->
-
-
-    {% ifequal a.menuformat 1 %}   <!-- menuformat 1 is pastas and salads -->
-  <div id="{{a.menuheader}}">
-    <table class="foodmenu">
-      <th>{{a.menuheader}}</th>
-      {% for b in a.QuerySet %}  <!-- Loop 2-1 -->
-      <tr class="foodrow-1 menuitem">
-        <td class="foodname-1">{{b.name}}</td>
-        <td class="foodprice">$ {{b.price}}</td>
-        {% if perms.orders.can_change_pasta or user.get_username == manager  %}
-        <!-- This is a workaround to test for manager permissions -->
-        <td class="foodbuttons"><a href="{{b.get_absolute_url}}update">Edit</a>
-          <a href="{{b.get_absolute_url}}delete">Delete</a></td>
-        {% else %} <!-- perm.orders -->
-          <td class="foodbuttons">
-            <span id = "{{a.foodname}}_{{b.id}}-placeholder" class = "placeholder"
-            style = display:none> &nbsp &nbsp &nbsp &nbsp &nbsp
-          </span>
-          <span>
-            <form id = "{{a.foodname}}_{{b.id}}" action = ""
-            method = "POST" class = "foodbuttons">
-            <input type="button"  value="Add to Order" title="Click to increase quantity"
-            onclick="add_to_order('{{a.foodname}}','{{b.id}}','{{b.name}}','{{b.price}}')"
-            class="btn btn-primary tooltipqtytip">
-          </form>
-        </span>
-        <span id = "{{a.foodname}}_{{b.id}}_resetspan" class = "resetbutton"
-        style = display:none>
-        <form id = "{{a.foodname}}_{{b.id}}_resetbutton" action = ""
-        method = "POST" class = "resetbutton">
-        <input type="button"  value="Reset" title="Set quantity to 0"
-        onclick="reset_item('{{a.foodname}}','{{b.id}}','{{b.price}}')"
-        class="btn btn-warning tooltipqtytip">
-      </form>
-    </span>
-  </td>
-  {% endif %}
-  {% if user.is_authenticated %}
-  {% endif %}
-</tr>
-{%endfor%} <!-- Loop 2-1 -->
-</table>
-<div class= "navbar flex-container">
-  <span class="btn btn-primary All" onclick="menu_nav('All')">All</span>
-  {% for c in foodtypes %} <!-- for c in foodtypes -->
-    <span class="btn btn-default {{c.menuheader}}" onclick="menu_nav('{{c.menuheader}}')">
-      {{c.menuheader}}</span>
-  {%endfor%}<!-- for c in foodtypes -->
-</div>
-</div>
-{% endifequal %} <!-- menuformat 1 is pastas and salads -->
+    <!-- </div> -->
+<table id="menucontrol">
+        <tr>
+          <td >
+            <span class="btn btn-primary">
+              <a href="{% url 'review_order' %}">Review Order</a>
+            </span>
+          </td>
+          <td class="toppingpage_middle">&nbsp &nbsp &nbsp &nbsp &nbsp</td>
+          <td>
+            <form action="" method="POST" class = "">
+              <input type="button" value="Cancel Order"
+              class="btn btn-warning" onclick = "cancel_order()">
+            </form>
+          </td>
+        </tr>
+      </table>
 
 
-  {% ifequal a.menuformat 2 %}
-<div id="TBD2" class="TODO">
-  <p class="TODO">Dinner Platters</p>
-</div>
-  {%endifequal%}
+      <p>You have visited this page {{ num_visits }}{% if num_visits == 1 %} time{% else %} times{% endif %}.</p>
+      {% load staticfiles %}
+      <script type="text/javascript"
+      var amenuheader = "{{num_visits}}">
+    </script>
+    <script type="text/javascript"
+    var menuheaders_displayedJSON = "{{menuheaders_displayedJSON|safe}}">
+  </script>
 
-  {% ifequal a.menuformat 3 %}   <!-- menuformat 3 is Pizzas and Subs -->
-<div id="{{a.menuheader}}">
-    <p class="TODO">fix borders</p>
-  <table class="foodmenu">
-    <th>{{a.menuheader}}</th>
-    <tr class="foodrow-3 ">
-      <td class="foodname-3"></td>
-      <td class="foodprice-3">Small</td>
-      <td class="foodprice-3">Large</td>
-      <td class="foodbuttons"></td>
-    </tr>
-    {% for b in a.QuerySet %}  <!-- Loop 2-3 -->
-    <tr class="foodrow-3 menuitem">
-      <td class="foodname-3">{{b.name}}</td>
-      <td class="foodprice-3">$ {{b.smallprice}}</td>
-      <td class="foodprice-3">$ {{b.largeprice}}</td>
-
-      {% if perms.orders.can_change_pasta or user.get_username == manager  %}
-      <!-- This is a workaround to test for manager permissions -->
-      <td class="foodbuttons"><a href="{{b.get_absolute_url}}update">Edit</a>
-        <a href="{{b.get_absolute_url}}delete">Delete</a></td>
-        {% else %}
-        <td id="{{a.foodname}}_{{b.numtoppings}}" class="btn btn-primary">
-           <a href="{% url 'add_toppings' b.id %}"</a> <span style="color:white" >Add to Order</span>
-        </td>
-        {% endif %} <!-- perms.orders...permission to modify orders-->
-      </tr>
-{%endfor%} <!-- Loop 2-3 -->
-</table>
-<div class= "navbar flex-container">
-  <span class="btn btn-primary All" onclick="menu_nav('All')">All</span>
-  {% for c in foodtypes %} <!-- for c in foodtypes -->
-    <span class="btn btn-default {{c.menuheader}}" onclick="menu_nav('{{c.menuheader}}')">
-      {{c.menuheader}}</span>
-  {%endfor%}<!-- for c in foodtypes -->
-</div>
-</div>
-{% endifequal %} <!-- menuformat 1 is pastas and salads -->
-
-{%endfor%} <!-- for a in foodtypes -->
-</div>
-
-  <table id="menucontrol">
-    <tr>
-      <td >
-        <span class="btn btn-primary">
-          <a href="{% url 'review_order' %}">Review Order</a>
-        </span>
-      </td>
-      <td class="toppingpage_middle">&nbsp &nbsp &nbsp &nbsp &nbsp</td>
-      <td>
-        <form action="" method="POST" class = "">
-          <input type="button" value="Cancel Order"
-          class="btn btn-warning" onclick = "cancel_order()">
-        </form>
-      </td>
-    </tr>
-  </table>
-
-<p>You have visited this page {{ num_visits }}{% if num_visits == 1 %} time{% else %} times{% endif %}.</p>
-{% load staticfiles %}
-<script type="text/javascript"
-var amenuheader = "{{num_visits}}">
-</script>
-<script type="text/javascript"
-var menuheaders_displayedJSON = "{{menuheaders_displayedJSON|safe}}">
-</script>
-
-<script src="{% static 'orders/common.js' %}"></script>
-<script src="{% static 'orders/p3.js' %}"></script>
-{% endblock %}
+  <script src="{% static 'orders/common.js' %}"></script>
+  <script src="{% static 'orders/p3.js' %}"></script>
+  {% endblock %}
