@@ -1,0 +1,12 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<div id="menu_control" class="flex-container">
+  <div></div>  <!-- placeholder -->
+  <div id="returntomenu"  class="btn btn-primary" >
+    <a href="{% url 'index' %}" style="color:white">Return to Main Menu</a>
+  </div>
+  <div></div>  <!-- placeholder -->
+  {% load staticfiles %}
+  <script src="{% static 'orders/p3logged_out.js' %}"></script>
+  {% endblock %}

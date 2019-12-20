@@ -1,8 +1,80 @@
 document.addEventListener('DOMContentLoaded', () => {
   menu_nav_init();
-  restore_menu();
+  p3_restore_menu();
   menu_nav_toggle();
+
+  //Uncaught (in promise) undefine seems to be limited to Chrome, doesn't show in Firefox or Opera
 });
+
+function p3_restore_menu() {
+  //This function restores the menu quantities to the values in the order object.
+  let menuitems=document.getElementsByClassName("menuitem");
+  if((sessionStorage.getItem("order")==null)||(sessionStorage.getItem("order").length<3)){
+  return;
+  }
+  var orderARRAY = jsonSTR_to_array(sessionStorage.getItem("order"));
+  let i1 = 0;
+  for (i1 = 0; i1 < orderARRAY.length; i1++) {
+    if ((orderARRAY[i1]["foodtype"] == "regularpizza")||(orderARRAY[i1]["foodtype"] == "sicilianpizza")||
+    (orderARRAY[i1]["foodtype"] == "special"))
+    {
+      //Is a pizza
+      if (orderARRAY[i1]["toppings"]==null) {
+        // Pizza with no toppings
+        itemID = orderARRAY[i1]["foodtype"] + "_" + "0";
+      }
+      else {
+        // Pizza with toppings
+        //check for first time this item has shown up in order object
+        itemID = orderARRAY[i1]["foodtype"] + "_" + orderARRAY[i1]["toppings"].length;
+      }
+      menuitem = document.getElementById(itemID);
+      if(menuitem==null)
+      {
+        itemID = itemID + "_BTN";
+        menuitem = document.getElementById(itemID);
+      }
+      //First time this pizza was ordered
+      if(menuitem!=null){
+        if ((menuitem.childNodes[1]==undefined)||(menuitem.childNodes[1]==null)) {
+          console.log(menuitem);
+        }
+        else {
+          if ((menuitem.childNodes[1].value=="Add to Order")
+          ||(menuitem.childNodes[1].innerText=="Add to Order"))
+          {
+            menuitem.childNodes[1].innerText = "Add More";
+            menuitem.classList.remove("btn-primary");
+            menuitem.classList.add("btn-success");
+          }
+        }
+      }
+    }
+
+    //Is not a pizza
+    else {
+      console.log("not a pizza")
+      itemID = orderARRAY[i1]["foodtype"] + "_" + orderARRAY[i1]["foodnameID"];
+      menuitem = document.getElementById(itemID);
+      if (menuitem!=null) {
+        if ((menuitem.childNodes[1].value=="Add to Order")||
+        (menuitem.childNodes[1].innerText=="Add to Order"))
+        {
+          let tr = menuitem.parentElement;
+          menuitem.removeChild(menuitem.childNodes[1])
+          qty_plus_minus_buttons(itemID,orderARRAY[i1]["qty"],-1,tr)
+          //RESUME: Figure out i , i is td_index
+          //qty_plus_minus_buttons(itemID,orderARRAY[i]["qty"],-1,document.getElementById(itemID).parentNode)
+          //qty_plus_minus_buttons(itemID);
+          //RESUME HERE
+          //document.getElementById(itemID).childNodes[1].childNodes[1].value=orderARRAY[i]["qty"];
+        }
+        else {
+        }
+      }
+    }
+  }
+}
 
 function menu_nav_init() {
   if (sessionStorage.getItem("menu_nav")==null) {
@@ -13,7 +85,6 @@ function menu_nav_init() {
 }
 
 function menu_nav(button) {
-  console.log(button);
   if (sessionStorage.getItem("menu_nav")==null) menu_nav_init();
   var menu_navJSON = JSON.parse(sessionStorage.getItem("menu_nav"));
   if (button=="All") {
@@ -85,23 +156,6 @@ function menu_nav_toggle() {
   }
 }
 
-function add_to_order(foodtype,foodnameID,foodname,foodprice){
-  if (sessionStorage.length>0) {
-    console.log("sessionStorage.length>0:", sessionStorage.length)
-    add_next_item_to_order(foodtype,foodnameID,foodname,foodprice);
-  }
-  else {
-    console.log("sessionStorage.length <1:", sessionStorage.length);
-    console.log("What happens in reset menu that doesn't happen here?")
-    var orderARRAY = [];
-    //add_next_item_to_order(foodtype,foodnameID,foodname,foodprice);
-    initializeOrders(foodtype,foodnameID,foodname,foodprice);
-    /* TODO
-    if this works delete initializeOrders() function
-    and look at deleting add_to_order() function
-    */
-
-  }
 
   /* Submit order
   Pass order to python
@@ -116,7 +170,6 @@ function add_to_order(foodtype,foodnameID,foodname,foodprice){
 
   /* Clear session storage on submit order and cancel order*/
 
-}
 
 function initializeOrders(a,b,d,c) {
   var itemID = a + '_' + b;
@@ -126,7 +179,7 @@ function initializeOrders(a,b,d,c) {
   orderARRAY = [itemDICT];
   var orderSTR = JSON.stringify(orderARRAY);
   sessionStorage.setItem("order",orderSTR);
-  restore_menu();
+  p3_restore_menu();
 }
 
 function add_next_item_to_order(a,b,d,c) {
@@ -146,7 +199,7 @@ function add_next_item_to_order(a,b,d,c) {
       //Is a pizza
     }
     else {
-      restore_menu();
+      p3_restore_menu();
       // let tr = document.createElement("tr");
       // //itemID=itemID+"_BTN"; RESUME HERE
       // qty_plus_minus_buttons(itemID,1,-1,tr);
@@ -159,14 +212,13 @@ function add_next_item_to_order(a,b,d,c) {
     qty = parseInt(document.getElementById(itemID).childNodes[1].value) + 1
     var i;
     for (i = 0; i < orderARRAY.length; i++) {
-      //console.log(orderARRAY[i])
       if ((orderARRAY[i]["foodtype"]==a)&&(orderARRAY[i]["foodnameID"]==b)) {
         orderARRAY[i]["qty"] = qty;
       }
     }
   }
   sessionStorage.setItem("order",JSON.stringify(orderARRAY));
-  restore_menu();
+  p3_restore_menu();
 }
 
 function reset_item(a,b,d,c) {
@@ -187,17 +239,9 @@ function reset_item(a,b,d,c) {
   sessionStorage.setItem("order",JSON.stringify(orderARRAY));
 }
 
-function cancel_order() {
-  sessionStorage.clear();
-  document.location.reload()
-}
-
   /*TODOs
 fix division for Subs in html
 sepatate id for pastas and salads in html or make table display:hidden
 check for sessionStorage.length and replace with if null
 check html divisions for ids
-in p3.js initial sessionStorage("menu_nav") if null
-menu_navDICT = {"All": true,
-                "everything else":false}
   */

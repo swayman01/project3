@@ -74,6 +74,7 @@ function countselectedtoppings() {
 
 function add_pizza(pizzaID,pizzatype,numtoppings,smallprice,largeprice,foodtype) {
   //gather data
+  console.log("add_pizza")
   var pizzaARRAY = ["regularpizza", "sicilianpizza", "special"]
   pizzaID = arguments[0];
   pizzatype = arguments[1];
@@ -129,6 +130,7 @@ function add_pizza(pizzaID,pizzatype,numtoppings,smallprice,largeprice,foodtype)
       itemDICT = {"foodtype":foodtype,"foodnameID":pizzaID,"foodprice":smallprice,"qty":qtysmallpizza,
       "foodname":"Small "+pizzatypeSTR};
     }
+    console.log(" go to add_pizza_to_order(itemDICT)")
     add_pizza_to_order(itemDICT);
 
   }

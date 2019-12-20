@@ -9,7 +9,7 @@ from django.urls import reverse, reverse_lazy, path
 from django.http import HttpResponseRedirect, HttpResponse, HttpRequest
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.contrib.auth import login, authenticate # 9/28/ 19 from https://simpleisbetterthancomplex.com/tutorial/2017/02/18/how-to-create-user-sign-up-view.html
+from django.contrib.auth import login, logout, authenticate # 9/28/ 19 from django documentation and https://simpleisbetterthancomplex.com/tutorial/2017/02/18/how-to-create-user-sign-up-view.html
 from django.contrib.auth.forms import UserCreationForm # 9/28/ 19 from https://simpleisbetterthancomplex.com/tutorial/2017/02/18/how-to-create-user-sign-up-view.html
 from orders.models import Regularpizza,Topping, Salad, Pasta, Order, User
 from orders.forms import PlaceOrderForm # TODO: see if we can delete Added 11/13/19 per Django documentation
@@ -18,12 +18,13 @@ import os, datetime
 from datetime import date, datetime
 import json
 import requests
-# TODO see if we can delete the next two lines
-from django.http import JsonResponse
-from django.core.serializers.json import DjangoJSONEncoder
+# TODO see if we can delete the next two lines - commented out 12/12/19
+# from django.http import JsonResponse
+# from django.core.serializers.json import DjangoJSONEncoder
 
 from django.template import Context, Template, loader
 from django.views.decorators.csrf import csrf_exempt # from https://stackoverflow.com/questions/16458166/how-to-disable-djangos-csrf-validation
+from decimal import Decimal
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -81,24 +82,22 @@ def index(request):
 
 
 def menu_nav(request, menuheader_displayedJSON):
-    print("94 index menu_nav: ",request)
+    # print("94 index menu_nav: ",request)
     menuheader_display=["Pizzas","Pastas","Salads"]
     menuheaders_displayedJSON = json.loads(menuheader_display)
-    # TODO: Access this file with an
     return menuheaders_displayed;
 
 
 def add_toppings(request, foodnameID):
     print("124 add_toppings request: ",request)
     pizzatypeDICT = {
-    4:0,  # 0 signifies Regular Pizza
-    8:0,
-    9:0,
-    7:0,
-    12:2, # 1 signifies Regular Pizza Special
+    4:0,  # 0 signifies Regular Pizza, 4 no toppings
+    8:0,  # 1 topping
+    9:0,  # 2 toppings
+    7:0,  # 3 toppings
+    12:2, # Regular Pizza Special
     }
     get1 = Regularpizza.objects.get(id=foodnameID)
-    # print("136 get1:", get1)
     numtoppings = get1.numtoppings
     smallprice = get1.smallprice
     largeprice = get1.largeprice
@@ -120,35 +119,42 @@ def add_toppings(request, foodnameID):
 
 
 def review_order(request):
-    print("154 review_order request: ",request)
     """Allows the customer to review and edit the order"""
+    print("123 review_order request: ",request, request.path)
+    next = request.path
     context = {
     'user_is_authenticated':request.user.is_authenticated,
+    'next':next
     }
+    print ("129 review_order context:", context)
     return render(request, 'orders/review_order.html', context=context)
 
 
 def place_order(request):
-    print("187 place_order request: ",request, request.user.is_authenticated)
+    print("131 place_order request: ",request, request.user.is_authenticated)
     context = { #TODO Delete if not needed
     'user_is_authenticated':request.user.is_authenticated,
+    'next': '/orders/review_order.html' #Needed because of how we pass json
     }
+    print ("139 place_order context:", context)
     if request.user.is_authenticated:
-        print("189: TODO - add next screen")
-        return render(request, 'orders/get_orderJS')
+        print("136 request: ",request)
+        return redirect('get_orderJS')
+        #return render(request, 'orders/get_orderJS')
+        #return render(request, 'orders/place_order.html', context=context) - commented out 12/16/19
     # this sent the html file,
     # but did not execute the javascript file
     return render(request, 'orders/place_order.html', context=context)
-    # return render(request, 'orders/place_order.html', context=context)
+
 
 def get_orderJS(request):
-    print("201 place_order request: ",request, request.user.is_authenticated)
+    print("144 place_order request, user_id.is_authenticated: ",request, request.user.is_authenticated)
     context = {
     'user_is_authenticated':request.user.is_authenticated,
     }
     orderdataJSON = request.POST['orderdataJSON']
     orderdataJSON = json.loads(orderdataJSON)
-    print("208: orderdataJSON: ", orderdataJSON)
+    print("152: orderdataJSON: ", orderdataJSON)
     if request.user.is_authenticated:
         customer_id = request.user.id
         user = User.objects.get(id=customer_id)
@@ -160,270 +166,58 @@ def get_orderJS(request):
     ordertime = timezone.now()
 # Loop through orderdata and create records in Order Model
     for order_item in orderdataJSON:
-        print("217: order_item",order_item,"\n")
-
+        print("162: order_item",order_item)
+# Need If to filter
         if order_item["foodtype"]=="regularpizza":
-            print("219: need to resolve by name and number of toppings for pizza")
+            #print("165: order_item",order_item)
+            # order_item_data =  Regularpizza.objects.filter(foodname=order_item["foodname"])
+            order_item_model =  Regularpizza.objects.all()
+            for item in order_item_model:
+                print("167: ",customer_id,customer_name, ordertime, order_item)
+                print("170 item: ",item)
+                # if order_item["foodnameID"] == 8 and item.numtoppings == 1:
+                try:
+                    numtoppings = len(order_item["toppings"])
+                except:
+                    numtoppings = 0
+                if item.numtoppings == numtoppings:
+                #if order_item["foodnameID"] == item.foodnameID: # and item["numtoppings"] == numtoppings:
+                    print("171 item: !", item.numtoppings, numtoppings)
+                # if size, numtoppings equal then add to model
+                    add_to_Order_model(customer_id,customer_name, ordertime, order_item)
 
         if order_item["foodtype"]=="pasta":
             print("224: order_item",order_item)
             order_item_data = Pasta.objects.filter(name=order_item["foodname"])
             for item in order_item_data:
-                print("227 item; ",item)
+                print("188 item; ",item)
                 add_to_Order_model(customer_id,customer_name, ordertime, order_item)
 
         if order_item["foodtype"]=="salad":
             order_item_data = Salad.objects.filter(name=order_item["foodname"])
             for item in order_item_data:
+                print("193 item; ",item)
                 add_to_Order_model(customer_id,customer_name, ordertime, order_item)
 # Retrieve order data
     ordername = customer_name + "-" + ordertime.strftime("%m/%d/%Y, %H:%M:%S")
     current_order = Order.objects.filter(name=ordername)
     orderJSONSTR = order_history_to_JSON(current_order)
-    for item in current_order: # for debugging 11/02/19
-        print("241 item:",item.foodtype)
+    order_price = Decimal(0.0)
+    for item in current_order:
+        order_price = order_price + Decimal(item.qty) * Decimal(item.foodprice)
     context = {
-    'orderJSONSTR': orderJSONSTR,
+    # 'orderJSONSTR': orderJSONSTR, # Commented out 12/11/19
     'current_order': current_order,
+    'order_price': order_price,
     }
-
+    print("207 request: ",request)
+    # return redirect('order_list') # 12/17/19: This does not return order_price
     return render(request, 'orders/order_list.html',context=context)
 
 
-# TODO: Do we use this?
-# def checkout(request):
-#         print("163 checkout request: ",request)
-#         ## Retrieve_order starts here:
-#         order_list = {}
-#         foodprice = 0.0
-#         try:
-#             #print("235 retrieve_order data: ",data)
-#             print("213")
-#         except:
-#             print("237 not able to print checkout data\n")
-#             print("238 request.method: ",request.method)
-#         orderdata = request.GET.get("orderdata")
-#         print("229: ", orderdata)
-#         orderdataJSON = json.loads(orderdata)
-#         # print("258: ",context)
-#         if request.user.is_authenticated:
-#             customer_id = request.user.id
-#             user = User.objects.get(id=customer_id)
-#             customer_name = user.username
-#         else:
-#             customer_id = 0
-#             customer_name = "guest"
-#             # Create time date stamp
-#             #ordertime = datetime.now() #commented out 11/2/19
-#         ordertime = timezone.now()
-#         # ordername = customer_name + "-" + ordertime.strftime("%m/%d/%Y, %H:%M:%S") # TODO: comment out
-#             # Loop through orderdata and create records in Order Model
-#         for order_item in orderdataJSON:
-#             print("245: order_item",order_item,"\n")
-#             print("246: ",order_item["foodtype"],order_item["foodnameID"],"\n")
-#             foodtype = order_item["foodtype"]
-#             #TODO comment out assignments
-#             # if order_item["foodtype"]=="regularpizza":
-#             if foodtype=="regularpizza":
-#                 #print("\n",order_item,"\n")
-#                 order_item_data = Regularpizza.objects.get(id=int(order_item["foodnameID"]))
-#                 #print("Retrieved: ",order_item_data)
-#                 print("need to resolve by name and number of toppings for pizza")
-#                 # retrieve query that matches foodnameID
-#                 # set foodtype, foodname, foodnameID,toppings (if pizza),foodprice and qty in Orders Model
-#                 #if order_item["foodtype"]=="pasta":
-#             if foodtype=="pasta":
-#                 print("order_item",order_item)
-#                 order_item_data = Pasta.objects.get(name=order_item["foodname"])
-#                 print("283 Retrieved: ",order_item_data)
-#
-#                 current_order = Order.objects.filter(name=ordername)
-#                 print("284 current_order:",current_order)
-#                 # for item in Pasta.objects.all():
-#                 for item in order_item_data:
-#                     foodprice = item.price
-#                     print ("287: ",item,item.price, foodprice)
-#                     # set foodtype, foodname, foodnameID,toppings (if pizza),foodprice and qty in Orders Model
-#                     # try to make a function
-#                     # foodtype = order_item["foodtype"]
-#                     order_item_model = Order(
-#                     name = ordername,
-#                     customer_id = customer_id,
-#                     orderdate = ordertime,
-#                     foodtype = foodtype, #order_item["foodtype"],
-#                     foodname = order_item["foodname"],
-#                     foodnameID = order_item["foodnameID"],
-#                     qty = order_item["foodnameID"],
-#                     foodprice = item.price
-#                     # add foodrating
-#                     )
-#                     order_item_model.save()
-#
-#
-#             if foodtype=="salad":
-#                 print("306: order_item",order_item)
-#                 order_item_data = Salad.objects.get(name=order_item["foodname"])
-#                 print("308:Retrieved: ",order_item_data)
-#                 # print("309: Salad.objects.all()",Salad.objects.all())
-#                 # foodname = order_item["foodname"]
-#                 # print("311 foodname: ",foodname)
-#                 # foodnameID = order_item["foodnameID"]
-#                 # qty = order_item["qty"]
-#                 current_order = Order.objects.filter(name=ordername)
-#                 print("316 order_item_data: ", order_item_data)
-#                 for item in current_order:
-#                     # foodprice = item.price
-#                     # print (item,item.price, foodprice)
-#                     #TODO: Pass dictionary instead of individual items
-#                     add_to_Order_model(ordername,customer_id,ordertime,order_item_data,foodtype,foodname,foodnameID,qty,foodprice)
-#                 # Retrieve order from the model and convert to JSON string to pass to javascript
-#
-#                 #print("320 current_order",current_order)
-#                 # for item in current_order: # for debugging 11/02/19
-#                 #     print("321 item:",item.foodtype)
-#                 orderJSONSTR = order_history_to_JSON(current_order)
-#             #TODO change single quotes to double quotes
-#             # User orderJSON for debugging        orderJSON = order_history_to_JSON(current_order)
-#             print("328: orderJSONSTR: ",orderJSONSTR)
-#             #context['orderJSONSTR']=orderJSONSTR
-#             #TODO put in hidden field in html file and then have js put in sessionStorage
-#             #confirmed_orderdata = json.dumps(orderdataJSON)
-#             print("334 context:",order_list,type(order_list['orderJSONSTR']))
-#
-#             # TODO: Repeat for other menu items
-#
-#             # Go to Order Placed
-#             # Order placed:
-#             #   Retrieve records with last time stamp and customer_id
-#             #   Display order with total
-#             #   Add buttons for order history and review
-#             # Or:
-#             #   Display message that the order has been placed
-#             #   Clear sessionStorage
-#             #   Logout and return to menu
-#
-#             # print("254: request",request) # problem:request <WSGIRequest: GET '/orders/orders/retrieve_order/?
-#             # return HttpResponse("255 retrieve_order") #Not Found: /orders/orders/checkout/ qed response object wrohg
-#             # print("263 request: ",request,"\n",dir(HttpRequest),"\n",HttpRequest,"\n")
-#             print("354 path_info:\n",request.path_info)
-#             # request_confirm = request.GET.copy()
-#             # request_confirm = copy.deepcopy(request TypeError: cannot serialize '_io.BufferedReader' object
-#             #  = request.GET.get('orders/confirm_order.html').copy()
-#             # print("266: ",request_confirm,"\n",request.GET,"\n",dir(request.GET))
-#             #return HttpResponse("checkout not found")
-#             # print("267: ", request.getlist) 'WSGIRequest' object has no attribute 'getlist'
-#             # return HttpResponse(template.render(context, request))
-#             # redirect has a copy of retrieve order
-#             # return redirect('/orders/confirm_order.html', context=context) # .html needed, executes confirm_order in views but not .html file
-#             # Request is a repeat of retrieve order data
-#             # return render(request, 'orders/order_list.html',context=context)
-#             ## Retrieve_order ends here:
-#             return render(request, 'orders/checkout.html')
-
-# TODO: can we delete this?
-def retrieve_order(request,data):
-    print("417 retrieve_order request",request)
-    order_list = {}
-    foodprice = 0.0
-    try:
-        print("420 retrieve_order data: ",data)
-    except:
-        print("422 not able to print retrieve_order data\n")
-        print("423 request.method: ",request.method)
-    orderdata = request.GET.get("orderdata")
-    orderdataJSON = json.loads(orderdata)
-    if request.user.is_authenticated:
-        customer_id = request.user.id
-        user = User.objects.get(id=customer_id)
-        customer_name = user.username
-    else:
-        customer_id = 0
-        customer_name = "guest"
-    # Create time date stamp
-    ordertime = timezone.now()
-    ordername = customer_name + "-" + ordertime.strftime("%m/%d/%Y, %H:%M:%S") #TODO Comment out
-    # Loop through orderdata and create records in Order Model
-    for order_item in orderdataJSON:
-        print("452: order_item",order_item,"\n")
-        if order_item["foodtype"]=="regularpizza":
-            order_item_data = Regularpizza.objects.get(id=int(order_item["foodnameID"]))
-            #print("Retrieved: ",order_item_data)
-            print("need to resolve by name and number of toppings for pizza")
-        if order_item["foodtype"]=="pasta":
-                print("464: order_item",order_item)
-                order_item_data = Pasta.objects.filter(name=order_item["foodname"])
-                print("466 Retrieved: ",order_item_data)
-                for item in order_item_data:
-                    if True:
-                        foodprice = item.price
-                        print ("287: ",item,item.price, foodprice)
-                        order_item_model = Order(
-                        name = ordername,
-                        customer_id = customer_id,
-                        orderdate = ordertime,
-                        foodtype = order_item["foodtype"],
-                        foodname = order_item["foodname"],
-                        foodnameID = order_item["foodnameID"],
-                        qty = order_item["qty"],
-                        foodprice = item.price
-                        # TODO add foodrating
-                        )
-                        order_item_model.save()
-
-        if order_item["foodtype"]=="salad":
-            print("484: order_item",order_item)
-            order_item_data = Salad.objects.filter(name=order_item["foodname"])
-            for item in order_item_data:
-                print("486 item; ",item)
-                # foodname = order_item["foodname"]
-                # foodnameID = order_item["foodnameID"]
-                # qty = order_item["qty]
-                # foodprice = order_item_data.price
-                print("491 order_item price: ",order_item,foodprice)
-                add_to_Order_model(customer_id,customer_name, ordertime, order_item)
-            # orderJSONSTR = order_history_to_JSON(current_order) commented out 11/16/19
-            # print("444: orderJSONSTR: ",orderJSONSTR)
-            # for item in Salad.objects.all():
-            #     foodprice = item.price
-            #     print (item,item.price, foodprice)
-            #     #TODO: Pass dictionary instead of individual items
-            #     add_to_Order_model(ordername,customer_id,ordertime,order_item_data,foodtype,foodname,foodnameID,qty,foodprice)
-            #
-            #     orderJSONSTR = order_history_to_JSON(current_order)
-            #     print("490: orderJSONSTR: ",orderJSONSTR)
-
-            # TODO: Repeat for other menu items
-
-    print("496 path_info: ",request.path_info)
-    # request_confirm = request.GET.copy()
-    # request_confirm = copy.deepcopy(request TypeError: cannot serialize '_io.BufferedReader' object
-    #  = request.GET.get('orders/confirm_order.html').copy()
-    # print("266: ",request_confirm,"\n",request.GET,"\n",dir(request.GET))
-    #return HttpResponse("checkout not found")
-    # print("267: ", request.getlist) 'WSGIRequest' object has no attribute 'getlist'
-    # return HttpResponse(template.render(context, request))
-    # redirect has a copy of retrieve order
-    # return redirect('/orders/confirm_order.html', context=context) # .html needed, executes confirm_order in views but not .html file
-    # Request is a repeat of retrieve order data
-    current_order = Order.objects.filter(name=ordername)
-    orderJSONSTR = order_history_to_JSON(current_order)
-    print("469 current_order",current_order)
-    for item in current_order: # for debugging 11/02/19
-        print("711 item:",item.foodtype)
-    context = {
-    'orderJSONSTR':orderJSONSTR,
-    }
-    print("474 context",context)
-    # return redirect('/',context=context)
-    # render ' ' and '/' do not work
-    # return HttpResponse("477 Still Trying")
-    # return render(request, 'order_list',context=context)
-    # return redirect('orders/order_list.html',context=context) #Not Found: /orders/orders/retrieve_order/orders/order_list.html
-    return render(request, 'orders/order_list.html',context=context) # url does not update
-
 def order_history_to_JSON(order_query):
     """
-    Input is a queary set; output isa JSON string suitable for passing to javascript.
+    Input is a queary set; output is a JSON string suitable for passing to javascript.
     """
     orderJSON = []
     for item in order_query:
@@ -440,20 +234,24 @@ def order_history_to_JSON(order_query):
     return orderJSONSTR
 
 
-# pre 11/22/19 version def add_to_Order_model(ordername,customer_id,ordertime, order_item,foodtype,foodname,foodnameID,qty,foodprice):
 def add_to_Order_model(customer_id,customer_name, ordertime, order_item):
-    print("775 add_to Order_model: ",order_item)
+    print("336 add_to Order_model: ",order_item)
+    foodnameID = order_item["foodnameID"]
+    foodname = str(order_item["foodname"])
+    if foodname == "regularpizza":
+        print("340: TODO update for toppings")
+        if foodnameID != 8:
+            foodname == "Reqular Pizza with " + "Topping names"
     order_item_model = Order(
     customer_id = customer_id,
-    # ordername = customer_name + "-" + ordertime.strftime("%m/%d/%Y, %H:%M:%S"),
     name = customer_name + "-" + ordertime.strftime("%m/%d/%Y, %H:%M:%S"),
     orderdate = ordertime,
     foodtype = order_item["foodtype"],
-    foodname = order_item["foodname"],
-    foodnameID = order_item["foodnameID"],
+    foodname = foodname,
+    foodnameID = foodnameID,
     qty = order_item["qty"],
     foodprice = order_item["foodprice"],
-        # add foodrating
+        # TODO add foodrating
         )
     order_item_model.save()
     return
@@ -653,3 +451,9 @@ def signup(request):
     else:
         form = UserCreationForm()
     return render(request, 'orders/signup.html', {'form': form})
+
+# modified from https://pythonprogramming.net/user-login-logout-django-tutorial/
+def logged_out(request):
+    print("567 request: ", request)
+    logout(request)
+    return render(request, 'orders/logged_out.html')

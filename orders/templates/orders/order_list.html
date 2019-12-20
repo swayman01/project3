@@ -1,25 +1,10 @@
 {% extends "orders/review_order.html" %}
+{% load mathfilters %}
 {% block title %}<title>Order List</title>{% endblock %}
 {% block content %}
-
-{% block menu_control %}
-<h1 class="TODO">Order List for Debugging</h1>
 <div class="TODO">
-
 </div>
-
-<ul>
-  {% for order in current_order %}
-    <li>
-      {{order.id}}**{{order.name}}**{{order.foodname}}**{{order.foodprice}}**{{order.qty}}**{{order.test}}
-    </li>
-  {% endfor %}
-</ul>
-<h1>Current Order</h1>
-<table id="current_order_frame">
-  <tr >
-    <th>Heading (if needed) goes here</th>
-  </tr>
+<table id="order_frame">
   <tr class="toppingheader">
     <td colspan="3"></td>
   </tr>
@@ -27,15 +12,17 @@
     <td class="toppingpage_left"></td>
     <td class="toppingpage_middle">
       <div style="overflow-y:auto;">
-        <table id="current_order">
+        <table id="order">
           {% for order in current_order %}
           <tr class="orderitem">
             <td>{{order.foodname}}</td>
-            <td>{{order.foodprice}}</td>
-            <td>{{order.qty}}</td>
-            <td class="TODO">Price</td>
+            <td class="item_price Total">$ {{order.foodprice}}</td>
+            <td class="item_price Total">{{order.qty}}</td>
+            <td class="line_item_price">$ {{order.foodprice|mul:order.qty}}</td>
           </tr>
             {% endfor %}
+          <tr class="boldText">
+            <td colspan="3">Total:</td><td class="line_item_price">$ {{order_price}}</td></tr>
         </table>
       </div>
     </td>
@@ -46,11 +33,33 @@
     <td colspan="3"></td>
   </tr>
   </table>
-  <p class="TODO">Calculate order price and place here</p>
+  {% block menu_control %}
+  <div id="menu_control" class="flex-container">
+    <div></div>  <!-- placeholder -->
+    <div>
+      {% if user.is_authenticated %}
+      <form action="logged_out/" method="GET" class = "">
+        <input type="submit" value="Logout" class="btn btn-primary" >
+        </form>
+      {% else %}
+      <div id="returntomenu"  class="btn btn-primary" >
+        <a href="{% url 'index' %}" style="color:white">Return to Main Menu</a>
+      </div>
+      {% endif %}
+    </div>
+    <div></div>  <!-- placeholder -->
+  </div>
+  <h5 class="TODO">Delete after fixing login</h5>
+  <p><a style="color:black" href="{% url 'logout'%}?next={{request.path}}">Example of ?next= {{request.path}}</a></p>
+  <p><a style="color:black" href="{% url 'logout'%}?next={% url 'index'%}">Example of ?next= {% url 'index'%}</a></p>
 
+
+  <div class="TODO">
+  </div>
+    <a style="color:black" href="{% url 'logout'%}">Logout no ?next</a>
+
+{% endblock %} <!-- menu_control -->
 {% load staticfiles %}
 <script src="{% static 'orders/common.js' %}"></script>
 <script src="{% static 'orders/p3order_list.js' %}"></script>
-
-{% endblock %}
-{% endblock %}
+{% endblock %} <!-- content -->

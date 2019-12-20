@@ -1,21 +1,15 @@
 {% extends "base_generic.html" %}
 
-
 {% block content %}
-
-<p class="TODO">index url: {% url 'index' %}</p>
 <div class="TODO">
-  <p>Clear session storage when last item is deleted</p>
-  <p>fix spacing for price*qty</p>
-  <p>Total cost or order</p>
   <p>user.get_id: {{user.id}}</p>
+  <p>Fix plus minus buttons for pizzas</p>
+  <p>SOMEDAY: Center table or eliminate white space for wide window</p>
 </div>
 <p id="user_id" style = display:none>{{user.id}}</p>
+
 {% block order_frame %}
 <table id="order_frame">
-  <tr >
-    <th>Heading (if needed) goes here</th>
-  </tr>
   <tr class="toppingheader">
     <td colspan="3"></td>
   </tr>
@@ -34,33 +28,42 @@
     <td colspan="3"></td>
   </tr>
 </table>
-{% endblock %}
+{% endblock %}  <!-- order_frame -->
+
 {% block menu_control %}
-<table id="menucontrol">
-  <tr>
-    <td>
-      <form action="{% url 'get_orderJS' %}" method="post">
-        {% csrf_token %}
-        {# form #}
-        <input  type="submit" class="btn btn-primary" style="color:white"
-        value="Place Order">
-        <textarea id="orderdataJSON" name="orderdataJSON" rows="8" cols="80" style = display:none></textarea>
-      </form>
-    </td>
-    <td class="toppingpage_middle">&nbsp &nbsp &nbsp &nbsp &nbsp</td>
-    <td class="btn btn-primary" onclick="add_more_to_order()">
+<div id="menu_control" class="flex-container">
+  <div>
+    {%if user.is_authenticated %}
+    <form action="{% url 'get_orderJS' %}" method="post">
+      {% csrf_token %}
+      {# form #}
+      <input  type="submit" class="btn btn-primary" style="color:white"
+      value="Place Order
+      ">
+      <textarea id="orderdataJSON" name="orderdataJSON" rows="8" cols="80" style = display:none></textarea>
+    </form>
+    {% else %}
+    <form action="{% url 'place_order' %}" method="get">
+      {% csrf_token %}
+      {# form #}
+      <input  type="submit" class="btn btn-primary" style="color:white" value="Place Order">
+      <textarea id="orderdataJSON" name="orderdataJSON" rows="8" cols="80" style = display:none></textarea>
+    </form>
+    {% endif %}
+    </div>
+  <div class="btn btn-primary" onclick="add_more_to_order()">
       Add More items
-    </td>
-    <td class="toppingpage_middle">&nbsp &nbsp &nbsp &nbsp &nbsp</td>
-    <td id="cancel"  class="btn btn-warning"
-    <a href="{% url 'index' %}">Not Needed, perhaps just reload index?</a>
-  </td>
-</tr>
-</table>
+  </div>
+  <div>
+    <form action="" method="POST" class = "">
+      <input type="button" value="Cancel Order"
+      class="btn btn-warning" onclick = "cancel_order()">
+      </form>
+  </div>
+</div>
 
 {% load staticfiles %}
 <script src="{% static 'orders/common.js' %}"></script>
 <script src="{% static 'orders/p3review_order.js' %}"></script>
-{% endblock %}
-
-{% endblock %}
+{% endblock %} <!-- menu_control -->
+{% endblock %}  <!-- content -->

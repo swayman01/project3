@@ -94,7 +94,6 @@ class Order(models.Model):
     foodrating = models.IntegerField(default = 0)
     # 0: no rating, -1: thumbs down, -2: thumbs up
     popularity = models.DecimalField(max_digits=5, decimal_places=2,default = 0)
-
     class Meta:
         ordering = ['-orderdate']
     # It is highlly unlikely that two orders will be submitted at the exact same time

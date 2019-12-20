@@ -31,7 +31,10 @@ function timestamp(){
 function restore_menu() {
   //This function restores the menu quantities to the values in the order object.
   let menuitems=document.getElementsByClassName("menuitem");
-  if(sessionStorage.getItem("order")==null) return;
+  if((sessionStorage.getItem("order")==null)||(sessionStorage.getItem("order").length<3)){
+  console.log("problem is with return line 37")
+  return;
+  }
   var orderARRAY = jsonSTR_to_array(sessionStorage.getItem("order"));
   let i1 = 0;
   for (i1 = 0; i1 < orderARRAY.length; i1++) {
@@ -74,19 +77,21 @@ function restore_menu() {
       console.log("not a pizza")
       itemID = orderARRAY[i1]["foodtype"] + "_" + orderARRAY[i1]["foodnameID"];
       menuitem = document.getElementById(itemID);
-      if ((menuitem.childNodes[1].value=="Add to Order")||
-      (menuitem.childNodes[1].innerText=="Add to Order"))
-      {
-        let tr = menuitem.parentElement;
-        menuitem.removeChild(menuitem.childNodes[1])
-        qty_plus_minus_buttons(itemID,orderARRAY[i1]["qty"],-1,tr)
-        //RESUME: Figure out i , i is td_index
-        //qty_plus_minus_buttons(itemID,orderARRAY[i]["qty"],-1,document.getElementById(itemID).parentNode)
-        //qty_plus_minus_buttons(itemID);
-        //RESUME HERE
-        //document.getElementById(itemID).childNodes[1].childNodes[1].value=orderARRAY[i]["qty"];
-      }
-      else {
+      if (menuitem!=null) {
+        if ((menuitem.childNodes[1].value=="Add to Order")||
+        (menuitem.childNodes[1].innerText=="Add to Order"))
+        {
+          let tr = menuitem.parentElement;
+          menuitem.removeChild(menuitem.childNodes[1])
+          qty_plus_minus_buttons(itemID,orderARRAY[i1]["qty"],-1,tr)
+          //RESUME: Figure out i , i is td_index
+          //qty_plus_minus_buttons(itemID,orderARRAY[i]["qty"],-1,document.getElementById(itemID).parentNode)
+          //qty_plus_minus_buttons(itemID);
+          //RESUME HERE
+          //document.getElementById(itemID).childNodes[1].childNodes[1].value=orderARRAY[i]["qty"];
+        }
+        else {
+        }
       }
     }
   }
@@ -96,10 +101,10 @@ function restore_menu() {
 function jsonSTR_to_array(jsonSTR){
   //This function takes a string that looks like an array of json objects and
   //converts it to a list
+
   //Strip leading and closing brackets ([])
   jsonSTR = jsonSTR.slice(1,-1);
   jsonLIST = jsonSTR.split("},");
-  //console.log("jsonLIST.length: ",jsonLIST.length,jsonLIST)
   for (i=0;i<jsonLIST.length-1;i++){
     jsonLIST[i] = jsonLIST[i].concat("}");
     //console.log(jsonLIST[i])
@@ -111,7 +116,6 @@ function jsonSTR_to_array(jsonSTR){
   return jsonLIST;
 }
 
-//TODO run as part of update_orderARRAY or another function
 function delete_item(index) {
   // update in case an item was changed
   update_orderARRAY();
@@ -167,13 +171,38 @@ function qty_plus_minus(td_id,j) {
     }
     sessionStorage.setItem("order",JSON.stringify(orderARRAY));
   }
+  console.log("document.location.reload()")
+  document.location.reload()
 }
+
 function update_item_price(td_price_id,item){
-  //updates the price on a line item when changing quantity
-  console.log("160: ",td_price_id,item);
-  let price = item.qty*item.foodprice;
-  if (document.getElementById("td_price_id")!=null) {
-    document.getElementById(td_price_id).innerText=(" $ " + price.toFixed(2))
+  //updates the price on a line item when changing
+  if(item!=undefined) {
+    console.log("160: ",td_price_id,item);
+    let price = item.qty*item.foodprice;
+    if (document.getElementById("td_price_id")!=null) {
+      document.getElementById(td_price_id).innerText=(" $ " + price.toFixed(2))
+    }
+  }
+}
+
+function add_to_order(foodtype,foodnameID,foodname,foodprice){
+  console.log(sessionStorage.getItem("order"))
+  if ((sessionStorage.getItem("order")!=null)&&(sessionStorage.getItem("order").length>2)) {
+    //TODO change to "order"
+    console.log("sessionStorage.length>0:", sessionStorage.length)
+    add_next_item_to_order(foodtype,foodnameID,foodname,foodprice);
+  }
+  else {
+    console.log("sessionStorage.length <1:", sessionStorage.length);
+    console.log("What happens in reset menu that doesn't happen here?")
+    var orderARRAY = [];
+    //add_next_item_to_order(foodtype,foodnameID,foodname,foodprice);
+    initializeOrders(foodtype,foodnameID,foodname,foodprice);
+    /* TODO
+    if this works delete initializeOrders() function
+    and look at deleting add_to_order() function
+    */
   }
 }
 
@@ -236,4 +265,9 @@ function qty_plus_minus_buttons(td_id,qty,i,tr)
   ts3.setAttribute("onclick",ocminus);
   td1.appendChild(ts3);
   tr.appendChild(td1);
+}
+
+function cancel_order() { //moved from p3.js 12/04/19
+  sessionStorage.clear();
+  document.location.reload()
 }

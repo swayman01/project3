@@ -12,9 +12,17 @@ body {
   font-size: 1.25em; }
 
 #order_frame {
-  display: block;
-  max-height: 50em;
-  overflow-y: scroll; }
+  width: 100%;
+  border-top: 10px solid #239346;
+  border-bottom: 10px solid #239346; }
+
+#table-wrapper {
+  position: relative; }
+
+#table-scroll {
+  height: 50rem;
+  overflow: auto;
+  margin-top: 20px; }
 
 .thfoods {
   width: 100%;
@@ -53,16 +61,6 @@ a:visited {
   text-align: center;
   width: 30%; }
 
-/*
-#qtylargepizza {
-  width: 10%;
-  text-align: center;
-}
-#qtysmallpizza {
-  width: 10%;
-  text-align: center;
-}
-*/
 .foodmenu {
   width: 100%; }
 
@@ -71,7 +69,14 @@ a:visited {
 
 .toppingheader {
   width: 100%;
-  background-color: #239346; }
+  text-align: center;
+  /* Added 12/2/19 */
+  background-color: #239346;
+  color: #239346;
+  box-sizing: border-box; }
+
+.th {
+  text-align: center; }
 
 .toppingpage {
   width: 100%; }
@@ -92,30 +97,53 @@ a:visited {
   margin-top: 0;
   margin-bottom: 0; }
 
-.foodrow, .foodrow-3, .foodrow-1, .foodname-0, .foodname, .foodname-1, .foodname-3, .simpleborder, .redborder {
+.foodrow, .orderitem, .foodrow-3, .foodrow-1, .foodrow-0, .foodname, .foodname-1, .foodname-3, .simpleborder, .redborder {
   border-style: solid;
   border-color: black;
   border-width: 2px;
   padding: .1rem; }
 
+.orderitem {
+  border-style: solid none solid none; }
+
 .foodrow-3, .foodrow-1, .foodrow-1 {
+  border-style: solid none solid none;
+  width: 100%; }
+
+.foodrow-0 {
+  border-style: none;
   width: 100%; }
 
 .foodname-0 {
+  /* @extend %borders; */
+  border-style: none;
   width: 50%;
+  text-align: center;
   /*padding-right:5%;*/ }
 
 .foodname, .foodname-1 {
+  border-style: solid none solid none;
+  border-style: none;
+  border-collapse: collapse;
   width: 50%; }
 
 .foodname-3 {
+  border-style: none;
   width: 35%; }
 
 .foodprice {
+  border-style: none;
   width: 15%; }
 
 .foodprice-3 {
+  border-style: none;
   width: 15%; }
+
+.line_item_price, .item_price {
+  padding-left: 2rem; }
+
+.boldText {
+  font-weight: bold; }
 
 .resetbutton .placeholder {
   width: 10%;
@@ -129,6 +157,9 @@ a:visited {
 .addpizza {
   color: #ffffff;
   color: white; }
+
+.noborders {
+  border-style: none; }
 
 section {
   margin: 0 10% 0 10%; }
@@ -191,9 +222,9 @@ nav {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: center;
-  justify-content: space-around;
-  align-items: center; }
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1em; }
 
 .flex-container-left {
   display: inline-flex;

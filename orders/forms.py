@@ -3,7 +3,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-print("Can we delete EditSaladForm?")
+print("forms.py 6: Can we delete EditSaladForm?")
 class EditSaladForm(forms.Form):
     #TODO Add Data Verification
     name = forms.CharField(label="Name")
@@ -23,13 +23,15 @@ class PlaceOrderForm(forms.Form):
         data = self.cleaned_data['place_order']
 
         return data
+
+# Commented out 12/19/19
 data = {'place_order':'23: place_order test'}
-f = PlaceOrderForm(data)
-# print("25 f.is_valid(): ", f.is_valid())
-# print("26 cleaned_data: ", f.cleaned_data)
-# print("27 PlaceOrderForm(data): ",f)
-class NameForm(forms.Form):
-    practice2 = forms.CharField(max_length=100, help_text="orderdataJSON goes here", initial ="practice2")
+# f = PlaceOrderForm(data)
+# # print("25 f.is_valid(): ", f.is_valid())
+# # print("26 cleaned_data: ", f.cleaned_data)
+# # print("27 PlaceOrderForm(data): ",f)
+# class NameForm(forms.Form):
+#     practice2 = forms.CharField(max_length=100, help_text="orderdataJSON goes here", initial ="practice2")
 
 # from https://realpython.com/django-and-ajax-form-submissions/
 # class PostForm(forms.ModelForm):

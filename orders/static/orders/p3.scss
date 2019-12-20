@@ -13,13 +13,32 @@ body {
   font-family: Verdana,Arial,Helvetica,sans-serif;
   font-size: 1.25em;
 }
-#order_frame {
-  display: block;
-  max-height: 50em;
 
-  overflow-y:scroll;
+
+
+// table {
+//   width: 100%;
+// } This didn' work
+#order_frame {
+  width: 100%;
+  //display: block; This causes funny things to happen 12/05/19
+  //max-height: 5em; This line doesn't seem to do anything 12/05/19
+  // overflow-y:scroll; //This line doesn't seem to do anything
+  border-top: 10px solid rgb(35,147,70);
+  border-bottom: 10px solid rgb(35,147,70);
 }
-// TODO: Center headers
+
+// per https://stackoverflow.com/questions/8232713/how-to-display-scroll-bar-onto-a-html-table
+#table-wrapper {
+  position:relative;
+}
+
+#table-scroll {
+  height:50rem;
+  overflow:auto;
+  margin-top:20px;
+}
+
 .thfoods {
   width:100%;
   text-align: center;
@@ -33,63 +52,64 @@ a:visited {
   color: white;
 }
 
+// commented and uncommented 12/3/19, not in previous version, commented out again 12/05/2019
+// #menudisplay {
+//   width:100%;
+// }
+
 #menuheader {
   width:100%;
   cellspacing: 0;
   cellpadding: 0;
 }
+
 %menutdheader {
   width:20%;
 }
+
 #menutdheaderleft {
   @extend %menutdheader;
   background-color: rgb(35,147,70);
 }
+
 #menutdheaderright {
   @extend %menutdheader;
   background-color: rgb(190,0,39);
   color: rgb(190,0,39);
 }
+
 #menutdheadercenter{
   width: 60%;
 }
+
 #login_guest{
   width: 60%;
   border: 2px solid black;
   border-collapse: collapse;
 }
 .login_guest{
-  // border: 1px solid black;
   text-align: center;
   width: 30%;
 }
 
-/*
-#qtylargepizza {
-  width: 10%;
-  text-align: center;
-}
-#qtysmallpizza {
-  width: 10%;
-  text-align: center;
-}
-*/
-
-
 .foodmenu, {
 width: 100%;
-//TODO change to 50% when centering table
 }
 
 .addtopping {
 width: 50%;
-//TODO change to 50% when centering table
 }
 
-.toppingheader
-{
+.toppingheader {
   width: 100%;
+  text-align: center; /* Added 12/2/19 */
   background-color: rgb(35,147,70);
+  color: rgb(35,147,70);
+  box-sizing: border-box;
+}
+
+.th {
+  text-align: center;
 }
 
 .toppingpage {
@@ -102,7 +122,7 @@ width: 50%;
 }
 
 .toppingpage_middle {
-  width: 70%
+  width: 70%;
 }
 
 %food-shared {
@@ -128,43 +148,71 @@ width: 50%;
   @extend %borders;
 }
 
+.orderitem{
+    @extend %borders;
+    border-style: solid none solid none;
+}
+
 .foodrow-3,.foodrow-1,.foodrow-1 {
   @extend %borders;
+  border-style: solid none solid none;
+  width: 100%;
+}
+
+.foodrow-0 {
+  @extend %borders;
+  border-style: none;
   width: 100%;
 }
 
 .foodname-0 {
-  @extend %borders;
+  /* @extend %borders; */
+  border-style: none;
   width: 50%;
+  text-align: center;
   /*padding-right:5%;*/
 }
 
 .foodname, .foodname-1 {
   @extend %food-shared;
   @extend %borders;
+  border-style: solid none solid none;
+  border-style: none;
+  border-collapse: collapse;
   width: 50%;
 }
 
 .foodname-3 {
   @extend %food-shared;
   @extend %borders;
+  // border-style: solid none solid none;
+  border-style: none;
+  //border-collapse: collapse;
   width: 35%;
 }
 
 .foodprice{
   @extend %food-shared;
+  border-style: none;
   width: 15%;
 }
 
 .foodprice-3 {
   @extend %food-shared;
+  border-style: none;
   width: 15%;
-  // Try border without border-collapse
+}
+
+.line_item_price, .item_price {
+  padding-left: 2rem;
+}
+
+.boldText {
+  font-weight: bold;
 }
 
 .foodbuttons{
   @extend %food-shared;
-  //width: 15%;
 }
 
 .resetbutton .placeholder {
@@ -184,6 +232,10 @@ width: 50%;
   color: white;
 }
 
+.noborders {
+  border-style: none;
+}
+
 section {margin:0 10% 0 10%}
 nav {
   background: lightgray;
@@ -195,7 +247,6 @@ nav {
   display: inline-block; //Or display: inline;
 }
 .navbuttons {
-  //padding:10px; commented out on 3/19/19 to make Open button look like other buttons
   margin:2%;
 }
 
@@ -247,9 +298,9 @@ nav {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: center;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
+  padding-top: 1em;
 }
 .flex-container-left {
   display: inline-flex;
@@ -274,7 +325,7 @@ nav {
   text-align: left;
   background: lightgray;
 }
-.flex-container-form {
+.flex-container-form {//TODO: Do we need this?
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;

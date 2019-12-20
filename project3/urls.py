@@ -14,20 +14,25 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.contrib.auth.views import LogoutView
 from django.urls import include, path
-
 from django.conf.urls import url
 from orders import views as core_views
+from django.views.generic.base import TemplateView # see https://dev.to/jonesoncorners/series-login-logout-authentication-in-django-part-i-4gf4
 
 urlpatterns = [
     path("", include("orders.urls")),
     path("admin/", admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
+    # see https://dev.to/jonesoncorners/series-login-logout-authentication-in-django-part-i-4gf4
+    path('', TemplateView.as_view(template_name ='home.html'), name = 'home'),
+    # path('logout/',
+    # auth_views.Logout.as_view(template_name='logged_out.html'),)
     # url(r'^signup/$', core_views.signup, name='signup'),
     #path('project3/templates/registration/login.html'),
 #project3/templates/registration
 ]
-# print("31 urlpatterns: ", urlpatterns)
+# print("32 urlpatterns: ", urlpatterns)
 # BASE_DIR:  /Users/swayman/Documents/Classes/CS50/CS50_Web_Programming/project3
 
 # urlpatterns:  [<URLResolver <module 'orders.urls' from '/Users/swayman/Documents/Classes/CS50/CS50_Web_Programming/project3/orders/urls.py'> (None:None) ''>,

@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById("pagetitle").innerHTML = "AJAX Experiments"
+  document.getElementById("pagetitle").innerHTML = "Place Your Order"
 });
 
 console.log("in p3place_order");
@@ -19,27 +19,27 @@ document.getElementById('orderdataJSON').innerText=orderJSON
 //console.log("before ajax for place_order");
 // from django example
 //console.log("orderJSON: ", orderJSON)
-$('.likebutton').click(function(){
-  //catid = $(this).attr("data-catid");
-  $.ajax(
-    {
-      type:"GET",
-      url: "orders/likePost/",
-      url: "orders/confirm_order.html/",
-      url: "/orders/confirm_order/",  //problem seems to be here
-      url: "orders/confirm_order/",
-      url: "orders/likePost/",
-      //url: "orders/place_order",
-      data:{
-        orderdata: orderJSON,
-      },
-      success: function( data )
-      {
-        alert(data);
-        alert("line 79 in p3place_order.js")
-      }
-    })
-  });
+// $('.likebutton').click(function(){
+//   //catid = $(this).attr("data-catid");
+//   $.ajax(
+//     {
+//       type:"GET",
+//       url: "orders/likePost/",
+//       url: "orders/confirm_order.html/",
+//       url: "/orders/confirm_order/",  //problem seems to be here
+//       url: "orders/confirm_order/",
+//       url: "orders/likePost/",
+//       //url: "orders/place_order",
+//       data:{
+//         orderdata: orderJSON,
+//       },
+//       success: function( data )
+//       {
+//         alert(data);
+//         alert("line 79 in p3place_order.js")
+//       }
+//     })
+//   });
   //end from django example
 $('.workaround').click(function(){
     $.ajax(

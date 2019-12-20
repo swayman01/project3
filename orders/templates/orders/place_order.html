@@ -2,51 +2,35 @@
 {% block title %}<title>AJAX Experiments</title>{% endblock %}
 {% block content %}
 <div class="TODO">
-  <p>Center table on window, or add space</p>
-  <p>Format like add toppings</p>
-  <p>fix functions for salads and include other models</p>
-  <p>user_is_authenticated: {{user_is_authenticated}}</p>
-</div>
-<div id="LoginOrGuest" style="overflow-x:auto;overflow-y:auto;">
-  <table id="login_guest">
-    <tr class="login_guest"><th>Login to rate your orders and save order history</th><th>or Continue as Guest</th></tr>
-    <tr>
-      <td class="login_guest"><span class="btn btn-primary" style="color:white">
-        <a href="{% url 'login'%}?next={{request.path}}">Login</a>
-      </span></td>
-      <td class="login_guest">
-        <span class="btn btn-primary" style="color:white">
-          <a class="retrieve_order"  name="orderdata" id="orderdata">
-            <!-- removed href="" -->
-            <!-- error after removing # Exception happened during processing of request from ('127.0.0.1', 64192)
-            ConnectionResetError: [Errno 54] Connection reset by peer -->
-            Continue as Guest</a>
-            <!-- Someday: Fix so we don't need two buttons -->
-          </span>
-
+  <p>Center table on window, or add space (try css grid)</p>
+  <p>Test Sign Up button</p>
+  <p class="TODO">Look at logging out after no activity</p>
+  </div>
+  <div id="LoginOrGuest" style="overflow-x:auto;overflow-y:auto;">
+    <table id="login_guest">
+      <tr class="login_guest"><th>Login to rate your orders and save order history</th><th>or Continue as Guest</th></tr>
+      <tr>
+        <td class="login_guest"><span class="btn btn-primary" style="color:white">
+          <a style="color:white" href="{% url 'login'%}?next=/orders/review_order.html">Login</a>
+        </span></td>
+        <td class="login_guest">
+          <form action="{% url 'get_orderJS' %}" method="post">
+            {% csrf_token %}
+            {# form #}
+            <input  type="submit" class="btn btn-primary" style="color:white"
+            value="Continue as Guest">
+            <textarea id="orderdataJSON" name="orderdataJSON" rows="8" cols="80" style = display:none></textarea>
+          </form>
         </td>
-        </tr>
-        <tr>
-          <td class="login_guest"><span class="btn btn-primary" style="color:white">
-            <a href="/orders/signup.html">Sign Up</a>
-          </span></td>
-          <td class="login_guest">
-            </td>
-        </tr>
-      </table>
-      <br />
-      <p class="TODO">From django example:{% url 'order_detail' 183%}
-        <a href="{% url 'order_detail' 183 %}">{% csrf_token %}</a></p>
-      <br />
-
-    </div>
-    <h2 id="testajax">Ajax Test Pre</h2>
-    <p id="GoToOrderList" class="btn btn-primary" style = display:none >
-      <a class="workaround" href="{% url 'order_list' %}" style="color:white">
-        If logged in Click to Continue review order and rate previous orders</a>
-      </p>
-      <p id="orderdataJSON" class="TODO"></p>
-      <p class="TODO">Look at logging out after no activity</p>
+      </tr>
+      <tr>
+        <td class="login_guest"><span class="btn btn-primary" >
+          <a style="color:white" href="/orders/signup.html">Sign Up</a>
+        </span></td>
+        <td class="login_guest">
+        </td>
+      </tr>
+    </table>
 
     {% load staticfiles %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>

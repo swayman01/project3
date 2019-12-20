@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'mathfilters',
 ]
 
 MIDDLEWARE = [
@@ -116,12 +117,10 @@ USE_L10N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.0/howto/static-files/
-# STATICFILES_DIRS = (
-#     os.path.join(BASE_DIR, "static"),
-# )
-# print("127 STATICFILES_DIRS: ",STATICFILES_DIRS)
+LOGOUT_REDIRECT_URL = 'logged_out'
+# see https://dev.to/jonesoncorners/series-login-logout-authentication-in-django-part-i-4gf4
+LOGIN_REDIRECT_URL ='index'
+# print("123 settings LOGOUT_REDIRECT_URL: ", LOGOUT_REDIRECT_URL)
+#LOGOUT_REDIRECT_URL = 'home'
 
 STATIC_URL = '/static/'

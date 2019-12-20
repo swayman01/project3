@@ -4,6 +4,7 @@
 <div class="TODO">
   <p>foodnameID,{{foodnameID}}</p>
   <p>numtoppings,{{numtoppings}}</p>
+  <p class="TODO">Fix nothing ordered alert on Cancel and Return to Main menu</p>
 </div>
   <table id="pizzabuttons">
     <tr>
@@ -92,12 +93,6 @@
 {% endifequal %}
 
   <td class="toppingpage_middle">&nbsp &nbsp &nbsp &nbsp &nbsp</td>
-  <td id="reset_toppings" class="foodbuttons">
-    <form action="#" method="post" >
-      {% csrf_token %}
-      <input type="submit" value="Reset this page"  class="btn btn-primary" style="color:white"/>
-    </form>
-  </td>
 
   <td class="toppingpage_middle">&nbsp &nbsp &nbsp &nbsp &nbsp</td>
   <td id="returntomenu"  class="btn btn-primary" >
