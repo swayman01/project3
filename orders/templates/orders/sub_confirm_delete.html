@@ -1,0 +1,11 @@
+{% extends "base_admin.html" %}
+
+{% block content %}
+<p>Are you sure you want to delete <em>{{ sub }} </em>?</p>
+{% endblock %}
+
+{% block confirm_delete %}
+{{block.super}}
+{% load staticfiles %}
+<script src="{% static 'orders/p3confirm_delete.js' %}"></script>
+{% endblock %}

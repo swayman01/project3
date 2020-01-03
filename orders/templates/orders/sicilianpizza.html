@@ -1,0 +1,17 @@
+{% extends "base_generic.html" %}
+{% block title %}<title>Regular</title>{% endblock %}
+{% block content %}
+<h1>Sicilian Pizza List</h1>
+{% if regularpizza_list %}
+<ul>
+  {% for sicilianpizza in regularpizza_list %}
+    <li>
+      <a href="{{sicilianpizza.get_absolute_url}}">{{sicilianpizza.name}} {{sicilianpizza.price}}</a>
+    </li>
+  {% endfor %}
+</ul>
+{% else %}
+  <p>There are no Sicilian Pizzas in the library.</p>
+{% endif %}
+
+{% endblock %}
