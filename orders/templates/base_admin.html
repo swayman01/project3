@@ -31,15 +31,20 @@
   {% endblock %}
 
   {% block confirm_delete %}
-  <form action="" method="POST" class="btn btn-primary">
-    {% csrf_token %}
-    <input type="submit" value="Yes, delete" style="color:white">
-  </form>
-
-  <form action="{%url 'index' %}" method="POST" class="btn btn-primary">
-    {% csrf_token %}
-    <input type="submit" value="No Thanks" style="color:white">
-  </form>
+  <div class= "navbar flex-container">
+    <span>
+    <form action="" method="POST" >
+      {% csrf_token %}
+      <input class="btn btn-primary" type="submit" value="Yes, Please Delete">
+    </form>
+    </span>
+    <span>
+      <form action="{%url 'index' %}" method="POST" >
+        {% csrf_token %}
+        <input class="btn btn-primary" type="submit" value="No Thank You">
+      </form>
+    </span>
+    </div>
   {% endblock %}
 
 </body>

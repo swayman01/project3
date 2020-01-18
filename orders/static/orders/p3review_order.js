@@ -1,7 +1,8 @@
 document.getElementById("pagetitle").innerHTML = "My Order"
 if ((sessionStorage.getItem("order")==null)||(sessionStorage.getItem("order").length<3)) {
   alert("Nothing Ordered");
-  window.history.go(-1);
+  gohome()
+  //window.history.go(-1);
 }
 
 function get_orderJS() {
@@ -12,7 +13,6 @@ function get_orderJS() {
   else {
     orderARRAY = jsonSTR_to_array(sessionStorage.getItem("order"))
     orderJSON = JSON.stringify(orderARRAY);
-    console.log(orderARRAY,"\n",orderJSON)
     document.getElementById('orderdataJSON').innerText=orderJSON
   }
 }
@@ -89,31 +89,12 @@ $('.login_or_guest').click(function(){
   let user_id = document.getElementById('user_id').innerText
   console.log("user_id")
   if (user_id=="None") {
-    console.log("button is place_order")
-    // make button like this:
-    // <td class="login_guest">
-    //   <span class="btn btn-primary" style="color:white">
-    //     <a class="Order_list" href="{% url 'order_list' %}" >
-    //       Order_list {% url 'order_list'%}: Kluge: Use after Retrieve Order</a>
-    //     </span>
-    //   </td>
+    //console.log("button is place_order")
   }
   else {
     console.log("button is order list")
   }
 });
-
-/* Submit order
-Pass order to python
-Clear session storage
-Reset buttons and cart screen
-*/
-
-/* Checkout button
-TODO: Allow login to save history
-*/
-
-/* Clear session storage on submit order */
 
 function reset_item(a,b,c) {
   //remove time from array

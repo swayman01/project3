@@ -11,8 +11,9 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth import login, logout, authenticate # 9/28/ 19 from django documentation and https://simpleisbetterthancomplex.com/tutorial/2017/02/18/how-to-create-user-sign-up-view.html
 from django.contrib.auth.forms import UserCreationForm # 9/28/ 19 from https://simpleisbetterthancomplex.com/tutorial/2017/02/18/how-to-create-user-sign-up-view.html
-from orders.models import Regularpizza,Topping, Salad, Pasta, Order, User
-from orders.forms import PlaceOrderForm # TODO: see if we can delete Added 11/13/19 per Django documentation
+from orders.models import Regularpizza, Sicilianpizza, Topping, Salad, Pasta, Sub, Dinnerplatter, Order, User
+# from orders.forms import PlaceOrderForm # TODO: see if we can delete commented out before 12/29/19
+# Added 11/13/19 per Django documentation
 
 import os, datetime
 from datetime import date, datetime
@@ -32,7 +33,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 def index(request):
     num_visits = request.session.get('num_visits', 0)
     request.session['num_visits'] = num_visits + 1
-    foodnames = {"regularpizzas":"regularpizza","toppings":"topping","pastas":"pasta","salads":"salad"}
+    foodnames = {"regularpizzas":"regularpizza","sicilianpizzas":"sicilianpizza",
+    "toppings":"topping","pastas":"pasta","salads":"salad","subs":"subs"}
     regularpizzaDICT = {
     'QuerySet': Regularpizza.objects.all(),
     'menutype': 'regularpizza',
@@ -40,6 +42,15 @@ def index(request):
     'menuheader_no_blanks': 'Regular_Pizza', # for use in css class
     'menuformat': 3,
     'foodname': 'regularpizza',
+    'toppings': 'topping'
+    }
+    sicilianpizzaDICT = {
+    'QuerySet': Sicilianpizza.objects.all(),
+    'menutype': 'sicilianpizza',
+    'menuheader': 'Sicilian Pizza',
+    'menuheader_no_blanks': 'Regular_Pizza', # for use in css class
+    'menuformat': 3,
+    'foodname': 'sicilianpizza',
     'toppings': 'topping'
     }
     toppingDICT = {
@@ -66,13 +77,31 @@ def index(request):
     'menuformat': 1,
     'foodname': 'salad',
     }
-    foodtypes = [regularpizzaDICT,toppingDICT, pastaDICT, saladDICT]
+    subDICT = {
+    'QuerySet': Sub.objects.all(),
+    'menutype': 'Sub',
+    'menuheader': 'Subs',
+    'menuheader_no_blanks': 'Subs',
+    'menuformat': 3,
+    'foodname': 'sub',
+    }
+    dinnerplatterDICT = {
+    'QuerySet': Dinnerplatter.objects.all(),
+    'menutype': 'Dinnerplatter',
+    'menuheader': 'Dinner Platters',
+    'menuheader_no_blanks': 'Dinnerplatters',
+    'menuformat': 3,
+    'foodname': 'dinnerplatter',
+    }
+    foodtypes = [regularpizzaDICT,sicilianpizzaDICT,toppingDICT, pastaDICT, saladDICT, subDICT, dinnerplatterDICT]
     manager = "manager"
     context = {
         'regularpizzas_all': Regularpizza.objects.all(),
+        'sicilianpizzas_all': Sicilianpizza.objects.all(),
         'toppings_all': Topping.objects.all(),
         'pastas_all': Pasta.objects.all(),
         'salads_all': Salad.objects.all(),
+        'subs_all': Sub.objects.all(),
         'num_visits': num_visits,
         'foodtypes': foodtypes,
         'foodnames': foodnames,
@@ -83,78 +112,199 @@ def index(request):
 
 def menu_nav(request, menuheader_displayedJSON):
     # print("94 index menu_nav: ",request)
-    menuheader_display=["Pizzas","Pastas","Salads"]
+    menuheader_display=["Pizzas","Pastas","Salads","Subs"]
     menuheaders_displayedJSON = json.loads(menuheader_display)
     return menuheaders_displayed;
 
 
 def add_toppings(request, foodnameID):
-    print("124 add_toppings request: ",request)
-    pizzatypeDICT = {
-    4:0,  # 0 signifies Regular Pizza, 4 no toppings
-    8:0,  # 1 topping
-    9:0,  # 2 toppings
-    7:0,  # 3 toppings
-    12:2, # Regular Pizza Special
-    }
-    get1 = Regularpizza.objects.get(id=foodnameID)
-    numtoppings = get1.numtoppings
+    if int(foodnameID)<1000:
+        print("106 foodnameID:", foodnameID)
+        get1 = Regularpizza.objects.get(id=foodnameID)
+        numtoppings = get1.numtoppings
+        smallprice = get1.smallprice
+        largeprice = get1.largeprice
+        foodtype = get1.foodtype
+        print("119 foodtype:",foodtype,", foodnameID:",foodnameID, "numtoppings:",numtoppings)
+        print("120 numtoppings, smallprice, largeprice:",numtoppings, smallprice, largeprice)
+        pizzatypeDICT = {
+        4:0,  # 0 signifies Regular Pizza, 4 no toppings
+        8:0,  # 1 topping
+        9:0,  # 2 toppings
+        7:0,  # 3 toppings
+        12:2, # Regular Pizza Special
+        }
+        pizzatype  = pizzatypeDICT[foodnameID]
+        context = {
+            'foodnameID': foodnameID,
+            'reqularpizzas_all': Regularpizza.objects.all(),
+            'toppings_all': Topping.objects.all(),
+            'numtoppings': numtoppings,
+            'pizzatype': pizzatype,
+            'smallprice': smallprice,
+            'largeprice': largeprice,
+            # 'foodtype': foodtype,
+            }
+    if int(foodnameID)>1000 and int(foodnameID)<2000:
+        foodnameID=foodnameID - 1000
+        get1 = Sicilianpizza.objects.get(id=foodnameID)
+        numtoppings = get1.numtoppings
+        smallprice = get1.smallprice
+        largeprice = get1.largeprice
+        foodtype = get1.foodtype
+        print("119 foodtype:",foodtype,", foodnameID:",foodnameID, "numtoppings:",numtoppings)
+        print("120 numtoppings, smallprice, largeprice:",numtoppings, smallprice, largeprice)
+        pizzatypeDICT = {
+        1:1,  # 1 signifies Sicilian Pizza, 1 no toppings
+        2:1,  # # 1 signifies Sicilian Pizza, 2 one topping
+        3:1,  # 2 toppings
+        4:1,  # 3 toppings
+        5:3,  # Sicilian Pizza Special # Should we use this tag instead of -1 for toppings?
+        }
+        pizzatype  = pizzatypeDICT[foodnameID]
+        context = {
+            'foodnameID': foodnameID,
+            'reqularpizzas_all': Sicilianpizza.objects.all(),
+            'toppings_all': Topping.objects.all(),
+            'numtoppings': numtoppings,
+            'pizzatype': pizzatype,
+            'smallprice': smallprice,
+            'largeprice': largeprice,
+            # 'foodtype': foodtype,
+            }
+    if int(foodnameID)>2000 and int(foodnameID)<3000:
+        foodnameID=foodnameID - 2000
+        get1 = Sub.objects.get(id=foodnameID)
+        numtoppings = 0
+        smallprice = get1.smallprice
+        largeprice = get1.largeprice
+        foodname = get1.name
+        foodtype = 'sub'
+        display_order = get1.display_order
+        # print("174 foodtype:",foodtype,", foodnameID:",foodnameID, "foodname:",foodname)
+        # print("175 numtoppings, smallprice, largeprice:",numtoppings, smallprice, largeprice)
+        # pizzatypeDICT =  #Commented out 1/1/2020
+        # 1:1,  # 1 signifies Sicilian Pizza, 1 no toppings
+        # 2:1,  # # 1 signifies Sicilian Pizza, 2 one topping
+        # 3:1,  # 2 toppings
+        # 4:1,  # 3 toppings
+        # 5:3,  # Sicilian Pizza Special # Should we use this tag instead of -1 for toppings?
+        # 6:1,  # Sub
+        # }
+        # print ("186 foodnameID:", foodnameID)
+        # pizzatype = pizzatypeDICT[foodnameID]
+        pizzatype = int("6")
+        # context = {
+        #     'foodnameID': foodnameID,
+        #     'reqularpizzas_all': Sub.objects.all(),
+        #     'toppings_all': Topping.objects.all(),
+        #     'numtoppings': numtoppings,
+        #     'pizzatype': pizzatype,
+        #     'smallprice': smallprice,
+        #     'largeprice': largeprice,
+        #     'foodname': foodname,
+        #     'foodtype': foodtype,
+        #     'display_order':display_order,
+        #     }
+        if display_order%1 != 0:
+            parent_display_order = display_order-display_order%1
+            print("203 parent_display_order: ", parent_display_order)
+            parent = Sub.objects.get(display_order=parent_display_order)
+            print("205: ",parent.smallprice, smallprice)
+            smallprice = smallprice + parent.smallprice
+            largeprice = largeprice + parent.largeprice
+            foodname = parent.name + " " + foodname
+        context = {
+            'foodnameID': foodnameID,
+            'reqularpizzas_all': Sub.objects.all(),
+            'toppings_all': Topping.objects.all(),
+            'numtoppings': numtoppings,
+            'pizzatype': pizzatype,
+            'smallprice': smallprice,
+            'largeprice': largeprice,
+            'foodname': foodname,
+            'foodtype': foodtype,
+            'display_order':display_order,
+            }
+            ####
+    if int(foodnameID)>3000:
+        foodnameID=foodnameID - 3000
+        get1 = Dinnerplatter.objects.get(id=foodnameID)
+        numtoppings = 0
+        smallprice = get1.smallprice
+        largeprice = get1.largeprice
+        foodname = get1.name
+        print("238, parent.name, foodname", foodname)
+        foodtype = 'dinnerplatter'
+        display_order = get1.display_order
+        pizzatype = int("4")
+        context = {
+                'foodnameID': foodnameID,
+                'reqularpizzas_all': Dinnerplatter.objects.all(),
+                'toppings_all': Topping.objects.all(),
+                'numtoppings': numtoppings,
+                'pizzatype': pizzatype,
+                'smallprice': smallprice,
+                'largeprice': largeprice,
+                'foodname': foodname,
+                'foodtype': foodtype,
+                'display_order':display_order,
+                }
+    return render(request, 'orders/add_toppings.html/', context=context)
+
+
+def add_to_orderARRAY (request, foodnameID):
+    """ This routine is only for subs as subs have add-ons"""
+    get1 = Sub.objects.get(id=foodnameID)
+    numtoppings = 0
     smallprice = get1.smallprice
     largeprice = get1.largeprice
-    foodtype = get1.foodtype
-    # print("136 foodtype:",foodtype,", foodnameID:",foodnameID, "numtoppings:",numtoppings)
-    # print("140 numtoppings, smallprice, largeprice:",numtoppings, smallprice, largeprice)
-    pizzatype  = pizzatypeDICT[foodnameID]
+    foodname = get1.name
+    foodtype = 'sub'
+    display_order = get1.display_order
+    pizzatype = int("6")
     context = {
         'foodnameID': foodnameID,
-        'reqularpizzas_all': Regularpizza.objects.all(),
+        'reqularpizzas_all': Sub.objects.all(),
         'toppings_all': Topping.objects.all(),
         'numtoppings': numtoppings,
         'pizzatype': pizzatype,
         'smallprice': smallprice,
         'largeprice': largeprice,
-        # 'foodtype': foodtype,
+        'foodname': foodname,
+        'foodtype': foodtype,
+        'display_order':display_order,
         }
-    return render(request, 'orders/add_toppings.html/', context=context)
+    return render(request, 'orders/add_to_orderARRAY.html/', context=context)
 
 
 def review_order(request):
     """Allows the customer to review and edit the order"""
-    print("123 review_order request: ",request, request.path)
     next = request.path
     context = {
     'user_is_authenticated':request.user.is_authenticated,
     'next':next
     }
-    print ("129 review_order context:", context)
     return render(request, 'orders/review_order.html', context=context)
 
 
 def place_order(request):
-    print("131 place_order request: ",request, request.user.is_authenticated)
+    #print("131 place_order request: ",request, request.user.is_authenticated)
     context = { #TODO Delete if not needed
     'user_is_authenticated':request.user.is_authenticated,
     'next': '/orders/review_order.html' #Needed because of how we pass json
     }
-    print ("139 place_order context:", context)
-    if request.user.is_authenticated:
-        print("136 request: ",request)
-        return redirect('get_orderJS')
-        #return render(request, 'orders/get_orderJS')
-        #return render(request, 'orders/place_order.html', context=context) - commented out 12/16/19
-    # this sent the html file,
-    # but did not execute the javascript file
-    return render(request, 'orders/place_order.html', context=context)
+    #print ("139 place_order context:", context)
+    if not request.user.is_authenticated:
+        return render(request, 'orders/place_order.html', context=context)
+    print("136 request: ",request)
+    return redirect('get_orderJS')
 
 
 def get_orderJS(request):
-    print("144 place_order request, user_id.is_authenticated: ",request, request.user.is_authenticated)
-    context = {
-    'user_is_authenticated':request.user.is_authenticated,
-    }
     orderdataJSON = request.POST['orderdataJSON']
     orderdataJSON = json.loads(orderdataJSON)
-    print("152: orderdataJSON: ", orderdataJSON)
+    # print("312: orderdataJSON: ", orderdataJSON)
     if request.user.is_authenticated:
         customer_id = request.user.id
         user = User.objects.get(id=customer_id)
@@ -165,40 +315,58 @@ def get_orderJS(request):
     # Create time date stamp
     ordertime = timezone.now()
 # Loop through orderdata and create records in Order Model
+    orderdataJSON_length = len(orderdataJSON)
+    orderdataJSON_count = 0
     for order_item in orderdataJSON:
-        print("162: order_item",order_item)
-# Need If to filter
+        # print("249: order_item",order_item)
         if order_item["foodtype"]=="regularpizza":
-            #print("165: order_item",order_item)
-            # order_item_data =  Regularpizza.objects.filter(foodname=order_item["foodname"])
             order_item_model =  Regularpizza.objects.all()
             for item in order_item_model:
-                print("167: ",customer_id,customer_name, ordertime, order_item)
-                print("170 item: ",item)
-                # if order_item["foodnameID"] == 8 and item.numtoppings == 1:
                 try:
                     numtoppings = len(order_item["toppings"])
                 except:
                     numtoppings = 0
                 if item.numtoppings == numtoppings:
-                #if order_item["foodnameID"] == item.foodnameID: # and item["numtoppings"] == numtoppings:
-                    print("171 item: !", item.numtoppings, numtoppings)
-                # if size, numtoppings equal then add to model
                     add_to_Order_model(customer_id,customer_name, ordertime, order_item)
 
+        if order_item["foodtype"]=="sicilianpizza":
+            order_item_model =  Sicilianpizza.objects.all()
+            for item in order_item_model:
+                try:
+                    numtoppings = len(order_item["toppings"])
+                except:
+                    numtoppings = 0
+                if item.numtoppings == numtoppings:
+                    add_to_Order_model(customer_id,customer_name, ordertime, order_item)
         if order_item["foodtype"]=="pasta":
-            print("224: order_item",order_item)
             order_item_data = Pasta.objects.filter(name=order_item["foodname"])
             for item in order_item_data:
-                print("188 item; ",item)
                 add_to_Order_model(customer_id,customer_name, ordertime, order_item)
 
         if order_item["foodtype"]=="salad":
             order_item_data = Salad.objects.filter(name=order_item["foodname"])
             for item in order_item_data:
-                print("193 item; ",item)
                 add_to_Order_model(customer_id,customer_name, ordertime, order_item)
+
+        if order_item["foodtype"]=="sub":
+            order_item_data = Sub.objects.filter(id=order_item["foodnameID"])
+            for item in order_item_data:
+                if item.display_order%1 != 0:
+                    parent_display_order = item.display_order-item.display_order%1
+                    parent = Sub.objects.get(display_order=parent_display_order)
+                    item.smallprice = item.smallprice + parent.smallprice
+                    item.largeprice = item.largeprice + parent.largeprice
+                    item.name = parent.name + " " + item.name
+                add_to_Order_model(customer_id,customer_name, ordertime, order_item)
+        if order_item["foodtype"]=="dinnerplatter":
+            order_item_data = Dinnerplatter.objects.filter(id=order_item["foodnameID"])
+            for item in order_item_data:
+                # print("364: item",item, customer_id,ordertime,order_item)
+                add_to_Order_model(customer_id,customer_name, ordertime, order_item)
+
+
 # Retrieve order data
+    current_order =[] #added 1/17/20
     ordername = customer_name + "-" + ordertime.strftime("%m/%d/%Y, %H:%M:%S")
     current_order = Order.objects.filter(name=ordername)
     orderJSONSTR = order_history_to_JSON(current_order)
@@ -206,12 +374,12 @@ def get_orderJS(request):
     for item in current_order:
         order_price = order_price + Decimal(item.qty) * Decimal(item.foodprice)
     context = {
-    # 'orderJSONSTR': orderJSONSTR, # Commented out 12/11/19
     'current_order': current_order,
     'order_price': order_price,
+    'user_is_authenticated':request.user.is_authenticated,
+    'place_order': True
     }
-    print("207 request: ",request)
-    # return redirect('order_list') # 12/17/19: This does not return order_price
+    # print("379 request: ",request,"\n",context)
     return render(request, 'orders/order_list.html',context=context)
 
 
@@ -235,7 +403,8 @@ def order_history_to_JSON(order_query):
 
 
 def add_to_Order_model(customer_id,customer_name, ordertime, order_item):
-    print("336 add_to Order_model: ",order_item)
+    # TODO add definition in triple quotes
+    # print("336 add_to Order_model: ",order_item)
     foodnameID = order_item["foodnameID"]
     foodname = str(order_item["foodname"])
     if foodname == "regularpizza":
@@ -255,6 +424,58 @@ def add_to_Order_model(customer_id,customer_name, ordertime, order_item):
         )
     order_item_model.save()
     return
+
+
+def order_history(request):
+    """Views order history and ratings"""
+    #TODO Add ratings, total price, add screen for menu items with total ratings for manager
+    #TODO add names for Dinner Platters in order file
+    #Filters
+        # by guest name
+        # by date
+    # If an individual
+    #ordername = customer_name + "-" + ordertime.strftime("%m/%d/%Y, %H:%M:%S")
+    #current_order = Order.objects.filter(name=ordername)
+    # If a manager
+    print("442 request.user.is_authenticated:", request.user.is_authenticated)
+    user_is_authenticated = False
+    is_manager = False
+    show_order_history = True
+    if request.user.is_authenticated:
+        user_is_authenticated = True
+        # customer_id = request.user.id replaced 1/18/20
+        user_id = request.user.id
+        user = User.objects.get(id=user_id)
+        user_name = user.username
+        if user_id == 2:
+            is_manager = True
+        print("452 user.username: ", user.username, user.id)
+        current_order = Order.objects.all() #TODO Filter
+        x1 = Order.objects.first().name
+        current_order = Order.objects.filter(name=x1)
+        my_orders = Order.objects.filter(customer_id=user.id)
+    if is_manager:
+        current_order = Order.objects.all()
+        orderJSONSTR = order_history_to_JSON(current_order) # Do we need this?
+    # order_price = Decimal(0.0)
+    # for item in current_order:
+    #     order_price = order_price + Decimal(item.qty) * Decimal(item.foodprice)
+    try:
+        x = current_order
+    except:
+        print ("464 no current order")
+        current_order = []
+    context = {
+      'current_order': current_order,
+      # 'customer_name': customer_name,
+      'is_manager': is_manager,
+      'user_is_authenticated': user_is_authenticated,
+      'my_orders': my_orders,
+      'show_order_history': show_order_history,
+    # 'order_price': order_price,
+    }
+    return render(request, 'orders/order_list.html',context=context)
+
 
 class RegularpizzaListView(generic.ListView):
     model = Regularpizza
@@ -285,6 +506,37 @@ class RegularpizzaUpdate(UpdateView):
 
 class RegularpizzaDelete(DeleteView):
     model = Regularpizza
+    success_url = reverse_lazy('index')
+
+class SicilianpizzaListView(generic.ListView):
+    model = Sicilianpizza
+
+class SicilianpizzaDetailView(generic.DetailView):
+    model = Sicilianpizza
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get the context
+        context = super(SicilianpizzaDetailView, self).get_context_data(**kwargs)
+        context['Sicilianpizzas_all']=Sicilianpizza.objects.all()
+        foodtypes = ["sicilianpizzas"]
+        foodname = "sicilianpizza"
+        context['foodtypes'] = foodtypes
+        context['foodname'] = foodname
+        return context
+
+class SicilianpizzaCreate(CreateView):
+    model = Sicilianpizza
+    # fields = '__all__'
+    fields = ['name', 'smallprice', 'largeprice', 'numtoppings']
+    success_url = reverse_lazy('index')
+
+class SicilianpizzaUpdate(UpdateView):
+    model = Sicilianpizza
+    # fields = '__all__'
+    fields = ['name', 'smallprice', 'largeprice', 'numtoppings']
+    success_url = reverse_lazy('index')
+
+class SicilianpizzaDelete(DeleteView):
+    model = Sicilianpizza
     success_url = reverse_lazy('index')
 
 class ToppingListView(generic.ListView):
@@ -402,17 +654,77 @@ class SaladDelete(DeleteView):
     model = Salad
     success_url = reverse_lazy('index')
 
+
+class SubListView(generic.ListView):
+    model = Sub
+
+class SubDetailView(generic.DetailView):
+    model = Sub
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get the context
+        context = super(SubDetailView, self).get_context_data(**kwargs)
+        context['Subs_all']=Sub.objects.all()
+        foodtypes = ["subs"]
+        foodname = "sub"
+        context['foodtypes'] = foodtypes
+        context['foodname'] = foodname
+        return context
+
+class SubCreate(CreateView):
+    model = Sub
+    fields = '__all__'
+    success_url = reverse_lazy('index')
+
+class SubUpdate(UpdateView):
+    model = Sub
+    fields = '__all__'
+    success_url = reverse_lazy('index')
+
+class SubDelete(DeleteView):
+    model = Sub
+    success_url = reverse_lazy('index')
+
+
+class DinnerplatterListView(generic.ListView):
+    model = Dinnerplatter
+
+class DinnerplatterDetailView(generic.DetailView):
+    model = Dinnerplatter
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get the context
+        context = super(DinnerplatterDetailView, self).get_context_data(**kwargs)
+        context['Dinnerplatters_all']=Dinnerplatter.objects.all()
+        foodtypes = ["dinnerplatters"]
+        foodname = "dinnerplatter test to see what happens - line 671"
+        context['foodtypes'] = foodtypes
+        context['foodname'] = foodname
+        return context
+
+class DinnerplatterCreate(CreateView):
+    model = Dinnerplatter
+    fields = '__all__'
+    success_url = reverse_lazy('index')
+
+class DinnerplatterUpdate(UpdateView):
+    model = Dinnerplatter
+    fields = '__all__'
+    success_url = reverse_lazy('index')
+
+class DinnerplatterDelete(DeleteView):
+    model = Dinnerplatter
+    success_url = reverse_lazy('index')
+
 class OrderListView(generic.ListView):
     model = Order
     def get_context_data(self, **kwargs):
-        x1 = Order.objects.first().name
-        x2 = Order.objects.filter(name=x1)
-        # print("557: ",x1, x2)
+        # x1 = Order.objects.first().name # commented out 1/18/20
+        # x2 = Order.objects.filter(name=x1) # commented out 1/18/20
         # Call the base implementation first to get the context
         context = super(OrderListView, self).get_context_data(**kwargs)
-        context['current_order'] = x2
+        # context['current_order'] = x2 # commented out 1/18/20
         # print("558 context: ",context)
         return context
+
 
 class OrderDetailView(generic.DetailView):
     model = Order
@@ -420,8 +732,6 @@ class OrderDetailView(generic.DetailView):
         # Call the base implementation first to get the context
         context = super(OrderDetailView, self).get_context_data(**kwargs)
         # Create any data and add it to the context
-        #context['authors_all']=Author.objects.all()
-        # try filter on last order - hardcode first, then pass variable later
         context['current_order'] = Order.objects.filter('filter')
         return context
 

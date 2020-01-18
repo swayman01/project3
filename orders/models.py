@@ -4,9 +4,8 @@ from django.contrib.auth.models import User
 from datetime import date
 import uuid # Required for unique instances
 
-
 class Regularpizza(models.Model):
-    """Model contains all of the pizza"""
+    """Model contains all of the Regulars pizzas"""
     name = models.CharField(max_length=50, help_text='')
     toppings = models.ManyToManyField('Topping', blank=True, related_name='regularpizza')
     smallprice = models.DecimalField(max_digits=5, decimal_places=2)
@@ -18,8 +17,70 @@ class Regularpizza(models.Model):
         ordering = ['smallprice']
 
     def get_absolute_url(self):
-        """Returns the url to access a particular salad instance."""
+        """Returns the url to access a particular pizza instance."""
         return reverse('regularpizza_detail', args=[str(self.id)])
+
+    def __str__(self):
+        """String for representing the Model object."""
+        return self.name
+
+
+class Sicilianpizza(models.Model):
+    """Model contains all of the Sicilian pizzas"""
+    name = models.CharField(max_length=50, help_text='')
+    toppings = models.ManyToManyField('Topping', blank=True, related_name='sicilianpizza')
+    smallprice = models.DecimalField(max_digits=5, decimal_places=2)
+    largeprice = models.DecimalField(max_digits=5, decimal_places=2)
+    numtoppings = models.IntegerField(default = 0)
+    foodtype = models.CharField(max_length=50, help_text='')
+
+    class Meta:
+        ordering = ['smallprice']
+
+    def get_absolute_url(self):
+        """Returns the url to access a particular pizza instance."""
+        return reverse('sicilianpizza_detail', args=[str(self.id)])
+
+    def __str__(self):
+        """String for representing the Model object."""
+        return self.name
+
+class Sub(models.Model):
+    """Model contains all of the Subs"""
+    name = models.CharField(max_length=50, help_text='')
+    smallprice = models.DecimalField(max_digits=5, decimal_places=2)
+    largeprice = models.DecimalField(max_digits=5, decimal_places=2)
+    #foodtype = models.CharField(max_length=50, help_text='')
+    # display_order used to order items and identify add-ons. numbers to the
+    # right of the decimal point indicate that it is an add-on
+    display_order = models.DecimalField(max_digits=7, decimal_places=3)
+
+    class Meta:
+        ordering = ['display_order']
+
+    def get_absolute_url(self):
+        """Returns the url to access a particular sub instance."""
+        return reverse('sub_detail', args=[str(self.id)])
+
+    def __str__(self):
+        """String for representing the Model object."""
+        return self.name
+
+
+class Dinnerplatter(models.Model):
+    """Model contains all of the Dinner Platters"""
+    name = models.CharField(max_length=50, help_text='')
+    smallprice = models.DecimalField(max_digits=5, decimal_places=2)
+    largeprice = models.DecimalField(max_digits=5, decimal_places=2)
+    # display_order used to order items
+    display_order = models.DecimalField(max_digits=7, decimal_places=3)
+
+    class Meta:
+        ordering = ['display_order']
+
+    def get_absolute_url(self):
+        """Returns the url to access a particular sub instance."""
+        return reverse('dinnerplatter_detail', args=[str(self.id)])
 
     def __str__(self):
         """String for representing the Model object."""
@@ -112,11 +173,11 @@ class Order(models.Model):
         return self.name
 
 # Not Used 10/29/19
-class PostOrder(models.Model):
-    post_heading = models.CharField(max_length=200)
-    post_text = models.TextField()
-    def __unicode__(self):      # If python2 use __str__ if python3
-        return unicode(self.user)
+# class PostOrder(models.Model):
+#     post_heading = models.CharField(max_length=200)
+#     post_text = models.TextField()
+#     def __unicode__(self):      # If python2 use __str__ if python3
+#         return unicode(self.user)
 #TODO for Currency
 # class MyModelAdmin(admin.ModelAdmin):
 #     list_display = ('formatted_amount', ...other fields...,)

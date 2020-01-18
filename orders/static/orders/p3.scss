@@ -1,3 +1,4 @@
+// Press Alt + Ctrl + c to watch the files for changes
 $easytoreadcolor: #fbf5e6;
 $papercolor: #fbfbf8;
 /* Other white colors: https://encycolorpedia.com/fdf5e8 */
@@ -14,26 +15,21 @@ body {
   font-size: 1.25em;
 }
 
-
-
 // table {
 //   width: 100%;
-// } This didn' work
+// } This didn't work
 #order_frame {
   width: 100%;
-  //display: block; This causes funny things to happen 12/05/19
-  //max-height: 5em; This line doesn't seem to do anything 12/05/19
-  // overflow-y:scroll; //This line doesn't seem to do anything
   border-top: 10px solid rgb(35,147,70);
   border-bottom: 10px solid rgb(35,147,70);
 }
 
 // per https://stackoverflow.com/questions/8232713/how-to-display-scroll-bar-onto-a-html-table
-#table-wrapper {
+#table_wrapper {
   position:relative;
 }
 
-#table-scroll {
+#table_scroll {
   height:50rem;
   overflow:auto;
   margin-top:20px;
@@ -325,7 +321,7 @@ nav {
   text-align: left;
   background: lightgray;
 }
-.flex-container-form {//TODO: Do we need this?
+.flex-container-form {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;

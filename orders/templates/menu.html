@@ -7,77 +7,84 @@
 {% endblock %}
 {% block content %}
 <div class="TODO">
-  <p>user.get_id: {{user.id}}</p>
-  <p>Look at POST for some actions</p>
-  <p>Review Edit screens for intuitive response</p>
-  <p>add Add button for manager for each menu format</p>
-  <p>Special Pizza - rotate by day of the week - fix numbertoppings</p>
+  <p>Special Pizza - rotate by day of the week (Duck Bacon) - fix numbertoppings</p>
+  <p>Fix plus/minus buttons on review order for elements when adding pizzas with toppings or same pizza</p>
+  <p>Blank out price and add small when price<0</p>
+  <p>Extra cheese on any sub, bring up order list filtered on subs with a click box and separate function</p>
   <p>Shrink window height when not showing the full menu</p>
   <p>Look at css grid for centering place_order and then here</p>
-  <p>Fix alert bug when activating Regular Pizza button in navbar - not repeatable 12/14/19</p>
+  <p>run chrome coverage tools for css and javascript</p>
 </div>
 
 <div id="menu_nav_DICT" style = display:none>{"All": true{% for m in foodtypes %},"{{m.menuheader}}": false{% endfor %}}</div>
 
+{# if perms.orders.can_change_pasta or user.get_username == manager  #}
+{% if user.is_authenticated %}
+  <div class= "navbar flex-container-form">
+    <span class="btn btn-primary">
+      <a href="{% url 'order_history' %}" style="color:white">View Order History</a>
+    </span>
+  </div>
+{% endif %}
 <!-- per https://stackoverflow.com/questions/8232713/how-to-display-scroll-bar-onto-a-html-table -->
-<div id="table-wrapper">
-  <div id="table-scroll">
-
-<table  id="order_frame">
-    <!-- <tr></tr> -->
-<!-- blank row to maintain table width not needed 12/04/2019-->
-  <tr class="toppingpage">
-    <td class="toppingpage_left"></td>
-    <td class="toppingpage_middle" style="overflow-y:scroll;">
-      <div style="overflow-y:auto;">
-        <div id="menudisplay">
-          {% for a in foodtypes %} <!-- for a in foodtypes -->
-          <p class="TODO">a.menuheader:{{a.menuheader}}, a.menuformat:{{a.menuformat}}</p>
-          {% ifequal a.menuformat 0 %}   <!-- menuformat 0 is toppings -->
-          <div id="{{a.menuheader}}" >
-            <table class="foodmenu">
-              <th class="th" colspan=3>{{a.menuheader}}</th>
-              {% for b in a.QuerySet %}  <!-- Loop 2-0 -->
-              <tr class="foodrow-0">
-                <td class="foodname-0">{{b.name}}</td>
-                {% if perms.orders.can_change_pasta or user.get_username == manager  %}
-                <!-- This is a workaround to test for manager permissions -->
-                <td class="foodbuttons"><a href="{{b.get_absolute_url}}update"
-                  class="btn btn-primary" style="color:white">Edit</a>
-                  <a href="{{b.get_absolute_url}}delete"
-                  class="btn btn-primary" style="color:white">Delete</a></td>
-                  {% endif %} <!-- perm.orders -->
-                </tr>
-                {%endfor%} <!-- Loop 2-0 -->
-              </table>
-              <p class="TODO">end menuformat 0</p>
-
-              <div class= "navbar flex-container">
-                <span class="btn btn-primary All" onclick="menu_nav('All')">All</span>
-                {% for c in foodtypes %} <!-- for c in foodtypes -->
-                <span class="btn btn-default {{c.menuheader}}" onclick="menu_nav('{{c.menuheader}}')">
-                  {{c.menuheader}}</span>
-                  {%endfor%}<!-- for c in foodtypes -->
-                </div>
-              </div> <!-- Toppings -->
-              {% endifequal %} <!-- menuformat 0 is toppings -->
-
-
-              {% ifequal a.menuformat 1 %}   <!-- menuformat 1 is pastas and salads -->
-              <div id="{{a.menuheader}}">
+<div id="table_wrapper">
+  <div id="table_scroll">
+    <table  id="order_frame">
+      <tr class="toppingpage">
+        <td class="toppingpage_left"></td>
+        <td class="toppingpage_middle" style="overflow-y:scroll;">
+          <div style="overflow-y:auto;">
+            <div id="menudisplay">
+              {% for a in foodtypes %} <!-- for a in foodtypes -->
+              {% ifequal a.menuformat 0 %}   <!-- menuformat 0 is toppings -->
+              <div id="{{a.menuheader}}" >
                 <table class="foodmenu">
-                  <tr><th class="th" colspan=3>{{a.menuheader}}</th></tr>
-
-                  {% for b in a.QuerySet %}  <!-- Loop 2-1 -->
-                  <tr class="foodrow-1 menuitem">
-                    <td class="foodname-1">{{b.name}}</td>
-                    <td class="foodprice">$ {{b.price}}</td>
+                  <th class="th" colspan=3>{{a.menuheader}}</th>
+                  {% for b in a.QuerySet %}  <!-- Loop 2-0 -->
+                  <tr class="foodrow-0">
+                    <td class="foodname-0">{{b.name}}</td>
                     {% if perms.orders.can_change_pasta or user.get_username == manager  %}
-                    <!-- This is a workaround to test for manager permissions -->
+                    <!-- Manager id is a workaround to test for manager permissions -->
                     <td class="foodbuttons"><a href="{{b.get_absolute_url}}update"
-                      class="btn btn-primary" style="color:white">Edit</a>
+                      class="btn btn-primary" style="color:white">Edit Item</a>
                       <a href="{{b.get_absolute_url}}delete"
-                      class="btn btn-primary" style="color:white">Delete</a></td>
+                      class="btn btn-primary" style="color:white">Delete Item</a>
+                    </td>
+                    {% endif %} <!-- perm.orders -->
+                  </tr>
+                  {%endfor%} <!-- Loop 2-0 -->
+                </table>
+                {% if perms.orders.can_change_pasta or user.get_username == manager  %}
+                <p class="foodbuttons"><a href="{%url 'topping_form'%}"
+                  class="btn btn-primary" style="color:white">Add New {{a.menuheader}}</a>
+                  </p>
+                {% endif %}
+
+                <div class= "navbar flex-container">
+                  <span class="btn btn-primary All" onclick="menu_nav('All')">All</span>
+                  {% for c in foodtypes %} <!-- for c in foodtypes -->
+                  <span class="btn btn-default {{c.menuheader}}" onclick="menu_nav('{{c.menuheader}}')">
+                    {{c.menuheader}}</span>
+                    {%endfor%} <!-- for c in foodtypes -->
+                  </div> <!-- navbar flex-container -->
+                </div> <!-- a.menuheader -->
+                {% endifequal %} <!-- menuformat 0 is toppings -->
+
+                {% ifequal a.menuformat 1 %}   <!-- menuformat 1 is pastas and salads -->
+                <div id="{{a.menuheader}}">
+                  <table class="foodmenu">
+                    <tr><th class="th" colspan=3>{{a.menuheader}}</th></tr>
+                    {% for b in a.QuerySet %}  <!-- Loop 2-1 -->
+                    <tr class="foodrow-1 menuitem">
+                      <td class="foodname-1">{{b.name}}</td>
+                      <td class="foodprice">$ {{b.price}}</td>
+                      {% if perms.orders.can_change_pasta or user.get_username == manager  %}
+                      <td class="foodbuttons">
+                        <a href="{{b.get_absolute_url}}update"
+                        class="btn btn-primary" style="color:white">Edit Item</a>
+                        <a href="{{b.get_absolute_url}}delete"
+                        class="btn btn-primary" style="color:white">Delete Item</a>
+                      </td>
                       {% else %} <!-- perm.orders -->
                       <td class="foodbuttons">
                         <span id = "{{a.foodname}}_{{b.id}}-placeholder" class = "placeholder"
@@ -100,31 +107,34 @@
                     class="btn btn-warning tooltipqtytip">
                   </form>
                 </span>
-              </td>
-              {% endif %}
-              {% if user.is_authenticated %}
+              </td>     <!-- foodbuttons -->
               {% endif %}
             </tr>
             {%endfor%} <!-- Loop 2-1 -->
           </table>
+          {% if perms.orders.can_change_pasta or user.get_username == manager  %}
+          {% ifequal a.menuheader "Pastas" %}
+            <p class="foodbuttons"><a href="{%url 'pasta_form'%}"
+              class="btn btn-primary" style="color:white">Add New {{a.menuheader}}</a>
+              </p>
+          {%endifequal%}
+          {% ifequal a.menuheader "Salads" %}
+            <p class="foodbuttons"><a href="{%url 'salad_form'%}"
+              class="btn btn-primary" style="color:white">Add New {{a.menuheader}}</a>
+              </p>
+          {%endifequal%}
+          {% endif %}
           <div class= "navbar flex-container">
             <span class="btn btn-primary All" onclick="menu_nav('All')">All</span>
             {% for c in foodtypes %} <!-- for c in foodtypes -->
             <span class="btn btn-default {{c.menuheader}}" onclick="menu_nav('{{c.menuheader}}')">
               {{c.menuheader}}</span>
               {%endfor%}<!-- for c in foodtypes -->
-            </div>
-          </div>
+            </div>  <!-- a.meunheader -->
+          </div>  <!-- navbar flex-container-->
           {% endifequal %} <!-- menuformat 1 is pastas and salads -->
 
-
-          {% ifequal a.menuformat 2 %}
-          <div id="TBD2" class="TODO">
-            <p class="TODO">Dinner Platters</p>
-          </div>
-          {%endifequal%}
-
-          {% ifequal a.menuformat 3 %}   <!-- menuformat 3 is Pizzas and Subs -->
+          {% ifequal a.menuformat 3 %}   <!-- menuformat 3 is Pizzas, Subs, and Dinner Platters -->
           <div id="{{a.menuheader}}">
             <table class="foodmenu">
               <th class="th" colspan=4>{{a.menuheader}}</th>
@@ -139,62 +149,100 @@
                 <td class="foodname-3">{{b.name}}</td>
                 <td class="foodprice-3">$ {{b.smallprice}}</td>
                 <td class="foodprice-3">$ {{b.largeprice}}</td>
-
                 {% if perms.orders.can_change_pasta or user.get_username == manager  %}
-                <!-- This is a workaround to test for manager permissions -->
                 <td class="foodbuttons"><a href="{{b.get_absolute_url}}update"
-                  class="btn btn-primary" style="color:white">Edit</a>
+                  class="btn btn-primary" style="color:white">Edit Item</a>
                   <a href="{{b.get_absolute_url}}delete"
-                  class="btn btn-primary" style="color:white">Delete</a></td>
+                  class="btn btn-primary" style="color:white">Delete Item</a></td>
                   {% else %}
-                  <td id="{{a.foodname}}_{{b.numtoppings}}" class="btn btn-primary">
-                    <a href="{% url 'add_toppings' b.id %}"</a>
-                      <span style="color:white" >Add to Order</span>
-                    </td>
+                    {% ifequal a.menuheader "Regular Pizza" %}
+                    <td id="{{a.foodname}}_{{b.numtoppings}}" class="btn btn-primary">
+                      <a href="{% url 'add_toppings' b.id %}"</a>
+                        <span style="color:white" >Add to Order</span>
+                      </td
+                    {% endifequal %}
+                    {% ifequal a.menuheader "Sicilian Pizza" %}
+                    <td id="{{a.foodname}}_{{b.numtoppings}}" class="btn btn-primary">
+                      <a href="{% url 'add_toppings' b.id|add:"1000" %}"</a>
+                        <span style="color:white" >Add to Order</span>
+                      </td
+                    {% endifequal %}
+                    {% ifequal a.menuheader "Subs" %}
+                    <td id="{{a.foodname}}_{{b.id}}" class="btn btn-primary">
+                      <a href="{% url 'add_toppings' b.id|add:"2000" %}"</a>
+                        <span style="color:white" >Add to Order</span>
+                      </td
+                    {%endifequal%}
+                    {{a.menuheader}}
+                    {% ifequal a.menuheader "Dinner Platters" %}
+                    <td id="{{a.foodname}}_{{b.id}}" class="btn btn-primary">
+                      <a href="{% url 'add_toppings' b.id|add:"3000" %}"</a>
+                        <span style="color:white" >Add to Order</span>
+                      </td
+                    {%endifequal%}
                     {% endif %} <!-- perms.orders...permission to modify orders-->
                   </tr>
                   {%endfor%} <!-- Loop 2-3 -->
                 </table>
+                {% if perms.orders.can_change_pasta or user.get_username == manager  %}
+                {% ifequal a.menuheader "Regular Pizza" %}
+                  <p class="foodbuttons"><a href="{%url 'sicilianpizza_form'%}"
+                    class="btn btn-primary" style="color:white">Add New {{a.menuheader}}</a>
+                    </p>
+                {%endifequal%}
+                {% ifequal a.menuheader "Sicilian Pizza" %}
+                  <p class="foodbuttons"><a href="{%url 'sicilianpizza_form'%}"
+                    class="btn btn-primary" style="color:white">Add New {{a.menuheader}}</a>
+                    </p>
+                {%endifequal%}
+                {% ifequal a.menuheader "Subs" %}
+                  <p class="foodbuttons"><a href="{%url 'sub_form'%}"
+                    class="btn btn-primary" style="color:white">Add New {{a.menuheader}}</a>
+                    </p>
+                {%endifequal%}
+                {% ifequal a.menuheader "Dinner Platters" %}
+                  <p class="foodbuttons"><a href="{%url 'dinnerplatter_form'%}"
+                    class="btn btn-primary" style="color:white">Add New {{a.menuheader}}</a>
+                    </p>
+                {%endifequal%}
+                {% endif %}
                 <div class= "navbar flex-container">
                   <span class="btn btn-primary All" onclick="menu_nav('All')">All</span>
                   {% for c in foodtypes %} <!-- for c in foodtypes -->
                   <span class="btn btn-default {{c.menuheader}}" onclick="menu_nav('{{c.menuheader}}')">
                     {{c.menuheader}}</span>
-                    {%endfor%}<!-- for c in foodtypes -->
-                  </div>
+                    {%endfor%} <!-- for c in foodtypes -->
+                  </div> <!-- navbar flex-container -->
                 </div>
                 {% endifequal %} <!-- menuformat 1 is pastas and salads -->
-
                 {%endfor%} <!-- for a in foodtypes -->
-              </div>
+              </div> <!-- menudisplay -->
+            </div>   <!-- overflow-y:auto -->
+          </td>  <!-- overflow-y:scroll -->
+          <td class="toppingpage_right"></td>
+        </tr>  <!-- toppingpage -->
+      </table> <!-- order_frame -->
+    </div>   <!-- table_scroll -->
+  </div>   <!-- table_wrapper-->
 
-            </div>
-          </td>
-    <td class="toppingpage_right"></td>
-  </tr>
-
-</table>
-  </div>   <!-- table-wrapper -->
-</div>   <!-- scroll -->
-
-  <div id="menu_control" class="flex-container">
+<div id="menu_control" class="flex-container">
     <div>
       <span class="btn btn-primary">
         <a href="{% url 'review_order' %}" style="color:white">Review Order</a>
       </span>
-      </div>
+    </div>
     <div>
       <form action="" method="POST" class = "">
         <input type="button" value="Cancel Order"
         class="btn btn-warning" onclick = "cancel_order()">
-        </form>
+      </form>
     </div>
-  </div>
+</div>
 
-  <p>You have visited this page {{ num_visits }}{% if num_visits == 1 %} time{% else %} times{% endif %}.</p>
-  {% load staticfiles %}
-  <script type="text/javascript" var amenuheader = "{{num_visits}}"></script>
-  <script type="text/javascript" var menuheaders_displayedJSON = "{{menuheaders_displayedJSON|safe}}"></script>
-  <script src="{% static 'orders/common.js' %}"></script>
-  <script src="{% static 'orders/p3.js' %}"></script>
-  {% endblock %}
+<p>You have visited this page {{ num_visits }}{% if num_visits == 1 %} time{% else %} times{% endif %}.</p>
+{% load staticfiles %}
+<script type="text/javascript" var amenuheader = "{{num_visits}}"></script>
+<script type="text/javascript" var menuheaders_displayedJSON = "{{menuheaders_displayedJSON|safe}}"></script>
+<script src="{% static 'orders/common.js' %}"></script>
+<script src="{% static 'orders/p3.js' %}"></script>
+{% endblock %}

@@ -2,20 +2,19 @@
 
 {% block content %}
 <div class="TODO">
-  <p>foodnameID,{{foodnameID}}</p>
-  <p>numtoppings,{{numtoppings}}</p>
   <p class="TODO">Fix nothing ordered alert on Cancel and Return to Main menu</p>
+  <p>See why toppings table is not centered</p>
 </div>
   <table id="pizzabuttons">
     <tr>
-      <td class="pizzabutton">Small Pizzas:
+      <td class="pizzabutton smallitem">Small Pizzas:
       </td>
       <td id="smallpizza">
         <button class="qty blabel" type="button" data-func="plus" data-field="field1">+</button>
         <input id="qtysmallpizza" class= "btn btn-success" type="button" name="field1" value="1" />
         <button id="minus" class="qty blabel" type="button" data-func="minus" data-field="field1">-</button>
       </td>
-      <td class="pizzabutton">Large Pizzas:</td>
+      <td class="pizzabutton  largeitem">Large Pizzas:</td>
       <td>
         <button class="qty blabel" type="button" data-func="plus" data-field="field2">+</button>
         <input id="qtylargepizza" class= "btn-default" type="button" name="field2" value="0" />
@@ -28,7 +27,7 @@
   {% ifnotequal numtoppings 0 %}
   <div>
     <table id="add_topping_frame">
-      <tr >
+      <tr>
         {% ifequal numtoppings 1 %}
         <th id="regpizzatitle" colspan="3" class="thfoods">Select {{numtoppings}} Topping</th>
         {% else %}
@@ -64,11 +63,11 @@
     </div>
     {% endifnotequal %}
     <td class="toppingpage_right"></td>
-  </tr>
+  <!-- </tr> Commented out 12/27/19-->
   <tr class="toppingheader">
     <td colspan="3"></td>
   </tr>
-</table>
+<!-- </table> Commented out 12/27/19-->
 <table id="menucontrol">
   <tr>
     {% ifnotequal numtoppings 0 %}
@@ -76,7 +75,7 @@
       <form action = ""
       method = "POST" class = "">
       <input id="add_to_order" type="button"  value="Add to Order" class="btn btn-default disabled" style="color:white"
-      onclick="add_pizza({{foodnameID}},{{pizzatype}},{{numtoppings}},{{smallprice}},{{largeprice}},{{foodtype}})"
+      onclick="add_pizza({{foodnameID}},{{pizzatype}},{{numtoppings}},{{smallprice}},{{largeprice}})"
       class="btn btn-default">
     </form>
   </td>
@@ -86,7 +85,7 @@
     <form action = ""
     method = "POST" class = "">
     <input id="add_to_order" type="button"  value="Add to Order" class="btn btn-primary" style="color:white"
-    onclick="add_pizza({{foodnameID}},{{pizzatype}},{{numtoppings}},{{smallprice}},{{largeprice}},{{foodtype}})"
+    onclick="add_pizza({{foodnameID}},{{pizzatype}},{{numtoppings}},{{smallprice}},{{largeprice}})"
     class="btn btn-default">
   </form>
 </td>
@@ -101,13 +100,9 @@
 </tr>
 </table>
 {% load staticfiles %}
-<!-- <script type="text/javascript" >
-    var regularpizzaklugeJSON  = {{regularpizzaklugeJSON}}
-</script>
-<script type="text/javascript" >
-    var regularpizzadbSTR = {{regularpizzadbSTR}} -->
-</script>
+<script type="text/javascript" >var pizzatype = {{pizzatype}}</script>
+<script type="text/javascript" >var foodname = '{{foodname}}'</script>
+<script type="text/javascript" >var display_order = '{{display_order}}'</script>
 <script src="{% static 'orders/common.js' %}"></script>
 <script src="{% static 'orders/p3toppings.js' %}"></script>
-
 {% endblock %}

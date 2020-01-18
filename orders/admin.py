@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from orders.models import Regularpizza, Topping, Pasta, Salad, Order
+from orders.models import Regularpizza, Topping, Pasta, Salad, Sub, Dinnerplatter, Order
 
 @admin.register(Regularpizza) # @ decorator does exactly the same thing as the admin.site.register() syntax
 class RegularpizzaAdmin(admin.ModelAdmin):
@@ -19,6 +19,14 @@ class SaladAdmin(admin.ModelAdmin):
 
 @admin.register(Pasta) # @ decorator does exactly the same thing as the admin.site.register() syntax
 class PastaAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(Sub) # @ decorator does exactly the same thing as the admin.site.register() syntax
+class SubAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(Dinnerplatter) # @ decorator does exactly the same thing as the admin.site.register() syntax
+class SubAdmin(admin.ModelAdmin):
     pass
 
 @admin.register(Order) # @ decorator does exactly the same thing as the admin.site.register() syntax

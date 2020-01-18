@@ -16,10 +16,10 @@ body {
   border-top: 10px solid #239346;
   border-bottom: 10px solid #239346; }
 
-#table-wrapper {
+#table_wrapper {
   position: relative; }
 
-#table-scroll {
+#table_scroll {
   height: 50rem;
   overflow: auto;
   margin-top: 20px; }

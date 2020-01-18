@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  console.log("DOMContentLoaded")
+  set_labels(pizzatype,foodname)
 });
 var qtysmallpizza=0;
 var qtylargepizza=0;
@@ -69,13 +69,23 @@ function countselectedtoppings() {
   }
   return selectedtoppingcount;
 }
-//deactivate buttons when limit is reached, activate checkout button
-//Moved to common.js
 
-function add_pizza(pizzaID,pizzatype,numtoppings,smallprice,largeprice,foodtype) {
+function set_labels(pizzatype, foodname) {
+  if(pizzatype==6) {
+    pizzatypeSTR = foodname + " Sub";
+    document.getElementsByClassName('smallitem')[0].innerText="Small " + pizzatypeSTR + "s";
+    document.getElementsByClassName('largeitem')[0].innerText="Large " + pizzatypeSTR + "s";
+  }
+  if(pizzatype==4) {
+    pizzatypeSTR = foodname + " Platter";
+    document.getElementsByClassName('smallitem')[0].innerText="Small " + pizzatypeSTR + "s";
+    document.getElementsByClassName('largeitem')[0].innerText="Large " + pizzatypeSTR + "s";
+  }
+}
+
+function add_pizza(pizzaID,pizzatype,numtoppings,smallprice,largeprice) {
   //gather data
-  console.log("add_pizza")
-  var pizzaARRAY = ["regularpizza", "sicilianpizza", "special"]
+  var pizzaARRAY = ["regularpizza", "sicilianpizza", "special","3","dinnerplatter","5","sub"];
   pizzaID = arguments[0];
   pizzatype = arguments[1];
   numtoppings = arguments[2];
@@ -91,11 +101,9 @@ function add_pizza(pizzaID,pizzatype,numtoppings,smallprice,largeprice,foodtype)
     return
   }
 
-  //console.log(pizzatype,(parseInt(pizzatype)==0));
   var toppingLIST = document.getElementsByClassName("selectbutton");
   var pizzatypeSTR = null;
   //gather info here
-
   if(parseInt(pizzatype)==0) {
     pizzatypeSTR = "Regular Pizza";
   }
@@ -105,8 +113,14 @@ function add_pizza(pizzaID,pizzatype,numtoppings,smallprice,largeprice,foodtype)
   if(pizzatype==2) {
     pizzatypeSTR = "Special Regular Pizza";
   }
-  if(pizzatype==4) {
+  if(pizzatype==3) {
     pizzatypeSTR = "Special Sicilian Pizza";
+  }
+  if(pizzatype==4) {
+    pizzatypeSTR = "Dinner Platters";
+  }
+  if(pizzatype==6) {
+    pizzatypeSTR = pizzatypeSTR = foodname + " Sub";
   }
 
   //extract toppings
@@ -115,7 +129,6 @@ function add_pizza(pizzaID,pizzatype,numtoppings,smallprice,largeprice,foodtype)
   var i;
   for (i = 0; i < toppingLIST.length; i++) {
     if (toppingLIST[i].value=="Deselect") {
-      //console.log(toppingLIST[i].parentElement.parentElement.parentElement.childNodes[1].innerText);
       toppings.push(toppingLIST[i].parentElement.parentElement.parentElement.childNodes[1].innerText);
     }
   }
@@ -124,70 +137,64 @@ function add_pizza(pizzaID,pizzatype,numtoppings,smallprice,largeprice,foodtype)
     if(numtoppings>0) {
       itemDICT = {"foodtype":foodtype,"foodprice":smallprice,"qty":qtysmallpizza,
       "toppings":toppings,"foodnameID":pizzaID,"foodname":"Small "+pizzatypeSTR+" with "+toppings};
-      console.log("itemDICT:",itemDICT);
     }
     else {
-      itemDICT = {"foodtype":foodtype,"foodnameID":pizzaID,"foodprice":smallprice,"qty":qtysmallpizza,
-      "foodname":"Small "+pizzatypeSTR};
+      if (pizzatype!=6) {
+        itemDICT = {"foodtype":foodtype,"foodnameID":pizzaID,"foodprice":smallprice,"qty":qtysmallpizza,
+        "foodname":"Small " + pizzatypeSTR + ": " + foodname};
+      }
+      else {
+        itemDICT = {"foodtype":foodtype,"foodnameID":pizzaID,"foodprice":smallprice,"qty":qtysmallpizza,
+        "foodname":"Small "+pizzatypeSTR,"display_order":display_order};
+      }
+      //Repeat for large
     }
-    console.log(" go to add_pizza_to_order(itemDICT)")
     add_pizza_to_order(itemDICT);
-
   }
+
   if (qtylargepizza>0){
     if(numtoppings>0) {
       itemDICT = {"foodtype":foodtype,"foodnameID":pizzaID,"foodprice":largeprice,"qty":qtylargepizza,
-      toppings:toppings,"foodname":"Large "+pizzatypeSTR};
+      "toppings":toppings,"foodname":"Large "+pizzatypeSTR+" with "+toppings};
     }
     else {
-      itemDICT = {"foodtype":foodtype,"foodnameID":pizzaID,"foodprice":largeprice,"qty":qtylargepizza,
-      "foodname":"Large "+pizzatypeSTR};
+      if (pizzatype!=6) {
+        itemDICT = {"foodtype":foodtype,"foodnameID":pizzaID,"foodprice":largeprice,"qty":qtylargepizza,
+        "foodname":"Large " + pizzatypeSTR + ": " + foodname};
+      }
+      else {
+        itemDICT = {"foodtype":foodtype,"foodnameID":pizzaID,"foodprice":largeprice,"qty":qtylargepizza,
+        "foodname":"Large "+pizzatypeSTR,"display_order":display_order};
+      }
     }
-    console.log("itemDICT:",itemDICT);
     add_pizza_to_order(itemDICT);
   }
 }
 
 function initializeOrderWithPizza(pizzaID){
-  //var itemID = a + '-' + b;
-  //var qty = 1;
-  // console.log(document.getElementById(itemID).childNodes[1].value);
   sessionStorage.clear();
   var orderARRAY = [];
   console.log("TODO: Complete this section as below or Delete")
-  // var orderSTR = JSON.stringify(orderARRAY);
-  // sessionStorage.setItem("order",orderSTR);
-  // document.getElementById(itemID).childNodes[1].value=qty;
-  // console.log(itemID)
-  // console.log("TODO: Write code for pizza as first item");
-  // TODO Open Pizza html
 }
 
 function add_pizza_to_order(itemDICT) {
-  console.log(itemDICT)
-  console.log(window.location.pathname)
-  if(sessionStorage.getItem("order")==null){
-    console.log("sessionStorage.length <1:", sessionStorage.length)
+  if((sessionStorage.getItem("order")==null)||(sessionStorage.getItem("order").length<3)) {
     var orderARRAY = [];
     orderARRAY = [itemDICT];
     let orderSTR = JSON.stringify(orderARRAY);
     sessionStorage.setItem("order",orderSTR);
-    // return to main menu
-    window.history.go(-1);
+    gohome();
   }
   else {
     orderARRAY = jsonSTR_to_array(sessionStorage.getItem("order"));
-    console.log(orderARRAY);
     orderARRAY.push(itemDICT);
     sessionStorage.setItem("order",JSON.stringify(orderARRAY));
-    //return to main menu
-    window.history.go(-1);
+    gohome();
   }
 }
 
 //SOMEDAY: Replace with qty_plus_minus(td_index,j)
 $('.qty').click(function() {
-  console.log("fix login for review order page");
   var $t = $(this),
   $in = $('input[name="' + $t.data('field') + '"]'),
   val = parseInt($in.val()),

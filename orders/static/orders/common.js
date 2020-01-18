@@ -74,7 +74,6 @@ function restore_menu() {
 
     //Is not a pizza
     else {
-      console.log("not a pizza")
       itemID = orderARRAY[i1]["foodtype"] + "_" + orderARRAY[i1]["foodnameID"];
       menuitem = document.getElementById(itemID);
       if (menuitem!=null) {
@@ -95,7 +94,6 @@ function restore_menu() {
       }
     }
   }
-  //console.log("loop finished - pause");
 }
 
 function jsonSTR_to_array(jsonSTR){
@@ -107,11 +105,9 @@ function jsonSTR_to_array(jsonSTR){
   jsonLIST = jsonSTR.split("},");
   for (i=0;i<jsonLIST.length-1;i++){
     jsonLIST[i] = jsonLIST[i].concat("}");
-    //console.log(jsonLIST[i])
   }
   for (i=0;i<jsonLIST.length;i++){
     jsonLIST[i] = JSON.parse(jsonLIST[i]);
-    //console.log(i,jsonLIST[i],"\n");
   }
   return jsonLIST;
 }
@@ -178,7 +174,6 @@ function qty_plus_minus(td_id,j) {
 function update_item_price(td_price_id,item){
   //updates the price on a line item when changing
   if(item!=undefined) {
-    console.log("160: ",td_price_id,item);
     let price = item.qty*item.foodprice;
     if (document.getElementById("td_price_id")!=null) {
       document.getElementById(td_price_id).innerText=(" $ " + price.toFixed(2))
@@ -187,22 +182,14 @@ function update_item_price(td_price_id,item){
 }
 
 function add_to_order(foodtype,foodnameID,foodname,foodprice){
-  console.log(sessionStorage.getItem("order"))
   if ((sessionStorage.getItem("order")!=null)&&(sessionStorage.getItem("order").length>2)) {
-    //TODO change to "order"
-    console.log("sessionStorage.length>0:", sessionStorage.length)
     add_next_item_to_order(foodtype,foodnameID,foodname,foodprice);
   }
   else {
     console.log("sessionStorage.length <1:", sessionStorage.length);
     console.log("What happens in reset menu that doesn't happen here?")
     var orderARRAY = [];
-    //add_next_item_to_order(foodtype,foodnameID,foodname,foodprice);
     initializeOrders(foodtype,foodnameID,foodname,foodprice);
-    /* TODO
-    if this works delete initializeOrders() function
-    and look at deleting add_to_order() function
-    */
   }
 }
 
@@ -213,7 +200,6 @@ function update_orderARRAY(){
   let orderitems=document.getElementsByClassName("orderitem");
   if(sessionStorage.getItem("order")!=null) orderARRAY = jsonSTR_to_array(sessionStorage.getItem("order"));
   else {
-    console.log("No stored orders");
     return
   }
   let input = document.getElementById("order");
@@ -228,14 +214,12 @@ function update_orderARRAY(){
       }
     }
   }
-  console.log("set sessionStorage");
   sessionStorage.setItem("order",JSON.stringify(orderARRAY));
 }
 
 function qty_plus_minus_buttons(td_id,qty,i,tr)
 //TODO eliminate i from argument list
 {
-  console.log("td_id: ",td_id)
   let td1 = document.createElement("td");
   td_id = td_id + "_BTN";
   td1.setAttribute("id",td_id);
@@ -269,5 +253,11 @@ function qty_plus_minus_buttons(td_id,qty,i,tr)
 
 function cancel_order() { //moved from p3.js 12/04/19
   sessionStorage.clear();
-  document.location.reload()
+  gohome()
+}
+
+// moved from p3toppings.js 1/3/2020
+//from https://stackoverflow.com/questions/13158786/how-to-return-to-home-page-using-javascript
+function gohome() {
+  window.location.href="/"
 }

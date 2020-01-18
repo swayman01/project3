@@ -3,8 +3,15 @@
 {% block title %}<title>Order List</title>{% endblock %}
 {% block content %}
 <div class="TODO">
+  <p>Center table inside green or fix td space allocation</p>
+  <p>Use local key (user id plus date) to filter last order placed</p>
+  <p>user_is_authenticated: {{user_is_authenticated}}</p>
+  <p>place_order: {{place_order}}</p>
 </div>
-<table id="order_frame">
+
+{% if not user_is_authenticated %}
+<h4 class="TODO">User is not authenticated: DONE</h4>
+<table id="order_frameNOT">
   <tr class="toppingheader">
     <td colspan="3"></td>
   </tr>
@@ -33,12 +40,156 @@
     <td colspan="3"></td>
   </tr>
   </table>
+  <p class="TODO">End user not authenticated</p>
+{% endif %}
+
+{% if user_is_authenticated and place_order %}
+<h4 class="TODO">User is authenticated and place order: </h4>
+<div class="TODO">
+  <p>Add like, dislike buttons</p>
+</div>
+<table id="order_frame">
+  <tr class="toppingheader">
+    <td colspan="3"></td>
+  </tr>
+  <tr class="toppingpage">
+    <td class="toppingpage_left"></td>
+    <td class="toppingpage_middle">
+      <div style="overflow-y:auto;">
+        <table id="order">
+          {% for order in current_order %}
+          <tr class="orderitem">
+            <td>{{order.foodname}}</td>
+            <td class="item_price Total">$ {{order.foodprice}}</td>
+            <td class="item_price Total">{{order.qty}}</td>
+            <td class="line_item_price">$ {{order.foodprice|mul:order.qty}}</td>
+          </tr>
+            {% endfor %}
+          <tr class="boldText">
+            <td colspan="3">Total:</td><td class="line_item_price">$ {{order_price}}</td>
+          </tr>
+        </table>
+      </div>
+    </td>
+    <br>
+    <td class="toppingpage_right"></td>
+  </tr>
+  <tr class="toppingheader">
+    <td colspan="3"></td>
+  </tr>
+  </table>
+  <!-- commented out 1/17/19<div class= "navbar flex-container">
+    <span class="btn btn-primary" onclick="order_historyJS()">View Order History</span>
+  </div> -->
+  <p class="TODO">End user authenticated and place_order</p>
+{% endif %}
+
+{% if is_manager %}
+<h2 class="TODO">Manger stuff goes here</h2>
+<div id="order_history_actions" class="navbar flex-container">
+  <div class="btn btn-primary" onclick="filter_by_dateJS()">Filter by Date</div>
+  <div class="btn btn-primary" onclick="export_csvJS()">Export as CSV</div>
+</div>
+</div>
+<table id="order_history">
+  <tr class="toppingheader">
+    <td colspan="3"></td>
+  </tr>
+  <tr class="toppingpage">
+    <td class="toppingpage_left"></td>
+    <td class="toppingpage_middle">
+      <div style="overflow-y:auto;">
+        <table id="all_orders">
+          {% for order in current_order %}
+          <tr class="orderitem">
+            <td class>{{order.customer_id}}</td>
+            <td>{{order.foodname}}</td>
+            <td class="item_price ">$ {{order.foodprice}}</td>
+            <td class=" ">{{order.qty}}</td>
+            <td class="line_item_price">$ {{order.foodprice|mul:order.qty}}</td>
+            <td class="TODO like-dislike">Like/Neutral/Dislike Display</td>
+          </tr>
+            {% endfor %}
+        </table>
+      </div>
+    </td>
+    <br>
+    <td class="toppingpage_right"></td>
+  </tr>
+  <tr class="toppingheader">
+    <td colspan="3"></td>
+  </tr>
+  </table>
+{% endif %}
+
+{% if not is_manager and user_is_authenticated%}
+{% if place_order %}
+<!-- <div class= "navbar flex-container-form">
+  <span class="btn btn-primary" onclick="order_historyJS()">View Order History (JS)</span>
+</div> -->
+<div class= "navbar flex-container-form">
+  <span class="btn btn-primary">
+    <a href="{% url 'order_history' %}" style="color:white">View Order History</a>
+  </span>
+</div>
+{% endif %}
+<h3 class="TODO">User stuff goes here</h3>
+<div class="TODO">
+  <p>show_order_history: {{show_order_history}}</p>
+  <p>Find out reload takes so long</p>
+  </div>
+
+{% if show_order_history %}
+<div id="order_history_actions" class="navbar flex-container">
+  <div class="btn btn-primary" onclick="filter_by_dateJS()">Filter by Date</div>
+  <div class="btn btn-primary" onclick="export_csvJS()">Export as CSV</div>
+</div>
+<table id="current_user_order_history">
+  <tr class="toppingheader">
+    <td colspan="3"></td>
+  </tr>
+  <tr class="toppingpage">
+    <td class="toppingpage_left"></td>
+    <td class="toppingpage_middle">
+      <div style="overflow-y:auto;">
+        <table id="all_orders">
+          <th class="th" colspan=5>My Orders</th>
+          <tr class="orderitem">
+            <td>Date Ordered</td>
+            <td>Item</td>
+            <td>Price</td>
+            <td>Quantity</td>
+            <td>Like?</td>
+          </tr>
+          {% for order in my_orders %}
+          <tr class="orderitem">
+            <td>{{order.orderdate}}</td>
+            <td>{{order.foodname}}</td>
+            <td class="item_price ">$ {{order.foodprice}}</td>
+            <td class=" ">{{order.qty}}</td>
+            <td class="TODO like-dislike">Like/Neutral/Dislike Button</td>
+          </tr>
+            {% endfor %}
+        </table>
+      </div>
+    </td>
+    <br>
+    <td class="toppingpage_right"></td>
+  </tr>
+  <tr class="toppingheader">
+    <td colspan="3"></td>
+  </tr>
+  </table>
+{% endif %} <!-- show_order_history -->
+
+<p class="TODO">End user Stuff here</p>
+{% endif %}
   {% block menu_control %}
   <div id="menu_control" class="flex-container">
     <div></div>  <!-- placeholder -->
     <div>
       {% if user.is_authenticated %}
-      <form action="logged_out/" method="GET" class = "">
+      <form action="logged_out/" method="get" class = "">
         <input type="submit" value="Logout" class="btn btn-primary" >
         </form>
       {% else %}
@@ -49,17 +200,10 @@
     </div>
     <div></div>  <!-- placeholder -->
   </div>
-  <h5 class="TODO">Delete after fixing login</h5>
-  <p><a style="color:black" href="{% url 'logout'%}?next={{request.path}}">Example of ?next= {{request.path}}</a></p>
-  <p><a style="color:black" href="{% url 'logout'%}?next={% url 'index'%}">Example of ?next= {% url 'index'%}</a></p>
-
-
-  <div class="TODO">
-  </div>
-    <a style="color:black" href="{% url 'logout'%}">Logout no ?next</a>
-
 {% endblock %} <!-- menu_control -->
 {% load staticfiles %}
+<script type="text/javascript" var place_order = "{{place_order}}"></script>
+<script type="text/javascript" var show_order_history = "{{show_order_history}}"></script>
 <script src="{% static 'orders/common.js' %}"></script>
 <script src="{% static 'orders/p3order_list.js' %}"></script>
 {% endblock %} <!-- content -->
