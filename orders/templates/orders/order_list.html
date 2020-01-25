@@ -2,16 +2,33 @@
 {% load mathfilters %}
 {% block title %}<title>Order List</title>{% endblock %}
 {% block content %}
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
 <div class="TODO">
   <p>Center table inside green or fix td space allocation</p>
   <p>Use local key (user id plus date) to filter last order placed</p>
   <p>user_is_authenticated: {{user_is_authenticated}}</p>
   <p>place_order: {{place_order}}</p>
 </div>
+<div class="container">
+  <h2>Dropdown Example - keep until accessibility code is copied over</h2>
+  <p>The data-toggle="dropdown" attribute is used to open the dropdown menu.</p>
+  <div class="dropdown">
+    <button class="btn btn-primary dropdown-toggle" id="menu1" type="button"
+    data-toggle="dropdown">Dropdown Example
+    <span class="caret"></span></button>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">HTML</a></li>
+      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">CSS</a></li>
+      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">JavaScript</a></li>
+      <li role="presentation" class="divider"></li>
+      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">About Us</a></li>
+    </ul>
+  </div>
+</div>
 
 {% if not user_is_authenticated %}
 <h4 class="TODO">User is not authenticated: DONE</h4>
-<table id="order_frameNOT">
+<table id="order_frameNOT">  <!-- frameNOT is to see if the id is needed -->
   <tr class="toppingheader">
     <td colspan="3"></td>
   </tr>
@@ -27,61 +44,61 @@
             <td class="item_price Total">{{order.qty}}</td>
             <td class="line_item_price">$ {{order.foodprice|mul:order.qty}}</td>
           </tr>
-            {% endfor %}
+          {% endfor %}
           <tr class="boldText">
             <td colspan="3">Total:</td><td class="line_item_price">$ {{order_price}}</td></tr>
-        </table>
-      </div>
-    </td>
-    <br>
-    <td class="toppingpage_right"></td>
-  </tr>
-  <tr class="toppingheader">
-    <td colspan="3"></td>
-  </tr>
+          </table>
+        </div>
+      </td>
+      <br>
+      <td class="toppingpage_right"></td>
+    </tr>
+    <tr class="toppingheader">
+      <td colspan="3"></td>
+    </tr>
   </table>
   <p class="TODO">End user not authenticated</p>
-{% endif %}
+  {% endif %}
 
-{% if user_is_authenticated and place_order %}
-<h4 class="TODO">User is authenticated and place order: </h4>
-<div class="TODO">
-  <p>Add like, dislike buttons</p>
-</div>
-<table id="order_frame">
-  <tr class="toppingheader">
-    <td colspan="3"></td>
-  </tr>
-  <tr class="toppingpage">
-    <td class="toppingpage_left"></td>
-    <td class="toppingpage_middle">
-      <div style="overflow-y:auto;">
-        <table id="order">
-          {% for order in current_order %}
-          <tr class="orderitem">
-            <td>{{order.foodname}}</td>
-            <td class="item_price Total">$ {{order.foodprice}}</td>
-            <td class="item_price Total">{{order.qty}}</td>
-            <td class="line_item_price">$ {{order.foodprice|mul:order.qty}}</td>
-          </tr>
+  {% if user_is_authenticated and place_order %}
+  <h4 class="TODO">User is authenticated and place order: </h4>
+  <div class="TODO">
+    <p>Add like, dislike buttons</p>
+  </div>
+  <table id="order_frame">
+    <tr class="toppingheader">
+      <td colspan="3"></td>
+    </tr>
+    <tr class="toppingpage">
+      <td class="toppingpage_left"></td>
+      <td class="toppingpage_middle">
+        <div style="overflow-y:auto;">
+          <table id="order">
+            {% for order in current_order %}
+            <tr class="orderitem">
+              <td>{{order.foodname}}</td>
+              <td class="item_price Total">$ {{order.foodprice}}</td>
+              <td class="item_price Total">{{order.qty}}</td>
+              <td class="line_item_price">$ {{order.foodprice|mul:order.qty}}</td>
+            </tr>
             {% endfor %}
-          <tr class="boldText">
-            <td colspan="3">Total:</td><td class="line_item_price">$ {{order_price}}</td>
-          </tr>
-        </table>
-      </div>
-    </td>
-    <br>
-    <td class="toppingpage_right"></td>
-  </tr>
-  <tr class="toppingheader">
-    <td colspan="3"></td>
-  </tr>
+            <tr class="boldText">
+              <td colspan="3">Total:</td><td class="line_item_price">$ {{order_price}}</td>
+            </tr>
+          </table>
+        </div>
+      </td>
+      <br>
+      <td class="toppingpage_right"></td>
+    </tr>
+    <tr class="toppingheader">
+      <td colspan="3"></td>
+    </tr>
   </table>
   <!-- commented out 1/17/19<div class= "navbar flex-container">
-    <span class="btn btn-primary" onclick="order_historyJS()">View Order History</span>
-  </div> -->
-  <p class="TODO">End user authenticated and place_order</p>
+  <span class="btn btn-primary" onclick="order_historyJS()">View Order History</span>
+</div> -->
+<p class="TODO">End user authenticated and place_order</p>
 {% endif %}
 
 {% if is_manager %}
@@ -107,9 +124,9 @@
             <td class="item_price ">$ {{order.foodprice}}</td>
             <td class=" ">{{order.qty}}</td>
             <td class="line_item_price">$ {{order.foodprice|mul:order.qty}}</td>
-            <td class="TODO like-dislike">Like/Neutral/Dislike Display</td>
+            <td class="TODO like-dislike">Rate Item</td>
           </tr>
-            {% endfor %}
+          {% endfor %}
         </table>
       </div>
     </td>
@@ -119,13 +136,13 @@
   <tr class="toppingheader">
     <td colspan="3"></td>
   </tr>
-  </table>
+</table>
 {% endif %}
 
 {% if not is_manager and user_is_authenticated%}
 {% if place_order %}
 <!-- <div class= "navbar flex-container-form">
-  <span class="btn btn-primary" onclick="order_historyJS()">View Order History (JS)</span>
+<span class="btn btn-primary" onclick="order_historyJS()">View Order History (JS)</span>
 </div> -->
 <div class= "navbar flex-container-form">
   <span class="btn btn-primary">
@@ -137,7 +154,7 @@
 <div class="TODO">
   <p>show_order_history: {{show_order_history}}</p>
   <p>Find out reload takes so long</p>
-  </div>
+</div>
 
 {% if show_order_history %}
 <div id="order_history_actions" class="navbar flex-container">
@@ -159,39 +176,58 @@
             <td>Item</td>
             <td>Price</td>
             <td>Quantity</td>
-            <td>Like?</td>
-          </tr>
-          {% for order in my_orders %}
-          <tr class="orderitem">
-            <td>{{order.orderdate}}</td>
-            <td>{{order.foodname}}</td>
-            <td class="item_price ">$ {{order.foodprice}}</td>
-            <td class=" ">{{order.qty}}</td>
-            <td class="TODO like-dislike">Like/Neutral/Dislike Button</td>
-          </tr>
+            <td>Rate Item<td>
+            </tr>
+            {% for order in my_orders %}
+            <tr class="orderitem">
+              <td>{{order.orderdate}}</td>
+              <td>{{order.foodname}}</td>
+              <td class="item_price ">$ {{order.foodprice}}</td>
+              <td class=" ">{{order.qty}}</td>
+              <td class="Rate Item">
+                <div class="dropdown">
+                  <button class="btn btn-primary">Rate Item <span>&nbsp &#9660;</span></button>
+                  <div class="dropdown-content" role="menu">
+                    <form action="{% url 'ratings' order.id 1 %}" method="post" class = "">
+                      {% csrf_token %}
+                      <input type="submit" value="Thumbs Up" class="btn btn-secondary btn-sm" >
+                    </form>
+                    <form action="{% url 'ratings' order.id 0 %}" method="post" class = "">
+                      {% csrf_token %}
+                      <input type="submit" value="No Opinion" class="btn btn-secondary btn-sm" >
+                    </form>
+                    <form action="{% url 'ratings' order.id -1 %}" method="post" class = "">
+                      {% csrf_token %}
+                      <input type="submit" value="Thumbs Down" class="btn btn-secondary btn-sm" >
+                    </form>
+                  </div>
+                </div>
+              </td>
+            </tr>
             {% endfor %}
-        </table>
-      </div>
-    </td>
-    <br>
-    <td class="toppingpage_right"></td>
-  </tr>
-  <tr class="toppingheader">
-    <td colspan="3"></td>
-  </tr>
+          </table>
+        </div>
+      </td>
+      <br>
+      <td class="toppingpage_right"></td>
+    </tr>
+    <tr class="toppingheader">
+      <td colspan="3"></td>
+    </tr>
   </table>
-{% endif %} <!-- show_order_history -->
+  {% endif %} <!-- show_order_history -->
 
-<p class="TODO">End user Stuff here</p>
-{% endif %}
+  <p class="TODO">End user Stuff here</p>
+  {% endif %}
   {% block menu_control %}
   <div id="menu_control" class="flex-container">
     <div></div>  <!-- placeholder -->
     <div>
       {% if user.is_authenticated %}
-      <form action="logged_out/" method="get" class = "">
+      <form action="logged_out/" method="post" class = "">
+        {% csrf_token %}
         <input type="submit" value="Logout" class="btn btn-primary" >
-        </form>
+      </form>
       {% else %}
       <div id="returntomenu"  class="btn btn-primary" >
         <a href="{% url 'index' %}" style="color:white">Return to Main Menu</a>
@@ -200,10 +236,10 @@
     </div>
     <div></div>  <!-- placeholder -->
   </div>
-{% endblock %} <!-- menu_control -->
-{% load staticfiles %}
-<script type="text/javascript" var place_order = "{{place_order}}"></script>
-<script type="text/javascript" var show_order_history = "{{show_order_history}}"></script>
-<script src="{% static 'orders/common.js' %}"></script>
-<script src="{% static 'orders/p3order_list.js' %}"></script>
-{% endblock %} <!-- content -->
+  {% endblock %} <!-- menu_control -->
+  {% load staticfiles %}
+  <script type="text/javascript" var place_order = "{{place_order}}"></script>
+  <script type="text/javascript" var show_order_history = "{{show_order_history}}"></script>
+  <script src="{% static 'orders/common.js' %}"></script>
+  <script src="{% static 'orders/p3order_list.js' %}"></script>
+  {% endblock %} <!-- content -->

@@ -11,7 +11,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth import login, logout, authenticate # 9/28/ 19 from django documentation and https://simpleisbetterthancomplex.com/tutorial/2017/02/18/how-to-create-user-sign-up-view.html
 from django.contrib.auth.forms import UserCreationForm # 9/28/ 19 from https://simpleisbetterthancomplex.com/tutorial/2017/02/18/how-to-create-user-sign-up-view.html
-from orders.models import Regularpizza, Sicilianpizza, Topping, Salad, Pasta, Sub, Dinnerplatter, Order, User
+from orders.models import Regularpizza, Sicilianpizza, Topping, Salad, Pasta
+from orders.models import Sub, Dinnerplatter, Order, User, Rating
 # from orders.forms import PlaceOrderForm # TODO: see if we can delete commented out before 12/29/19
 # Added 11/13/19 per Django documentation
 
@@ -194,18 +195,6 @@ def add_toppings(request, foodnameID):
         # print ("186 foodnameID:", foodnameID)
         # pizzatype = pizzatypeDICT[foodnameID]
         pizzatype = int("6")
-        # context = {
-        #     'foodnameID': foodnameID,
-        #     'reqularpizzas_all': Sub.objects.all(),
-        #     'toppings_all': Topping.objects.all(),
-        #     'numtoppings': numtoppings,
-        #     'pizzatype': pizzatype,
-        #     'smallprice': smallprice,
-        #     'largeprice': largeprice,
-        #     'foodname': foodname,
-        #     'foodtype': foodtype,
-        #     'display_order':display_order,
-        #     }
         if display_order%1 != 0:
             parent_display_order = display_order-display_order%1
             print("203 parent_display_order: ", parent_display_order)
@@ -226,7 +215,7 @@ def add_toppings(request, foodnameID):
             'foodtype': foodtype,
             'display_order':display_order,
             }
-            ####
+
     if int(foodnameID)>3000:
         foodnameID=foodnameID - 3000
         get1 = Dinnerplatter.objects.get(id=foodnameID)
@@ -294,10 +283,8 @@ def place_order(request):
     'user_is_authenticated':request.user.is_authenticated,
     'next': '/orders/review_order.html' #Needed because of how we pass json
     }
-    #print ("139 place_order context:", context)
     if not request.user.is_authenticated:
         return render(request, 'orders/place_order.html', context=context)
-    print("136 request: ",request)
     return redirect('get_orderJS')
 
 
@@ -314,7 +301,7 @@ def get_orderJS(request):
         customer_name = "guest"
     # Create time date stamp
     ordertime = timezone.now()
-# Loop through orderdata and create records in Order Model
+    # Loop through orderdata and create records in Order Model
     orderdataJSON_length = len(orderdataJSON)
     orderdataJSON_count = 0
     for order_item in orderdataJSON:
@@ -364,8 +351,7 @@ def get_orderJS(request):
                 # print("364: item",item, customer_id,ordertime,order_item)
                 add_to_Order_model(customer_id,customer_name, ordertime, order_item)
 
-
-# Retrieve order data
+    # Retrieve order data
     current_order =[] #added 1/17/20
     ordername = customer_name + "-" + ordertime.strftime("%m/%d/%Y, %H:%M:%S")
     current_order = Order.objects.filter(name=ordername)
@@ -379,7 +365,6 @@ def get_orderJS(request):
     'user_is_authenticated':request.user.is_authenticated,
     'place_order': True
     }
-    # print("379 request: ",request,"\n",context)
     return render(request, 'orders/order_list.html',context=context)
 
 
@@ -404,7 +389,6 @@ def order_history_to_JSON(order_query):
 
 def add_to_Order_model(customer_id,customer_name, ordertime, order_item):
     # TODO add definition in triple quotes
-    # print("336 add_to Order_model: ",order_item)
     foodnameID = order_item["foodnameID"]
     foodname = str(order_item["foodname"])
     if foodname == "regularpizza":
@@ -428,16 +412,7 @@ def add_to_Order_model(customer_id,customer_name, ordertime, order_item):
 
 def order_history(request):
     """Views order history and ratings"""
-    #TODO Add ratings, total price, add screen for menu items with total ratings for manager
-    #TODO add names for Dinner Platters in order file
-    #Filters
-        # by guest name
-        # by date
-    # If an individual
-    #ordername = customer_name + "-" + ordertime.strftime("%m/%d/%Y, %H:%M:%S")
-    #current_order = Order.objects.filter(name=ordername)
-    # If a manager
-    print("442 request.user.is_authenticated:", request.user.is_authenticated)
+    print("414 order_history(request):", request)
     user_is_authenticated = False
     is_manager = False
     show_order_history = True
@@ -449,17 +424,13 @@ def order_history(request):
         user_name = user.username
         if user_id == 2:
             is_manager = True
-        print("452 user.username: ", user.username, user.id)
         current_order = Order.objects.all() #TODO Filter
         x1 = Order.objects.first().name
         current_order = Order.objects.filter(name=x1)
         my_orders = Order.objects.filter(customer_id=user.id)
     if is_manager:
         current_order = Order.objects.all()
-        orderJSONSTR = order_history_to_JSON(current_order) # Do we need this?
-    # order_price = Decimal(0.0)
-    # for item in current_order:
-    #     order_price = order_price + Decimal(item.qty) * Decimal(item.foodprice)
+        orderJSONSTR = order_history_to_JSON(current_order) # TODOD Do we need this?
     try:
         x = current_order
     except:
@@ -467,7 +438,6 @@ def order_history(request):
         current_order = []
     context = {
       'current_order': current_order,
-      # 'customer_name': customer_name,
       'is_manager': is_manager,
       'user_is_authenticated': user_is_authenticated,
       'my_orders': my_orders,
@@ -475,6 +445,65 @@ def order_history(request):
     # 'order_price': order_price,
     }
     return render(request, 'orders/order_list.html',context=context)
+
+# def ratings(request, foodrating): Commented out 1/22/2020
+#     """Allows users to rate a past menu item. I do not allow ratings on
+#     the current order as the customer hasn't tried them yet"""
+#     print("472 rating: ", foodrating)
+#     context = {
+#
+#     }
+# TODO Delete ratings.html
+#     return render(request, 'orders/ratings.html',context=context)
+
+#hoverable
+def ratings(request, orderid, foodrating):
+    """Allows users to rate a past menu item. I do not allow ratings on
+    the current order as the customer hasn't tried them yet"""
+    user_id = request.user.id
+    order1 = Order.objects.get(id=int(orderid))
+    # If rating exists update
+    rating1 = Rating.objects.filter(customer_id=user_id)
+    if rating1.count()>0:
+        if rating1.filter(foodtype=order1.foodtype).count()>0:
+            if rating1.filter(foodtype=order1.foodtype).filter(foodname=order1.foodname).count()>0:
+                if rating1.filter(foodtype=order1.foodtype).filter(foodname=order1.foodname).count()>1:
+                    print("471: Why more than one rating?", rating1.filter(foodtype=order1.foodtype).filter(foodname=order1.foodname).count())
+                    for rating_item in rating1.filter(foodtype=order1.foodtype).filter(foodname=order1.foodname):
+                        print("473: ", rating_item.customer_id,rating_item.id, rating_item.foodname)
+                rating1.filter(foodtype=order1.foodtype).filter(foodname=order1.foodname) \
+                .update(customer_rating=foodrating)
+                context = {
+
+                }
+                return redirect('order_history')
+            # Else create a new rating
+    context = {
+
+    }
+    create_new_rating(user_id, order1.foodtype, order1.foodname, foodrating)
+    return redirect('order_history')
+    # return render(request, 'orders/order_list.html',context=context)
+    # return render(request, 'orders/ratings.html',context=context)
+
+
+def create_new_rating(customer_id, foodtype, foodname, foodrating):
+    print("507 create_new_rating:", customer_id, foodtype, foodname, foodrating)
+    rating_item_model = Rating(
+    customer_id = customer_id,
+    foodtype = foodtype,
+    foodname = foodname,
+    customer_rating = foodrating
+        )
+    rating_item_model.save()
+    return
+
+
+def update_rating(rating_item_model, rating):
+    print("515 update_rating:", customer_id, foodtype, foodname, foodrating)
+    rating_item_model.update(rating=rating)
+    rating_item_model.save()
+    return
 
 
 class RegularpizzaListView(generic.ListView):
@@ -601,29 +630,29 @@ class PastaDelete(DeleteView):
     model = Pasta
     success_url = reverse_lazy('index')
 
-def salads(request):
-    # TODO: do we need this?
-    print("90: do we need this? ")
-    num_visits = request.session.get('num_visits', 0)
-    request.session['num_visits'] = num_visits + 1
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['now'] = timezone.now()
-        context['salads_all'] = list(Salad.objects.all()),
-        context['saladsall'] = Salad.objects.all(),
-        context['num_visits'] = num_visits,
-        return context
-    context = {
-        'salads_all': list(Salad.objects.all()),
-        'num_visits': num_visits,
-        'saladsall': Salad.objects.all(),
-    }
-
-    print("572 context:",context)
-    print("573 list(Salad.objects.all()):",list(Salad.objects.all()))
-    print("574 context['salads__all']:",context['salads_all'][0])
-    print("575 context['saladsall']:",context['saladsall'])
-    return render(request, 'orders/salads.html', context=context)
+# def salads(request): # Commented out 1/20/2020
+#     # TODO: do we need this?
+#     print("90: do we need this? ")
+#     num_visits = request.session.get('num_visits', 0)
+#     request.session['num_visits'] = num_visits + 1
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['now'] = timezone.now()
+#         context['salads_all'] = list(Salad.objects.all()),
+#         context['saladsall'] = Salad.objects.all(),
+#         context['num_visits'] = num_visits,
+#         return context
+#     context = {
+#         'salads_all': list(Salad.objects.all()),
+#         'num_visits': num_visits,
+#         'saladsall': Salad.objects.all(),
+#     }
+#
+#     print("572 context:",context)
+#     print("573 list(Salad.objects.all()):",list(Salad.objects.all()))
+#     print("574 context['salads__all']:",context['salads_all'][0])
+#     print("575 context['saladsall']:",context['saladsall'])
+#     return render(request, 'orders/salads.html', context=context)
 
 class SaladListView(generic.ListView):
     model = Salad
@@ -748,7 +777,7 @@ class OrderUpdate(UpdateView):
 
 
 def signup(request):
-    print("319: in signup")
+    print("740: in signup")
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -757,7 +786,7 @@ def signup(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            return redirect('place_order')
+            # return redirect('place_order(request)')
     else:
         form = UserCreationForm()
     return render(request, 'orders/signup.html', {'form': form})

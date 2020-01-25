@@ -186,8 +186,6 @@ function add_to_order(foodtype,foodnameID,foodname,foodprice){
     add_next_item_to_order(foodtype,foodnameID,foodname,foodprice);
   }
   else {
-    console.log("sessionStorage.length <1:", sessionStorage.length);
-    console.log("What happens in reset menu that doesn't happen here?")
     var orderARRAY = [];
     initializeOrders(foodtype,foodnameID,foodname,foodprice);
   }

@@ -147,9 +147,9 @@ class Order(models.Model):
     orderdate = models.DateTimeField(auto_now=False, auto_now_add=False)
     # Use customer_id and orderdate as keys
     foodtype = models.CharField(max_length=50, help_text='', default = '')
-    foodname = models.CharField(max_length=50, help_text='')
+    foodname = models.CharField(max_length=100, help_text='')
     foodnameID = models.IntegerField(default = 0)
-    toppings = models.CharField(max_length=50, default = '', help_text='', blank=True)
+    toppings = models.CharField(max_length=100, default = '', help_text='', blank=True)
     foodprice = models.DecimalField(max_digits=5, decimal_places=2)
     qty = models.IntegerField(default = 0)
     foodrating = models.IntegerField(default = 0)
@@ -172,19 +172,21 @@ class Order(models.Model):
         #print("models 111: ",self)
         return self.name
 
-# Not Used 10/29/19
-# class PostOrder(models.Model):
-#     post_heading = models.CharField(max_length=200)
-#     post_text = models.TextField()
-#     def __unicode__(self):      # If python2 use __str__ if python3
-#         return unicode(self.user)
-#TODO for Currency
-# class MyModelAdmin(admin.ModelAdmin):
-#     list_display = ('formatted_amount', ...other fields...,)
-#
-#     def formatted_amount(self, obj):
-#         # obj is the Model instance
-#
-#         # If your locale is properly set, try also:
-#         # locale.currency(obj.amount, grouping=True)
-#         return '%.2f EUR' % obj.amount
+
+class Rating(models.Model):
+    """This model contains the ratings of customers for menu items. Maximum size
+    is #Customers#MenuItems """
+    customer_id = models.IntegerField(default = 0)
+    foodtype = models.CharField(max_length=50, help_text='', default = '')
+    foodnameID = models.IntegerField(default = 0)
+    customer_rating = models.IntegerField(default = 0)
+    foodname = models.CharField(max_length=100, default = '', help_text='', blank=True)
+
+    def get_absolute_url(self):
+        """Returns the url to access a particular rating instance."""
+        return reverse('order', args=[str(self.id)])
+
+    # def __str__(self): Commented out 2/24/2020
+    #     """String for representing the Model object."""
+    #     #print("models 111: ",self)
+    #     return self.name

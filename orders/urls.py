@@ -19,7 +19,7 @@ urlpatterns = [
     path('pasta/create/', views.PastaCreate.as_view(), name='pasta_form'),
     path('pasta/<int:pk>/update/', views.PastaUpdate.as_view(), name='pasta_form'),
     path('pasta/<int:pk>/delete/', views.PastaDelete.as_view(), name='pasta_form'),
-    path('salads/', views.salads, name='salads'), # This works except for context, should we make this like pastas?
+    # path('salads/', views.salads, name='salads'), # Commented out 1/20/2020 This works except for context, should we make this like pastas?
     path('salad/<int:pk>/', views.SaladDetailView.as_view(), name='salad_detail'),
     path('salad/create/', views.SaladCreate.as_view(), name='salad_form'),
     path('salad/<int:pk>/update/', views.SaladUpdate.as_view(), name='salad_form'),
@@ -48,6 +48,8 @@ urlpatterns = [
     path('orders/place_order.html', views.place_order, name="place_order"),
     path('orders/get_orderJS', views.get_orderJS, name="get_orderJS"),
     path('orders/order_history', views.order_history, name="order_history"),
+    #path('orders/ratings.html/<foodrating>/', views.ratings, name="ratings"), Commented out 2/22/2020
+    path('orders/ratings.html/<orderid>,<foodrating>/', views.ratings, name="ratings"),
     path('orders/signup.html', views.signup, name="signup"),
 ]
 #TODO Cleanup

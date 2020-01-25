@@ -1,5 +1,8 @@
 document.getElementById("pagetitle").innerHTML = "Order Placed"
-console.log('In p3order_list.js')
+// document.ready(function(){
+//   console.log("document ready");
+//   $(".dropdown-toggle").dropdown();
+// });
 function order_historyJS() {
   show_order_history = true;
   console.log("order_historyJS/show_order_history:",show_order_history);
