@@ -1,4 +1,6 @@
 document.getElementById("pagetitle").innerHTML = "My Order"
+//TODO Change to My Orders if not the most recent order
+
 if ((sessionStorage.getItem("order")==null)||(sessionStorage.getItem("order").length<3)) {
   alert("Nothing Ordered");
   gohome()

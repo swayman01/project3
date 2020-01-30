@@ -13,16 +13,12 @@ from django.contrib.auth import login, logout, authenticate # 9/28/ 19 from djan
 from django.contrib.auth.forms import UserCreationForm # 9/28/ 19 from https://simpleisbetterthancomplex.com/tutorial/2017/02/18/how-to-create-user-sign-up-view.html
 from orders.models import Regularpizza, Sicilianpizza, Topping, Salad, Pasta
 from orders.models import Sub, Dinnerplatter, Order, User, Rating
-# from orders.forms import PlaceOrderForm # TODO: see if we can delete commented out before 12/29/19
-# Added 11/13/19 per Django documentation
 
 import os, datetime
 from datetime import date, datetime
 import json
 import requests
-# TODO see if we can delete the next two lines - commented out 12/12/19
-# from django.http import JsonResponse
-# from django.core.serializers.json import DjangoJSONEncoder
+import itertools
 
 from django.template import Context, Template, loader
 from django.views.decorators.csrf import csrf_exempt # from https://stackoverflow.com/questions/16458166/how-to-disable-djangos-csrf-validation
@@ -269,10 +265,13 @@ def add_to_orderARRAY (request, foodnameID):
 
 def review_order(request):
     """Allows the customer to review and edit the order"""
-    next = request.path
+    # next = request.path
+
+
+
     context = {
     'user_is_authenticated':request.user.is_authenticated,
-    'next':next
+    # 'next':next
     }
     return render(request, 'orders/review_order.html', context=context)
 
@@ -291,7 +290,6 @@ def place_order(request):
 def get_orderJS(request):
     orderdataJSON = request.POST['orderdataJSON']
     orderdataJSON = json.loads(orderdataJSON)
-    # print("312: orderdataJSON: ", orderdataJSON)
     if request.user.is_authenticated:
         customer_id = request.user.id
         user = User.objects.get(id=customer_id)
@@ -416,9 +414,10 @@ def order_history(request):
     user_is_authenticated = False
     is_manager = False
     show_order_history = True
+    my_ratingsLIST = []
+    my_ratingsDICT ={}
     if request.user.is_authenticated:
         user_is_authenticated = True
-        # customer_id = request.user.id replaced 1/18/20
         user_id = request.user.id
         user = User.objects.get(id=user_id)
         user_name = user.username
@@ -428,6 +427,22 @@ def order_history(request):
         x1 = Order.objects.first().name
         current_order = Order.objects.filter(name=x1)
         my_orders = Order.objects.filter(customer_id=user.id)
+        my_ratings = Rating.objects.filter(customer_id=user_id)
+        if my_ratings.count()<1:
+            print ("436 my_ratings.count()<1: do we need this if statement",my_ratings)
+        #(user_id, order1.foodtype, order1.foodname, customer_rating)
+        for rating in my_ratings:
+            x = {
+            "customer_id":rating.customer_id,
+            "foodtype":rating.foodtype,
+            "foodname":rating.foodname,
+            "customer_rating":rating.customer_rating,
+            }
+            my_ratingsLIST.append(x)
+        my_ratingsJSONSTR = json.dumps(my_ratingsLIST)
+        my_ratingsJSONSTR = my_ratingsJSONSTR.replace("'",'"')
+
+
     if is_manager:
         current_order = Order.objects.all()
         orderJSONSTR = order_history_to_JSON(current_order) # TODOD Do we need this?
@@ -441,22 +456,14 @@ def order_history(request):
       'is_manager': is_manager,
       'user_is_authenticated': user_is_authenticated,
       'my_orders': my_orders,
+     # 'my_ratingsARRAY': my_ratingsLIST,
+      'my_ratingsJSONSTR': my_ratingsJSONSTR,
       'show_order_history': show_order_history,
     # 'order_price': order_price,
     }
     return render(request, 'orders/order_list.html',context=context)
 
-# def ratings(request, foodrating): Commented out 1/22/2020
-#     """Allows users to rate a past menu item. I do not allow ratings on
-#     the current order as the customer hasn't tried them yet"""
-#     print("472 rating: ", foodrating)
-#     context = {
-#
-#     }
-# TODO Delete ratings.html
-#     return render(request, 'orders/ratings.html',context=context)
 
-#hoverable
 def ratings(request, orderid, foodrating):
     """Allows users to rate a past menu item. I do not allow ratings on
     the current order as the customer hasn't tried them yet"""
@@ -477,14 +484,12 @@ def ratings(request, orderid, foodrating):
 
                 }
                 return redirect('order_history')
-            # Else create a new rating
+    # Else create a new rating
     context = {
 
     }
     create_new_rating(user_id, order1.foodtype, order1.foodname, foodrating)
     return redirect('order_history')
-    # return render(request, 'orders/order_list.html',context=context)
-    # return render(request, 'orders/ratings.html',context=context)
 
 
 def create_new_rating(customer_id, foodtype, foodname, foodrating):
@@ -630,29 +635,6 @@ class PastaDelete(DeleteView):
     model = Pasta
     success_url = reverse_lazy('index')
 
-# def salads(request): # Commented out 1/20/2020
-#     # TODO: do we need this?
-#     print("90: do we need this? ")
-#     num_visits = request.session.get('num_visits', 0)
-#     request.session['num_visits'] = num_visits + 1
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['now'] = timezone.now()
-#         context['salads_all'] = list(Salad.objects.all()),
-#         context['saladsall'] = Salad.objects.all(),
-#         context['num_visits'] = num_visits,
-#         return context
-#     context = {
-#         'salads_all': list(Salad.objects.all()),
-#         'num_visits': num_visits,
-#         'saladsall': Salad.objects.all(),
-#     }
-#
-#     print("572 context:",context)
-#     print("573 list(Salad.objects.all()):",list(Salad.objects.all()))
-#     print("574 context['salads__all']:",context['salads_all'][0])
-#     print("575 context['saladsall']:",context['saladsall'])
-#     return render(request, 'orders/salads.html', context=context)
 
 class SaladListView(generic.ListView):
     model = Salad

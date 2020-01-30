@@ -49,7 +49,7 @@ urlpatterns = [
     path('orders/get_orderJS', views.get_orderJS, name="get_orderJS"),
     path('orders/order_history', views.order_history, name="order_history"),
     #path('orders/ratings.html/<foodrating>/', views.ratings, name="ratings"), Commented out 2/22/2020
-    path('orders/ratings.html/<orderid>,<foodrating>/', views.ratings, name="ratings"),
+    path('orders/ratings/<orderid>,<foodrating>/', views.ratings, name="ratings"),
     path('orders/signup.html', views.signup, name="signup"),
 ]
 #TODO Cleanup

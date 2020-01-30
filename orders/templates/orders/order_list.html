@@ -5,10 +5,12 @@
 <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
 <div class="TODO">
   <p>Center table inside green or fix td space allocation</p>
-  <p>Use local key (user id plus date) to filter last order placed</p>
   <p>user_is_authenticated: {{user_is_authenticated}}</p>
   <p>place_order: {{place_order}}</p>
+  <p>&#128077</p>
+
 </div>
+<p id="my_ratingsJSONSTR" style = display:none>{{my_ratingsJSONSTR}}</p>
 <div class="container">
   <h2>Dropdown Example - keep until accessibility code is copied over</h2>
   <p>The data-toggle="dropdown" attribute is used to open the dropdown menu.</p>
@@ -95,9 +97,6 @@
       <td colspan="3"></td>
     </tr>
   </table>
-  <!-- commented out 1/17/19<div class= "navbar flex-container">
-  <span class="btn btn-primary" onclick="order_historyJS()">View Order History</span>
-</div> -->
 <p class="TODO">End user authenticated and place_order</p>
 {% endif %}
 
@@ -124,7 +123,7 @@
             <td class="item_price ">$ {{order.foodprice}}</td>
             <td class=" ">{{order.qty}}</td>
             <td class="line_item_price">$ {{order.foodprice|mul:order.qty}}</td>
-            <td class="TODO like-dislike">Rate Item</td>
+            <!-- <td class="TODO like-dislike">Rate Item</td> -->
           </tr>
           {% endfor %}
         </table>
