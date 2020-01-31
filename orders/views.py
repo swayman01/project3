@@ -13,13 +13,11 @@ from django.contrib.auth import login, logout, authenticate # 9/28/ 19 from djan
 from django.contrib.auth.forms import UserCreationForm # 9/28/ 19 from https://simpleisbetterthancomplex.com/tutorial/2017/02/18/how-to-create-user-sign-up-view.html
 from orders.models import Regularpizza, Sicilianpizza, Topping, Salad, Pasta
 from orders.models import Sub, Dinnerplatter, Order, User, Rating
-
 import os, datetime
 from datetime import date, datetime
 import json
 import requests
 import itertools
-
 from django.template import Context, Template, loader
 from django.views.decorators.csrf import csrf_exempt # from https://stackoverflow.com/questions/16458166/how-to-disable-djangos-csrf-validation
 from decimal import Decimal
@@ -115,23 +113,36 @@ def menu_nav(request, menuheader_displayedJSON):
 
 
 def add_toppings(request, foodnameID):
+    special_pizzaDICT = { # 0 corresponds to Sunday
+    # SOMEDAY - put in model for easy editing
+        0:"Shrimp Scampi",
+        1:"Venison",
+        2:"Duck Bacon",
+        3:"Goat Cheese and Beets",
+        4:"Asparagus, Artichoke Hearts and Spinach",
+        5:"Herring",
+        6:"Avocado and Habanero",
+    }
+    foodname = ''
+    print("127 foodnameID", foodnameID)
     if int(foodnameID)<1000:
-        print("106 foodnameID:", foodnameID)
         get1 = Regularpizza.objects.get(id=foodnameID)
         numtoppings = get1.numtoppings
         smallprice = get1.smallprice
         largeprice = get1.largeprice
         foodtype = get1.foodtype
-        print("119 foodtype:",foodtype,", foodnameID:",foodnameID, "numtoppings:",numtoppings)
-        print("120 numtoppings, smallprice, largeprice:",numtoppings, smallprice, largeprice)
         pizzatypeDICT = {
         4:0,  # 0 signifies Regular Pizza, 4 no toppings
         8:0,  # 1 topping
         9:0,  # 2 toppings
         7:0,  # 3 toppings
-        12:2, # Regular Pizza Special
+        12:2, # Special Regular pizza
         }
         pizzatype  = pizzatypeDICT[foodnameID]
+        print("141 pizzatype: ",pizzatype)
+        if pizzatype==2:
+            numtoppings = 0
+            foodname = special_pizzaDICT[timezone.now().weekday()]
         context = {
             'foodnameID': foodnameID,
             'reqularpizzas_all': Regularpizza.objects.all(),
@@ -140,6 +151,7 @@ def add_toppings(request, foodnameID):
             'pizzatype': pizzatype,
             'smallprice': smallprice,
             'largeprice': largeprice,
+            'foodname':foodname,
             # 'foodtype': foodtype,
             }
     if int(foodnameID)>1000 and int(foodnameID)<2000:
@@ -149,16 +161,17 @@ def add_toppings(request, foodnameID):
         smallprice = get1.smallprice
         largeprice = get1.largeprice
         foodtype = get1.foodtype
-        print("119 foodtype:",foodtype,", foodnameID:",foodnameID, "numtoppings:",numtoppings)
-        print("120 numtoppings, smallprice, largeprice:",numtoppings, smallprice, largeprice)
         pizzatypeDICT = {
         1:1,  # 1 signifies Sicilian Pizza, 1 no toppings
         2:1,  # # 1 signifies Sicilian Pizza, 2 one topping
         3:1,  # 2 toppings
         4:1,  # 3 toppings
-        5:3,  # Sicilian Pizza Special # Should we use this tag instead of -1 for toppings?
+        5:3,  # Special Sicilian Pizza  # Should we use this tag instead of -1 for toppings?
         }
         pizzatype  = pizzatypeDICT[foodnameID]
+        if pizzatype==3:
+            numtoppings = 0
+            foodname = special_pizzaDICT[timezone.now().weekday()]
         context = {
             'foodnameID': foodnameID,
             'reqularpizzas_all': Sicilianpizza.objects.all(),
@@ -167,6 +180,7 @@ def add_toppings(request, foodnameID):
             'pizzatype': pizzatype,
             'smallprice': smallprice,
             'largeprice': largeprice,
+            'foodname':foodname,
             # 'foodtype': foodtype,
             }
     if int(foodnameID)>2000 and int(foodnameID)<3000:
@@ -178,18 +192,6 @@ def add_toppings(request, foodnameID):
         foodname = get1.name
         foodtype = 'sub'
         display_order = get1.display_order
-        # print("174 foodtype:",foodtype,", foodnameID:",foodnameID, "foodname:",foodname)
-        # print("175 numtoppings, smallprice, largeprice:",numtoppings, smallprice, largeprice)
-        # pizzatypeDICT =  #Commented out 1/1/2020
-        # 1:1,  # 1 signifies Sicilian Pizza, 1 no toppings
-        # 2:1,  # # 1 signifies Sicilian Pizza, 2 one topping
-        # 3:1,  # 2 toppings
-        # 4:1,  # 3 toppings
-        # 5:3,  # Sicilian Pizza Special # Should we use this tag instead of -1 for toppings?
-        # 6:1,  # Sub
-        # }
-        # print ("186 foodnameID:", foodnameID)
-        # pizzatype = pizzatypeDICT[foodnameID]
         pizzatype = int("6")
         if display_order%1 != 0:
             parent_display_order = display_order-display_order%1
@@ -265,19 +267,13 @@ def add_to_orderARRAY (request, foodnameID):
 
 def review_order(request):
     """Allows the customer to review and edit the order"""
-    # next = request.path
-
-
-
     context = {
     'user_is_authenticated':request.user.is_authenticated,
-    # 'next':next
     }
     return render(request, 'orders/review_order.html', context=context)
 
 
 def place_order(request):
-    #print("131 place_order request: ",request, request.user.is_authenticated)
     context = { #TODO Delete if not needed
     'user_is_authenticated':request.user.is_authenticated,
     'next': '/orders/review_order.html' #Needed because of how we pass json
@@ -303,7 +299,9 @@ def get_orderJS(request):
     orderdataJSON_length = len(orderdataJSON)
     orderdataJSON_count = 0
     for order_item in orderdataJSON:
-        # print("249: order_item",order_item)
+        print("302: order_item",order_item)
+        if order_item["foodtype"]=="special":
+            add_to_Order_model(customer_id,customer_name, ordertime, order_item)
         if order_item["foodtype"]=="regularpizza":
             order_item_model =  Regularpizza.objects.all()
             for item in order_item_model:
@@ -311,6 +309,7 @@ def get_orderJS(request):
                     numtoppings = len(order_item["toppings"])
                 except:
                     numtoppings = 0
+                print("310 item.numtoppings, numtoppings",item.numtoppings, numtoppings)
                 if item.numtoppings == numtoppings:
                     add_to_Order_model(customer_id,customer_name, ordertime, order_item)
 
@@ -323,6 +322,7 @@ def get_orderJS(request):
                     numtoppings = 0
                 if item.numtoppings == numtoppings:
                     add_to_Order_model(customer_id,customer_name, ordertime, order_item)
+
         if order_item["foodtype"]=="pasta":
             order_item_data = Pasta.objects.filter(name=order_item["foodname"])
             for item in order_item_data:
@@ -343,14 +343,14 @@ def get_orderJS(request):
                     item.largeprice = item.largeprice + parent.largeprice
                     item.name = parent.name + " " + item.name
                 add_to_Order_model(customer_id,customer_name, ordertime, order_item)
+
         if order_item["foodtype"]=="dinnerplatter":
             order_item_data = Dinnerplatter.objects.filter(id=order_item["foodnameID"])
             for item in order_item_data:
-                # print("364: item",item, customer_id,ordertime,order_item)
                 add_to_Order_model(customer_id,customer_name, ordertime, order_item)
 
     # Retrieve order data
-    current_order =[] #added 1/17/20
+    current_order =[]
     ordername = customer_name + "-" + ordertime.strftime("%m/%d/%Y, %H:%M:%S")
     current_order = Order.objects.filter(name=ordername)
     orderJSONSTR = order_history_to_JSON(current_order)

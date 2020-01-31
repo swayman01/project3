@@ -85,7 +85,7 @@ function set_labels(pizzatype, foodname) {
 
 function add_pizza(pizzaID,pizzatype,numtoppings,smallprice,largeprice) {
   //gather data
-  var pizzaARRAY = ["regularpizza", "sicilianpizza", "special","3","dinnerplatter","5","sub"];
+  var pizzaARRAY = ["regularpizza", "sicilianpizza", "special","special","dinnerplatter","5","sub"];
   pizzaID = arguments[0];
   pizzatype = arguments[1];
   numtoppings = arguments[2];

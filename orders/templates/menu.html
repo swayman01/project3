@@ -173,7 +173,6 @@
                         <span style="color:white" >Add to Order</span>
                       </td
                     {%endifequal%}
-                    {{a.menuheader}}
                     {% ifequal a.menuheader "Dinner Platters" %}
                     <td id="{{a.foodname}}_{{b.id}}" class="btn btn-primary">
                       <a href="{% url 'add_toppings' b.id|add:"3000" %}"</a>
