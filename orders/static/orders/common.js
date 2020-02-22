@@ -159,7 +159,7 @@ function qty_plus_minus(td_id,j) {
         val = parseInt(val)-1;
         orderARRAY[i]["qty"] = parseInt(val);
         if (parseInt(val)<1) {
-          delete_item()
+          delete_item(i+1)  //updated 2/19/2020
         }
         td_id.childNodes[1].setAttribute("value",val);
         update_item_price(td_price_id,orderARRAY[i]);
@@ -167,7 +167,6 @@ function qty_plus_minus(td_id,j) {
     }
     sessionStorage.setItem("order",JSON.stringify(orderARRAY));
   }
-  console.log("document.location.reload()")
   document.location.reload()
 }
 
@@ -193,8 +192,6 @@ function add_to_order(foodtype,foodnameID,foodname,foodprice){
 
 function update_orderARRAY(){
   // reads values on screen and updates orderARRAY file
-  // TODO: If qty = 0 Delete item
-  // TODO: Move to p3review_orders
   let orderitems=document.getElementsByClassName("orderitem");
   if(sessionStorage.getItem("order")!=null) orderARRAY = jsonSTR_to_array(sessionStorage.getItem("order"));
   else {
@@ -208,11 +205,11 @@ function update_orderARRAY(){
       order_id = orderitems[j].childNodes[2].id.slice(0,-4)
       if(item_id==order_id) {
         orderARRAY[j]["qty"] = parseInt(orderitems[j].childNodes[2].childNodes[1].value);
-        //console.log(orderARRAY[i]);
       }
     }
   }
   sessionStorage.setItem("order",JSON.stringify(orderARRAY));
+  gohome()
 }
 
 function qty_plus_minus_buttons(td_id,qty,i,tr)
@@ -254,7 +251,6 @@ function cancel_order() { //moved from p3.js 12/04/19
   gohome()
 }
 
-// moved from p3toppings.js 1/3/2020
 //from https://stackoverflow.com/questions/13158786/how-to-return-to-home-page-using-javascript
 function gohome() {
   window.location.href="/"

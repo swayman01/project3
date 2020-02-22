@@ -22,21 +22,35 @@ function p3_restore_menu() {
       (orderARRAY[i1]["foodtype"] == "sub")||
       (orderARRAY[i1]["foodtype"] == "dinnerplatter")) {
       //Is like a pizza
+
       if (orderARRAY[i1]["toppings"]==null) {
         if ((orderARRAY[i1]["foodtype"] != "sub")&&
-          (orderARRAY[i1]["foodtype"] != "dinnerplatter")) {
+          (orderARRAY[i1]["foodtype"] != "dinnerplatter")&&
+          (orderARRAY[i1]["foodtype"] != "special")) {
           // Pizza with no toppings
-          itemID = orderARRAY[i1]["foodtype"] + "_" + "0";
-        }
-        //else sub or dinner platter
-        else {
           itemID = orderARRAY[i1]["foodtype"] + "_" + orderARRAY[i1]["foodnameID"];
         }
+        //else special, sub or dinner platter
+        // else {
+          itemID = orderARRAY[i1]["foodtype"] + "_" + orderARRAY[i1]["foodnameID"];
+          if (orderARRAY[i1]["foodname"].includes("Sicilian")) {
+              itemID = "sicilianpizza" + "_" + String(orderARRAY[i1]["foodnameID"]);
+          }
+          if (orderARRAY[i1]["foodname"].includes("Regular Pizza")) {
+              itemID = "regularpizza" + "_" + String(orderARRAY[i1]["foodnameID"]);
+          }
+        // }
       }
       else {
         // Pizza with toppings
         //check for first time this item has shown up in order object
-        itemID = orderARRAY[i1]["foodtype"] + "_" + orderARRAY[i1]["toppings"].length;
+        itemID = orderARRAY[i1]["foodtype"] + "_" + orderARRAY[i1]["foodnameID"];
+        if (orderARRAY[i1]["foodname"].includes("Sicilian")) {
+            itemID = "sicilianpizza" + "_" + String(orderARRAY[i1]["foodnameID"]);
+        }
+        if (orderARRAY[i1]["foodname"].includes("Regular Pizza")) {
+            itemID = "regularpizza" + "_" + String(orderARRAY[i1]["foodnameID"]);
+        }
       }
       menuitem = document.getElementById(itemID);
       if(menuitem==null)
@@ -177,9 +191,7 @@ function add_next_item_to_order(a,b,d,c) {
   if (document.getElementById(itemID).childNodes[1].value=="Add to Order") {
     var qty =1;
     itemDICT = {foodtype:a,foodnameID:b,foodname:d,foodprice:c,qty:qty};
-    console.log(itemDICT);
     orderARRAY.push(itemDICT);
-    //console.log(orderARRAY);
     sessionStorage.setItem("order",JSON.stringify(orderARRAY));
     if ((a == "regularpizza")||(a == "sicilianpizza")|| (a == "special"))
     {

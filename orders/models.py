@@ -12,6 +12,8 @@ class Regularpizza(models.Model):
     largeprice = models.DecimalField(max_digits=5, decimal_places=2)
     numtoppings = models.IntegerField(default = 0)
     foodtype = models.CharField(max_length=50, help_text='')
+    special_name = models.CharField(max_length=50, blank=True, default = "",
+    help_text='Special Pizzas rotate by day of the week')
 
     class Meta:
         ordering = ['smallprice']
@@ -33,6 +35,8 @@ class Sicilianpizza(models.Model):
     largeprice = models.DecimalField(max_digits=5, decimal_places=2)
     numtoppings = models.IntegerField(default = 0)
     foodtype = models.CharField(max_length=50, help_text='')
+    special_name = models.CharField(max_length=50, blank=True, default = "",
+    help_text='Special Pizzas rotate by day of the week')
 
     class Meta:
         ordering = ['smallprice']

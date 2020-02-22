@@ -2,8 +2,7 @@
 
 {% block content %}
 <div class="TODO">
-  <p>{{user_is_authenticated}}</p>
-  <p>SOMEDAY: Center table or eliminate white space for wide window</p>
+  <p>+/- doesn't work when there is more than 1 item in the list</p>
 </div>
 <p id="user_id" style = display:none>{{user.id}}</p>
 
@@ -12,16 +11,16 @@
   <tr class="toppingheader">
     <td colspan="3"></td>
   </tr>
-  <tr class="toppingpage">
-    <td class="toppingpage_left"></td>
-    <td class="toppingpage_middle">
+  <tr class="reviewpage">
+    <td class="reviewpage_left"></td>
+    <td class="reviewpage_middle">
       <div style="overflow-y:auto;">
         <table id="order">
         </table>
       </div>
     </td>
     <br>
-    <td class="toppingpage_right"></td>
+    <td class="reviewpage_right"></td>
   </tr>
   <tr class="toppingheader">
     <td colspan="3"></td>

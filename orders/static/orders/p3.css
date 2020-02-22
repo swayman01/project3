@@ -1,5 +1,5 @@
 /* Alt - Ctrl - C to watch scss for changes */
-/* or ctrl-shift P and Atom Compile */
+/* or cmd-shift P and Atom Sass Compile */
 /* Other white colors: https://encycolorpedia.com/fdf5e8 */
 h1, h2, h1 + h5, h2 + h5, h6 {
   text-align: center; }
@@ -72,7 +72,6 @@ a:visited {
 .toppingheader {
   width: 100%;
   text-align: center;
-  /* Added 12/2/19 */
   background-color: #239346;
   color: #239346;
   box-sizing: border-box; }
@@ -84,11 +83,31 @@ a:visited {
   width: 100%; }
 
 .toppingpage_left, .toppingpage_right {
-  width: 15%;
+  width: 30%;
   background-color: #239346; }
 
 .toppingpage_middle {
+  width: 40%; }
+
+.menupage {
+  width: 100%; }
+
+.menupage_left, .menupage_right {
+  width: 15%;
+  background-color: #239346; }
+
+.menupage_middle {
   width: 70%; }
+
+.reviewpage {
+  width: 100%; }
+
+.reviewpage_left, .reviewpage_right {
+  width: 5%;
+  background-color: #239346; }
+
+.reviewpage_middle {
+  width: 90%; }
 
 .foodrow, .foodname, .foodname-1, .foodname-3, .foodprice, .foodprice-3, .foodbuttons, .resetbutton .placeholder {
   text-align: left;
@@ -135,14 +154,20 @@ a:visited {
 
 .foodprice {
   border-style: none;
-  width: 15%; }
+  width: 15%;
+  white-space: nowrap; }
 
 .foodprice-3 {
   border-style: none;
-  width: 15%; }
+  width: 15%;
+  white-space: nowrap; }
+
+.delete_button {
+  margin-left: 2rem; }
 
 .line_item_price, .item_price {
-  padding-left: 2rem; }
+  padding-left: 2rem;
+  white-space: nowrap; }
 
 .boldText {
   font-weight: bold; }
@@ -162,6 +187,12 @@ a:visited {
 
 .noborders {
   border-style: none; }
+
+.pizzabuttonspace {
+  width: 33%; }
+
+.addtoppingspace {
+  width: 20%; }
 
 section {
   margin: 0 10% 0 10%; }
@@ -259,6 +290,12 @@ nav {
   justify-content: space-around;
   align-items: center;
   /*  Why doesn't this behave the same as flex-container*/ }
+
+.flex-container-space {
+  display: block;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: stretch; }
 
 .simpleborder {
   border-color: black; }

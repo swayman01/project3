@@ -2,40 +2,35 @@
 {% load mathfilters %}
 {% block title %}<title>Order List</title>{% endblock %}
 {% block content %}
-<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
-<div class="TODO">
+<!-- <div class="SOMEDAY">
   <p>Center table inside green or fix td space allocation</p>
-  <p>user_is_authenticated: {{user_is_authenticated}}</p>
-  <p>place_order: {{place_order}}</p>
-
-</div>
+</div> -->
 <p id="my_ratingsJSONSTR" style = display:none>{{my_ratingsJSONSTR}}</p>
-<div class="container">
-  <h2>Dropdown Example - keep until accessibility code is copied over</h2>
-  <p>The data-toggle="dropdown" attribute is used to open the dropdown menu.</p>
-  <div class="dropdown">
-    <button class="btn btn-primary dropdown-toggle" id="menu1" type="button"
-    data-toggle="dropdown">Dropdown Example
-    <span class="caret"></span></button>
-    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">HTML</a></li>
-      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">CSS</a></li>
-      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">JavaScript</a></li>
-      <li role="presentation" class="divider"></li>
-      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">About Us</a></li>
-    </ul>
-  </div>
-</div>
+<!-- <div id="order_data" class=TODO> commented out 2/19/2020
+  [
+    {% for order in current_order %}
+    {"foodtype":"{{order.foodtype}}",
+    "foodname":"{{order.foodname}}",
+    "qty":"{{order.qty}}","foodprice":"{{order.foodprice}}",
+    "customer_rating":"{{order.customer_rating}}"},
+{% endfor %}
+  {"end":"end"}]
+</div> -->
+<!-- <div class="SOMEDAY">
+  <p>for convert to csv or xml</p>
+  <p>Remove last comma</p>
+  <p>write file</p>
+  <p>test in excel</p>
+</div> -->
 
 {% if not user_is_authenticated %}
-<h4 class="TODO">User is not authenticated: DONE</h4>
 <table id="order_frameNOT">  <!-- frameNOT is to see if the id is needed -->
-  <tr class="toppingheader">
+  <tr class="menuheader">
     <td colspan="3"></td>
   </tr>
-  <tr class="toppingpage">
-    <td class="toppingpage_left"></td>
-    <td class="toppingpage_middle">
+  <tr class="menupage">
+    <td class="menupage_left"></td>
+    <td class="menupage_middle">
       <div style="overflow-y:auto;">
         <table id="order">
           {% for order in current_order %}
@@ -52,27 +47,22 @@
         </div>
       </td>
       <br>
-      <td class="toppingpage_right"></td>
+      <td class="menupage_right"></td>
     </tr>
-    <tr class="toppingheader">
+    <tr class="menuheader">
       <td colspan="3"></td>
     </tr>
   </table>
-  <p class="TODO">End user not authenticated</p>
   {% endif %}
 
   {% if user_is_authenticated and place_order %}
-  <h4 class="TODO">User is authenticated and place order: </h4>
-  <div class="TODO">
-    <p>Add like, dislike buttons</p>
-  </div>
   <table id="order_frame">
-    <tr class="toppingheader">
+    <tr class="menuheader">
       <td colspan="3"></td>
     </tr>
-    <tr class="toppingpage">
-      <td class="toppingpage_left"></td>
-      <td class="toppingpage_middle">
+    <tr class="menupage">
+      <td class="menupage_left"></td>
+      <td class="menupage_middle">
         <div style="overflow-y:auto;">
           <table id="order">
             {% for order in current_order %}
@@ -90,29 +80,28 @@
         </div>
       </td>
       <br>
-      <td class="toppingpage_right"></td>
+      <td class="menupage_right"></td>
     </tr>
-    <tr class="toppingheader">
+    <tr class="menuheader">
       <td colspan="3"></td>
     </tr>
   </table>
-<p class="TODO">End user authenticated and place_order</p>
+
 {% endif %}
 
 {% if is_manager %}
-<h2 class="TODO">Manger stuff goes here</h2>
-<div id="order_history_actions" class="navbar flex-container">
+<!-- <div id="order_history_actions" class="navbar flex-container">
   <div class="btn btn-primary" onclick="filter_by_dateJS()">Filter by Date</div>
-  <div class="btn btn-primary" onclick="export_csvJS()">Export as CSV</div>
-</div>
-</div>
+  <div class="btn btn-primary" onclick="json2xml()">Export to XML</div>
+</div> -->
+
 <table id="order_history">
-  <tr class="toppingheader">
+  <tr class="menuheader">
     <td colspan="3"></td>
   </tr>
-  <tr class="toppingpage">
-    <td class="toppingpage_left"></td>
-    <td class="toppingpage_middle">
+  <tr class="menupage">
+    <td class="menupage_left"></td>
+    <td class="menupage_middle">
       <div style="overflow-y:auto;">
         <table id="all_orders">
           {% for order in current_order %}
@@ -122,16 +111,15 @@
             <td class="item_price ">$ {{order.foodprice}}</td>
             <td class=" ">{{order.qty}}</td>
             <td class="line_item_price">$ {{order.foodprice|mul:order.qty}}</td>
-            <!-- <td class="TODO like-dislike">Rate Item</td> -->
           </tr>
           {% endfor %}
         </table>
       </div>
     </td>
     <br>
-    <td class="toppingpage_right"></td>
+    <td class="menupage_right"></td>
   </tr>
-  <tr class="toppingheader">
+  <tr class="menuheader">
     <td colspan="3"></td>
   </tr>
 </table>
@@ -139,33 +127,25 @@
 
 {% if not is_manager and user_is_authenticated%}
 {% if place_order %}
-<!-- <div class= "navbar flex-container-form">
-<span class="btn btn-primary" onclick="order_historyJS()">View Order History (JS)</span>
-</div> -->
 <div class= "navbar flex-container-form">
   <span class="btn btn-primary">
     <a href="{% url 'order_history' %}" style="color:white">View Order History</a>
   </span>
 </div>
 {% endif %}
-<h3 class="TODO">User stuff goes here</h3>
-<div class="TODO">
-  <p>show_order_history: {{show_order_history}}</p>
-  <p>Find out reload takes so long</p>
-</div>
 
 {% if show_order_history %}
-<div id="order_history_actions" class="navbar flex-container">
+<!-- <div id="order_history_actions" class="navbar flex-container">
   <div class="btn btn-primary" onclick="filter_by_dateJS()">Filter by Date</div>
-  <div class="btn btn-primary" onclick="export_csvJS()">Export as CSV</div>
-</div>
+  <div class="btn btn-primary" onclick="json2xml()">Export to XML</div>
+</div> -->
 <table id="current_user_order_history">
-  <tr class="toppingheader">
+  <tr class="menuheader">
     <td colspan="3"></td>
   </tr>
-  <tr class="toppingpage">
-    <td class="toppingpage_left"></td>
-    <td class="toppingpage_middle">
+  <tr class="menupage">
+    <td class="menupage_left"></td>
+    <td class="menupage_middle">
       <div style="overflow-y:auto;">
         <table id="all_orders">
           <th class="th" colspan=5>My Orders</th>
@@ -181,7 +161,7 @@
               <td>{{order.orderdate}}</td>
               <td>{{order.foodname}}</td>
               <td class="item_price ">$ {{order.foodprice}}</td>
-              <td class=" ">{{order.qty}}</td>
+              <td class="item_price ">{{order.qty}}</td>
               <td class="Rate Item">
                 <div class="dropdown">
                   <button class="btn btn-primary">Rate Item <span>&nbsp &#9660;</span></button>
@@ -207,15 +187,14 @@
         </div>
       </td>
       <br>
-      <td class="toppingpage_right"></td>
+      <td class="menupage_right"></td>
     </tr>
-    <tr class="toppingheader">
+    <tr class="menuheader">
       <td colspan="3"></td>
     </tr>
   </table>
   {% endif %} <!-- show_order_history -->
 
-  <p class="TODO">End user Stuff here</p>
   {% endif %}
   {% block menu_control %}
   <div id="menu_control" class="flex-container">

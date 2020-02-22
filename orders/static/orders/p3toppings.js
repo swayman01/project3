@@ -4,7 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
 var qtysmallpizza=0;
 var qtylargepizza=0;
 var add_to_order_flag=false
-// Toggle Buttons
+document.getElementById("extra_cheese_frame").style.display="none"
+document.getElementById("extra_cheese_table").style.display="none"
+
 function toggleselecttopping(toppingID,numtoppings){
   if (document.getElementById(toppingID).childNodes[1].value=="Select") {
     if (document.getElementById(toppingID).childNodes[1].classList.contains("disabled")==false) {
@@ -19,7 +21,7 @@ function toggleselecttopping(toppingID,numtoppings){
     document.getElementById(toppingID).childNodes[1].classList.remove('btn-info')
     document.getElementById(toppingID).childNodes[1].classList.remove('disabled')
   }
-  // Count selected toppins and compare
+  // Count selected toppings and compare
   selectedtoppingcount = countselectedtoppings();
   if (selectedtoppingcount==numtoppings) {
     document.getElementById("add_to_order").classList.remove('disabled')
@@ -75,6 +77,9 @@ function set_labels(pizzatype, foodname) {
     pizzatypeSTR = foodname + " Sub";
     document.getElementsByClassName('smallitem')[0].innerText="Small " + pizzatypeSTR + "s";
     document.getElementsByClassName('largeitem')[0].innerText="Large " + pizzatypeSTR + "s";
+    if (foodname.includes("Extra Cheese")) {
+      extra_cheese();
+    }
   }
   if(pizzatype==4) {
     pizzatypeSTR = foodname + " Platter";
@@ -84,7 +89,6 @@ function set_labels(pizzatype, foodname) {
 }
 
 function add_pizza(pizzaID,pizzatype,numtoppings,smallprice,largeprice) {
-  //gather data
   var pizzaARRAY = ["regularpizza", "sicilianpizza", "special","special","dinnerplatter","5","sub"];
   pizzaID = arguments[0];
   pizzatype = arguments[1];
@@ -117,55 +121,49 @@ function add_pizza(pizzaID,pizzatype,numtoppings,smallprice,largeprice) {
     pizzatypeSTR = "Special Sicilian Pizza";
   }
   if(pizzatype==4) {
-    pizzatypeSTR = "Dinner Platters";
+    pizzatypeSTR = foodname + " Dinner Platter";
   }
   if(pizzatype==6) {
-    pizzatypeSTR = pizzatypeSTR = foodname + " Sub";
+    pizzatypeSTR = foodname + " Sub";
   }
-
   //extract toppings
-  var toppings =[]
+  var toppings = []
   var toppingLIST = document.getElementsByClassName("selectbutton");
   var i;
   for (i = 0; i < toppingLIST.length; i++) {
     if (toppingLIST[i].value=="Deselect") {
-      toppings.push(toppingLIST[i].parentElement.parentElement.parentElement.childNodes[1].innerText);
+      toppings.push(toppingLIST[i].parentElement.parentElement.parentElement.childNodes[3].innerText);
     }
   }
 
   if (qtysmallpizza>0){
-    if(numtoppings>0) {
+    if(pizzatype<=1) {
       itemDICT = {"foodtype":foodtype,"foodprice":smallprice,"qty":qtysmallpizza,
       "toppings":toppings,"foodnameID":pizzaID,"foodname":"Small "+pizzatypeSTR+" with "+toppings};
     }
-    else {
-      if (pizzatype!=6) {
-        itemDICT = {"foodtype":foodtype,"foodnameID":pizzaID,"foodprice":smallprice,"qty":qtysmallpizza,
-        "foodname":"Small " + pizzatypeSTR + ": " + foodname};
-      }
-      else {
-        itemDICT = {"foodtype":foodtype,"foodnameID":pizzaID,"foodprice":smallprice,"qty":qtysmallpizza,
-        "foodname":"Small "+pizzatypeSTR,"display_order":display_order};
-      }
-      //Repeat for large
+    if((pizzatype==2)||(pizzatype==3)) {
+      itemDICT = {"foodtype":foodtype,"foodprice":smallprice,"qty":qtysmallpizza,
+      "toppings":toppings,"foodnameID":pizzaID,"foodname":"Small "+pizzatypeSTR + ": " + foodname};
+    }
+    if(pizzatype>=4) {
+      itemDICT = {"foodtype":foodtype,"foodnameID":pizzaID,"foodprice":smallprice,"qty":qtysmallpizza,
+      "foodname":"Small "+pizzatypeSTR,"display_order":display_order};
     }
     add_pizza_to_order(itemDICT);
   }
 
   if (qtylargepizza>0){
-    if(numtoppings>0) {
-      itemDICT = {"foodtype":foodtype,"foodnameID":pizzaID,"foodprice":largeprice,"qty":qtylargepizza,
-      "toppings":toppings,"foodname":"Large "+pizzatypeSTR+" with "+toppings};
+    if(pizzatype<=1) {
+      itemDICT = {"foodtype":foodtype,"foodprice":largeprice,"qty":qtylargepizza,
+      "toppings":toppings,"foodnameID":pizzaID,"foodname":"Large "+pizzatypeSTR+" with "+toppings};
     }
-    else {
-      if (pizzatype!=6) {
-        itemDICT = {"foodtype":foodtype,"foodnameID":pizzaID,"foodprice":largeprice,"qty":qtylargepizza,
-        "foodname":"Large " + pizzatypeSTR + ": " + foodname};
-      }
-      else {
-        itemDICT = {"foodtype":foodtype,"foodnameID":pizzaID,"foodprice":largeprice,"qty":qtylargepizza,
-        "foodname":"Large "+pizzatypeSTR,"display_order":display_order};
-      }
+    if((pizzatype==2)||(pizzatype==3)) {
+      itemDICT = {"foodtype":foodtype,"foodprice":largeprice,"qty":qtylargepizza,
+      "toppings":toppings,"foodnameID":pizzaID,"foodname":"Large "+pizzatypeSTR + ": " + foodname};
+    }
+    if(pizzatype>=4) {
+      itemDICT = {"foodtype":foodtype,"foodnameID":pizzaID,"foodprice":largeprice,"qty":qtylargepizza,
+      "foodname":"Large "+pizzatypeSTR,"display_order":display_order};
     }
     add_pizza_to_order(itemDICT);
   }
@@ -215,10 +213,8 @@ $('.qty').click(function() {
     $in.val(valMax);
     return false;
   }
-
   // Perform increment or decrement logic
   if ($t.data('func') == 'plus') {
-    // console.log("129 in anonymous plus");
     if (val < valMax) $in.val(val + 1);
   }
   else {
@@ -247,3 +243,97 @@ $('.qty').click(function() {
     }
   }
 });
+
+function extra_cheese() {
+  //This function brings up the extra cheese menu
+  if((sessionStorage.getItem("order")==null)||(sessionStorage.getItem("order").length<3)) {
+    alert("No Subs to add Extra Cheese");
+    gohome();
+  }
+  else {
+    orderARRAY = jsonSTR_to_array(sessionStorage.getItem("order"));
+  }
+  subct=0;
+  extra_cheese_candidates=[];
+  for (i = 0; i < orderARRAY.length; i++) {
+    if (orderARRAY[i].foodtype=="sub") {
+      subct = subct+1;
+      extra_cheese_candidates.push(orderARRAY[i])
+    }
+  }
+  if (subct==0) {
+    alert("No Subs to add Extra Cheese");
+    gohome();
+  }
+  console.log(extra_cheese_candidates);
+  document.getElementById("pizzabuttons").style.display="none";
+  document.getElementById("menu_control").style.display="none";
+  document.getElementById("pagetitle").innerText="Extra Cheese?";
+  let extra_cheese_start = document.getElementById("extra_cheese_menu");
+  let items_with_extra_cheese = 0;
+  for (i = 0; i < extra_cheese_candidates.length; i++) {
+    if(extra_cheese_candidates[i].foodname.includes("with extra cheese")) {
+      items_with_extra_cheese = items_with_extra_cheese + 1;
+      if(items_with_extra_cheese==extra_cheese_candidates.length) {
+        alert("All items eligible for extra cheese have extra cheese");
+        gohome()
+      }
+    }
+    if(!extra_cheese_candidates[i].foodname.includes("with extra cheese")) {
+      console.log("TODO: Add warning if all items already have extra cheese")
+      let tr = document.createElement("tr");
+      tr.setAttribute("class","extra_cheese");
+      let item_name = document.createTextNode(extra_cheese_candidates[i].foodname);
+      // let unitprice = parseFloat(orderARRAY[i].foodprice)
+      // let item_price = document.createTextNode(" $ " + unitprice.toFixed(2));
+      let tdname = document.createElement("td");
+      // let tdprice = document.createElement("td");
+      tdname.appendChild(item_name);
+      // tdprice.appendChild(item_price);
+      tr.appendChild(tdname);
+      // tr.appendChild(tdprice);
+      let tdname2 = document.createElement("td");
+      tdname2.appendChild(document.createTextNode("Extra Cheese"));
+      tdname2.setAttribute("onclick","add_cheese("+i+")");
+      tdname2.setAttribute("class","btn btn-primary")
+      tr.appendChild(tdname2);
+      tr.setAttribute("id","extra_cheese_"+i);
+      extra_cheese_start.appendChild(tr)
+    }
+  }
+  document.getElementById("extra_cheese_frame").style.display="block"
+  document.getElementById("extra_cheese_table").style.display="block"
+  document.getElementById("extra_cheese_form").style.display="block"
+}
+
+function add_cheese(sub_index) {
+  let subct=-1;
+  orderARRAY = jsonSTR_to_array(sessionStorage.getItem("order"));
+  for (i = 0; i < orderARRAY.length; i++) {
+    //if (orderARRAY[i].foodtype=="sub") {
+    if (orderARRAY[i].foodtype=="sub") {
+      subct = subct+1;
+      if(subct==sub_index) {
+        current_sub = orderARRAY[i];
+        order_INDEX = i;
+      }
+    }
+  }
+  //Toggle button
+  extra_cheese_btn = document.getElementById("extra_cheese_"+String(sub_index)).childNodes[1]
+  extra_cheese_btn.innerText = "Extra Cheese Added"
+  extra_cheese_btn.classList.add('btn-info')
+  extra_cheese_btn.classList.remove('btn-primary')
+  console.log(current_sub);
+  extra_cheese_smallprice = parseFloat(extra_cheese_smallprice)
+  extra_cheese_largeprice = parseFloat(extra_cheese_largeprice)
+  if (orderARRAY[order_INDEX].foodname.startsWith("Small")) {
+    orderARRAY[order_INDEX].foodprice = orderARRAY[order_INDEX].foodprice + extra_cheese_smallprice
+  }
+  if (orderARRAY[order_INDEX].foodname.startsWith("Large")) {
+    orderARRAY[order_INDEX].foodprice = orderARRAY[order_INDEX].foodprice + extra_cheese_largeprice
+  }
+  orderARRAY[order_INDEX].foodname = orderARRAY[order_INDEX].foodname + " with extra cheese";
+  sessionStorage.setItem("order",JSON.stringify(orderARRAY));
+  // return to ???
+}

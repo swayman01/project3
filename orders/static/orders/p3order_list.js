@@ -10,14 +10,57 @@ document.addEventListener('DOMContentLoaded', () => {
 function order_historyJS() {
   show_order_history = true;
   document.location.reload();
-
 }
+
 function filter_by_dateJS() {
   console.log("TODO filter_by_dateJS")
 }
 
-function export_csvJS() {
-  console.log("TODO export_csvJS")
+function json2xml() {
+  //get order history
+  // from https://tqdev.com/2017-converting-json-to-xml-in-javascript-and-php
+    var json = document.getElementById("order_data").innerHTML
+    console.log(json);
+    json = json.replace(/[\n\r]+/g, '');
+    //console.log(json);
+    var a = JSON.parse(json)
+    var c = document.createElement("root");
+    var t = function (v) {
+        return {}.toString.call(v).split(' ')[1].slice(0, -1).toLowerCase();
+    };
+    var f = function (f, c, a, s) {
+        c.setAttribute("type", t(a));
+        if (t(a) != "array" && t(a) != "object") {
+            if (t(a) != "null") {
+                c.appendChild(document.createTextNode(a));
+            }
+        } else {
+            for (var k in a) {
+                var v = a[k];
+                if (k == "__type" && t(a) == "object") {
+                    c.setAttribute("__type", v);
+                } else {
+                    if (t(v) == "object") {
+                        var ch = c.appendChild(document.createElementNS(null, s ? "item" : k));
+                        f(f, ch, v);
+                    } else if (t(v) == "array") {
+                        var ch = c.appendChild(document.createElementNS(null, s ? "item" : k));
+                        f(f, ch, v, true);
+                    } else {
+                        var va = document.createElementNS(null, s ? "item" : k);
+                        if (t(v) != "null") {
+                            va.appendChild(document.createTextNode(v));
+                        }
+                        var ch = c.appendChild(va);
+                        ch.setAttribute("type", t(v));
+                    }
+                }
+            }
+        }
+    };
+    f(f, c, a, t(a) == "array");
+    console.log(c.outerHTML);
+    return c.outerHTML;
 }
 
 function update_rating_buttons() {

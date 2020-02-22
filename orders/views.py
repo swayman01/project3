@@ -23,7 +23,17 @@ from django.views.decorators.csrf import csrf_exempt # from https://stackoverflo
 from decimal import Decimal
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+#TODO Change timezone to Eastern
+special_pizzaDICT = { # 0 corresponds to Monday
+    0:"Venison",
+    1:"Duck Bacon",
+    2:"Goat Cheese and Beets",
+    3:"Asparagus, Artichoke Hearts and Spinach",
+    4:"Herring",
+    5:"Avocado and Habanero",
+    6:"Shrimp Scampi",
+}
+special_name = special_pizzaDICT[timezone.now().weekday()]
 
 def index(request):
     num_visits = request.session.get('num_visits', 0)
@@ -90,6 +100,9 @@ def index(request):
     }
     foodtypes = [regularpizzaDICT,sicilianpizzaDICT,toppingDICT, pastaDICT, saladDICT, subDICT, dinnerplatterDICT]
     manager = "manager"
+    # special_name = special_pizzaDICT[timezone.now().weekday()]
+    Sicilianpizza.objects.all().filter(name="Special").update(special_name=": " + special_name)
+    Regularpizza.objects.all().filter(name="Special").update(special_name=": " + special_name)
     context = {
         'regularpizzas_all': Regularpizza.objects.all(),
         'sicilianpizzas_all': Sicilianpizza.objects.all(),
@@ -106,31 +119,22 @@ def index(request):
 
 
 def menu_nav(request, menuheader_displayedJSON):
-    # print("94 index menu_nav: ",request)
     menuheader_display=["Pizzas","Pastas","Salads","Subs"]
     menuheaders_displayedJSON = json.loads(menuheader_display)
     return menuheaders_displayed;
 
 
 def add_toppings(request, foodnameID):
-    special_pizzaDICT = { # 0 corresponds to Sunday
-    # SOMEDAY - put in model for easy editing
-        0:"Shrimp Scampi",
-        1:"Venison",
-        2:"Duck Bacon",
-        3:"Goat Cheese and Beets",
-        4:"Asparagus, Artichoke Hearts and Spinach",
-        5:"Herring",
-        6:"Avocado and Habanero",
-    }
-    foodname = ''
-    print("127 foodnameID", foodnameID)
     if int(foodnameID)<1000:
         get1 = Regularpizza.objects.get(id=foodnameID)
         numtoppings = get1.numtoppings
         smallprice = get1.smallprice
         largeprice = get1.largeprice
         foodtype = get1.foodtype
+        try:
+            foodname = get1.foodname
+        except:
+            foodname = ""
         pizzatypeDICT = {
         4:0,  # 0 signifies Regular Pizza, 4 no toppings
         8:0,  # 1 topping
@@ -139,10 +143,9 @@ def add_toppings(request, foodnameID):
         12:2, # Special Regular pizza
         }
         pizzatype  = pizzatypeDICT[foodnameID]
-        print("141 pizzatype: ",pizzatype)
         if pizzatype==2:
             numtoppings = 0
-            foodname = special_pizzaDICT[timezone.now().weekday()]
+            foodname = special_name
         context = {
             'foodnameID': foodnameID,
             'reqularpizzas_all': Regularpizza.objects.all(),
@@ -152,7 +155,6 @@ def add_toppings(request, foodnameID):
             'smallprice': smallprice,
             'largeprice': largeprice,
             'foodname':foodname,
-            # 'foodtype': foodtype,
             }
     if int(foodnameID)>1000 and int(foodnameID)<2000:
         foodnameID=foodnameID - 1000
@@ -161,17 +163,21 @@ def add_toppings(request, foodnameID):
         smallprice = get1.smallprice
         largeprice = get1.largeprice
         foodtype = get1.foodtype
+        try:
+            foodname = get1.foodname
+        except:
+            foodname = ""
         pizzatypeDICT = {
         1:1,  # 1 signifies Sicilian Pizza, 1 no toppings
-        2:1,  # # 1 signifies Sicilian Pizza, 2 one topping
+        2:1,  # 1 signifies Sicilian Pizza, 2 one topping
         3:1,  # 2 toppings
         4:1,  # 3 toppings
-        5:3,  # Special Sicilian Pizza  # Should we use this tag instead of -1 for toppings?
+        5:3,  # Special Sicilian Pizza
         }
         pizzatype  = pizzatypeDICT[foodnameID]
         if pizzatype==3:
             numtoppings = 0
-            foodname = special_pizzaDICT[timezone.now().weekday()]
+            foodname = special_name
         context = {
             'foodnameID': foodnameID,
             'reqularpizzas_all': Sicilianpizza.objects.all(),
@@ -181,7 +187,6 @@ def add_toppings(request, foodnameID):
             'smallprice': smallprice,
             'largeprice': largeprice,
             'foodname':foodname,
-            # 'foodtype': foodtype,
             }
     if int(foodnameID)>2000 and int(foodnameID)<3000:
         foodnameID=foodnameID - 2000
@@ -195,9 +200,7 @@ def add_toppings(request, foodnameID):
         pizzatype = int("6")
         if display_order%1 != 0:
             parent_display_order = display_order-display_order%1
-            print("203 parent_display_order: ", parent_display_order)
             parent = Sub.objects.get(display_order=parent_display_order)
-            print("205: ",parent.smallprice, smallprice)
             smallprice = smallprice + parent.smallprice
             largeprice = largeprice + parent.largeprice
             foodname = parent.name + " " + foodname
@@ -221,7 +224,6 @@ def add_toppings(request, foodnameID):
         smallprice = get1.smallprice
         largeprice = get1.largeprice
         foodname = get1.name
-        print("238, parent.name, foodname", foodname)
         foodtype = 'dinnerplatter'
         display_order = get1.display_order
         pizzatype = int("4")
@@ -234,14 +236,21 @@ def add_toppings(request, foodnameID):
                 'smallprice': smallprice,
                 'largeprice': largeprice,
                 'foodname': foodname,
+                'foodnameID': foodnameID,
                 'foodtype': foodtype,
                 'display_order':display_order,
                 }
+    # get extra cheese prices for subs
+    extra_cheese_prices = Sub.objects.filter(name="Extra Cheese on any sub").first()
+    all = Sub.objects.all()
+    context['extra_cheese_smallprice'] = extra_cheese_prices.smallprice
+    context['extra_cheese_largeprice'] = extra_cheese_prices.largeprice
     return render(request, 'orders/add_toppings.html/', context=context)
 
 
 def add_to_orderARRAY (request, foodnameID):
     """ This routine is only for subs as subs have add-ons"""
+    print("253: Do we need this?")
     get1 = Sub.objects.get(id=foodnameID)
     numtoppings = 0
     smallprice = get1.smallprice
@@ -299,7 +308,6 @@ def get_orderJS(request):
     orderdataJSON_length = len(orderdataJSON)
     orderdataJSON_count = 0
     for order_item in orderdataJSON:
-        print("302: order_item",order_item)
         if order_item["foodtype"]=="special":
             add_to_Order_model(customer_id,customer_name, ordertime, order_item)
         if order_item["foodtype"]=="regularpizza":
@@ -309,7 +317,6 @@ def get_orderJS(request):
                     numtoppings = len(order_item["toppings"])
                 except:
                     numtoppings = 0
-                print("310 item.numtoppings, numtoppings",item.numtoppings, numtoppings)
                 if item.numtoppings == numtoppings:
                     add_to_Order_model(customer_id,customer_name, ordertime, order_item)
 
@@ -402,7 +409,6 @@ def add_to_Order_model(customer_id,customer_name, ordertime, order_item):
     foodnameID = foodnameID,
     qty = order_item["qty"],
     foodprice = order_item["foodprice"],
-        # TODO add foodrating
         )
     order_item_model.save()
     return
@@ -410,7 +416,6 @@ def add_to_Order_model(customer_id,customer_name, ordertime, order_item):
 
 def order_history(request):
     """Views order history and ratings"""
-    print("414 order_history(request):", request)
     user_is_authenticated = False
     is_manager = False
     show_order_history = True
@@ -728,12 +733,8 @@ class DinnerplatterDelete(DeleteView):
 class OrderListView(generic.ListView):
     model = Order
     def get_context_data(self, **kwargs):
-        # x1 = Order.objects.first().name # commented out 1/18/20
-        # x2 = Order.objects.filter(name=x1) # commented out 1/18/20
         # Call the base implementation first to get the context
         context = super(OrderListView, self).get_context_data(**kwargs)
-        # context['current_order'] = x2 # commented out 1/18/20
-        # print("558 context: ",context)
         return context
 
 
@@ -759,7 +760,6 @@ class OrderUpdate(UpdateView):
 
 
 def signup(request):
-    print("740: in signup")
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -775,6 +775,5 @@ def signup(request):
 
 # modified from https://pythonprogramming.net/user-login-logout-django-tutorial/
 def logged_out(request):
-    print("567 request: ", request)
     logout(request)
     return render(request, 'orders/logged_out.html')

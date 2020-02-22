@@ -60,7 +60,7 @@ for (i = 0; i < orderARRAY.length; i++) {
   orderlist.appendChild(tr);
   di = "delete_item("+(i+1)+")";
   td_id_price = td_id + "_PRICE";
-  orderlist.childNodes[i+1].childNodes[3].setAttribute("class","btn btn-primary");
+  orderlist.childNodes[i+1].childNodes[3].setAttribute("class","btn btn-primary delete_button");
   orderlist.childNodes[i+1].childNodes[3].setAttribute("onclick",di);
   orderlist.childNodes[i+1].childNodes[4].setAttribute("id",td_id_price);
   orderlist.childNodes[i+1].childNodes[4].setAttribute("class","line_item_price");
@@ -84,7 +84,6 @@ function add_more_to_order(){
   if((sessionStorage.getItem("order")!=null)&&(sessionStorage.getItem("order").length>2)) {
     update_orderARRAY();
   }
-  console.log(window.history.go(-1));
 }
 
 $('.login_or_guest').click(function(){

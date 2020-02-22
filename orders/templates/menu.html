@@ -6,13 +6,11 @@
 {{ block.super}}
 {% endblock %}
 {% block content %}
+<div class="SOMEDAY">
+    <!-- <p>Shrink window height when not showing the full menu</p> -->
+</div>
 <div class="TODO">
-  <p>Special Pizza - rotate by day of the week (Duck Bacon) - fix numbertoppings</p>
-  <p>DONE? Fix plus/minus buttons on review order for elements when adding pizzas with toppings or same pizza</p>
-  <p>Blank out price and add small when price<0</p>
-  <p>Extra cheese on any sub, bring up order list filtered on subs with a click box and separate function</p>
-  <p>Shrink window height when not showing the full menu</p>
-  <p>Look at css grid for centering place_order and then here</p>
+  <p>(Maybe) Check for orders exist (or put one order in database) for order history button</p>
   <p>run chrome coverage tools for css and javascript</p>
 </div>
 
@@ -30,9 +28,9 @@
 <div id="table_wrapper">
   <div id="table_scroll">
     <table  id="order_frame">
-      <tr class="toppingpage">
-        <td class="toppingpage_left"></td>
-        <td class="toppingpage_middle" style="overflow-y:scroll;">
+      <tr class="menupage">
+        <td class="menupage_left"></td>
+        <td class="menupage_middle" style="overflow-y:scroll;">
           <div style="overflow-y:auto;">
             <div id="menudisplay">
               {% for a in foodtypes %} <!-- for a in foodtypes -->
@@ -77,7 +75,9 @@
                     {% for b in a.QuerySet %}  <!-- Loop 2-1 -->
                     <tr class="foodrow-1 menuitem">
                       <td class="foodname-1">{{b.name}}</td>
-                      <td class="foodprice">$ {{b.price}}</td>
+
+                        <td class="foodprice">$ {{b.price}}</td>
+
                       {% if perms.orders.can_change_pasta or user.get_username == manager  %}
                       <td class="foodbuttons">
                         <a href="{{b.get_absolute_url}}update"
@@ -117,7 +117,7 @@
             <p class="foodbuttons"><a href="{%url 'pasta_form'%}"
               class="btn btn-primary" style="color:white">Add New {{a.menuheader}}</a>
               </p>
-          {%endifequal%}
+          {% endifequal %}
           {% ifequal a.menuheader "Salads" %}
             <p class="foodbuttons"><a href="{%url 'salad_form'%}"
               class="btn btn-primary" style="color:white">Add New {{a.menuheader}}</a>
@@ -129,7 +129,7 @@
             {% for c in foodtypes %} <!-- for c in foodtypes -->
             <span class="btn btn-default {{c.menuheader}}" onclick="menu_nav('{{c.menuheader}}')">
               {{c.menuheader}}</span>
-              {%endfor%}<!-- for c in foodtypes -->
+              {% endfor %}<!-- for c in foodtypes -->
             </div>  <!-- a.meunheader -->
           </div>  <!-- navbar flex-container-->
           {% endifequal %} <!-- menuformat 1 is pastas and salads -->
@@ -146,9 +146,18 @@
               </tr>
               {% for b in a.QuerySet %}  <!-- Loop 2-3 -->
               <tr class="foodrow-3 menuitem">
-                <td class="foodname-3">{{b.name}}</td>
-                <td class="foodprice-3">$ {{b.smallprice}}</td>
-                <td class="foodprice-3">$ {{b.largeprice}}</td>
+                <td class="foodname-3">{{b.name}}{{b.special_name}}</td>
+                {% if b.smallprice >= 0 %}
+                 <td class="foodprice-3">$ {{b.smallprice}}</td>
+                 {% else %}
+                  <td class="foodprice-3">&nbsp &nbsp</td>
+                {% endif %}
+                {% if b.largeprice >= 0 %}
+                  <td class="foodprice-3">$ {{b.largeprice}}</td>
+                 {% else %}
+                   <td class="foodprice-3">&nbsp &nbsp</td>
+                {% endif %}
+
                 {% if perms.orders.can_change_pasta or user.get_username == manager  %}
                 <td class="foodbuttons"><a href="{{b.get_absolute_url}}update"
                   class="btn btn-primary" style="color:white">Edit Item</a>
@@ -156,13 +165,16 @@
                   class="btn btn-primary" style="color:white">Delete Item</a></td>
                   {% else %}
                     {% ifequal a.menuheader "Regular Pizza" %}
-                    <td id="{{a.foodname}}_{{b.numtoppings}}" class="btn btn-primary">
+                    <!-- <td id="{{a.foodname}}_{{b.numtoppings}}" class="btn btn-primary"> -->
+                    <td id="{{a.foodname}}_{{b.id}}" class="btn btn-primary">
                       <a href="{% url 'add_toppings' b.id %}"</a>
                         <span style="color:white" >Add to Order</span>
                       </td
                     {% endifequal %}
+
                     {% ifequal a.menuheader "Sicilian Pizza" %}
-                    <td id="{{a.foodname}}_{{b.numtoppings}}" class="btn btn-primary">
+                    <!-- <td id="{{a.foodname}}_{{b.numtoppings}}" class="btn btn-primary"> -->
+                    <td id="{{a.foodname}}_{{b.id}}" class="btn btn-primary">
                       <a href="{% url 'add_toppings' b.id|add:"1000" %}"</a>
                         <span style="color:white" >Add to Order</span>
                       </td
@@ -214,12 +226,12 @@
                   </div> <!-- navbar flex-container -->
                 </div>
                 {% endifequal %} <!-- menuformat 1 is pastas and salads -->
-                {%endfor%} <!-- for a in foodtypes -->
+                {% endfor %} <!-- for a in foodtypes -->
               </div> <!-- menudisplay -->
             </div>   <!-- overflow-y:auto -->
           </td>  <!-- overflow-y:scroll -->
-          <td class="toppingpage_right"></td>
-        </tr>  <!-- toppingpage -->
+          <td class="menupage_right"></td>
+        </tr>  <!-- menupage -->
       </table> <!-- order_frame -->
     </div>   <!-- table_scroll -->
   </div>   <!-- table_wrapper-->
@@ -238,7 +250,7 @@
     </div>
 </div>
 
-<p>You have visited this page {{ num_visits }}{% if num_visits == 1 %} time{% else %} times{% endif %}.</p>
+<!-- <p>You have visited this page {{ num_visits }}{# if num_visits == 1 #} time{# else #} times{# endif #}.</p> -->
 {% load staticfiles %}
 <script type="text/javascript" var amenuheader = "{{num_visits}}"></script>
 <script type="text/javascript" var menuheaders_displayedJSON = "{{menuheaders_displayedJSON|safe}}"></script>
