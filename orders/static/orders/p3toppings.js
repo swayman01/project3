@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   set_labels(pizzatype,foodname)
 });
+
 var qtysmallpizza=0;
 var qtylargepizza=0;
 var add_to_order_flag=false
@@ -172,7 +173,7 @@ function add_pizza(pizzaID,pizzatype,numtoppings,smallprice,largeprice) {
 function initializeOrderWithPizza(pizzaID){
   sessionStorage.clear();
   var orderARRAY = [];
-  console.log("TODO: Complete this section as below or Delete")
+  console.log("SOMEDAY: Complete this section as below or Delete")
 }
 
 function add_pizza_to_order(itemDICT) {
@@ -191,7 +192,6 @@ function add_pizza_to_order(itemDICT) {
   }
 }
 
-//SOMEDAY: Replace with qty_plus_minus(td_index,j)
 $('.qty').click(function() {
   var $t = $(this),
   $in = $('input[name="' + $t.data('field') + '"]'),
@@ -280,18 +280,12 @@ function extra_cheese() {
       }
     }
     if(!extra_cheese_candidates[i].foodname.includes("with extra cheese")) {
-      console.log("TODO: Add warning if all items already have extra cheese")
       let tr = document.createElement("tr");
       tr.setAttribute("class","extra_cheese");
       let item_name = document.createTextNode(extra_cheese_candidates[i].foodname);
-      // let unitprice = parseFloat(orderARRAY[i].foodprice)
-      // let item_price = document.createTextNode(" $ " + unitprice.toFixed(2));
       let tdname = document.createElement("td");
-      // let tdprice = document.createElement("td");
       tdname.appendChild(item_name);
-      // tdprice.appendChild(item_price);
       tr.appendChild(tdname);
-      // tr.appendChild(tdprice);
       let tdname2 = document.createElement("td");
       tdname2.appendChild(document.createTextNode("Extra Cheese"));
       tdname2.setAttribute("onclick","add_cheese("+i+")");
@@ -335,5 +329,4 @@ function add_cheese(sub_index) {
   }
   orderARRAY[order_INDEX].foodname = orderARRAY[order_INDEX].foodname + " with extra cheese";
   sessionStorage.setItem("order",JSON.stringify(orderARRAY));
-  // return to ???
 }

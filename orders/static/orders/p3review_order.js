@@ -1,10 +1,8 @@
 document.getElementById("pagetitle").innerHTML = "My Order"
-//TODO Change to My Orders if not the most recent order
 
 if ((sessionStorage.getItem("order")==null)||(sessionStorage.getItem("order").length<3)) {
   alert("Nothing Ordered");
   gohome()
-  //window.history.go(-1);
 }
 
 function get_orderJS() {
@@ -25,6 +23,56 @@ if ((sessionStorage.getItem("order")==null)||(sessionStorage.getItem("order").le
 else{
   var orderARRAY = jsonSTR_to_array(sessionStorage.getItem("order"));
 }
+
+function qty_plus_minus(td_id,j) {
+  //This function increments quantities when clicking on the plus or minus keys
+  // j of 1 signifies +, j of -1 signifies -
+
+  //SOMEDAY: Learn $(this)
+  let valMax = 9, valMin = 0;
+  let val = td_id.childNodes[1].value;
+  let menuitem_id = td_id.id.slice(0,-4);
+  let td_price_id = menuitem_id+"_PRICE"
+  if (isNaN(val) || val < valMin) {
+    td_id.childNodes[1].setAttribute("value",val);
+  }
+  if (val >= valMax) val=parseInt(valMax);
+  if(sessionStorage.getItem("order")!=null) orderARRAY = jsonSTR_to_array(sessionStorage.getItem("order"));
+  else {
+    console.log("No stored orders");
+    return
+  }
+  if (j==1) {
+    let i = parseInt(td_id.id.split("_")[1])
+    // for (i = 0; i < orderARRAY.length; i++) {
+    //   let order_id = orderARRAY[i]["foodtype"]+"_"+(orderARRAY[i]["foodnameID"].toString());
+      //if(menuitem_id==order_id) {
+        if (parseInt(val) < valMax) val = parseInt(val)+1;
+        orderARRAY[i]["qty"] = parseInt(val);
+        td_id.childNodes[1].setAttribute("value",val);
+        update_item_price(td_price_id,orderARRAY[i]);
+      //}
+    //}
+    sessionStorage.setItem("order",JSON.stringify(orderARRAY));
+  }
+  if (j==-1) {
+    for (i = 0; i < orderARRAY.length; i++) {
+      let order_id = orderARRAY[i]["foodtype"]+"_"+(orderARRAY[i]["foodnameID"].toString());
+      if(menuitem_id==order_id) {
+        val = parseInt(val)-1;
+        orderARRAY[i]["qty"] = parseInt(val);
+        if (parseInt(val)<1) {
+          delete_item(i+1)  //updated 2/19/2020
+        }
+        td_id.childNodes[1].setAttribute("value",val);
+        update_item_price(td_price_id,orderARRAY[i]);
+      }
+    }
+    sessionStorage.setItem("order",JSON.stringify(orderARRAY));
+  }
+  document.location.reload()
+}
+
 let orderlist = document.getElementById("order");
 //Populate review_order_html
 var order_price=0.
@@ -42,15 +90,16 @@ for (i = 0; i < orderARRAY.length; i++) {
   tr.appendChild(tdname);
   tr.appendChild(tdprice);
   // Column 2: Quantity buttons
+  // See if we can make changes here and eliminate function qty_plus_minus_review(td_id,j) {
   td_id = "order_"+i;
-  td_id = orderARRAY[i].foodtype + "_" +orderARRAY[i].foodnameID;
-  qty_plus_minus_buttons(td_id,orderARRAY[i].qty,i,tr);
+  // td_id = orderARRAY[i].foodtype + "_" +orderARRAY[i].foodnameID;
+  qty_plus_minus_buttons(td_id,orderARRAY[i].qty,i,tr); //tried replacing with line below 2/24/20
+  //qty_plus_minus_buttons(i,orderARRAY[i].qty,i,tr);
   // Column 3: Delete Button
   let td2 = document.createElement("td");
   td2.appendChild(document.createTextNode("Delete"));
   tr.appendChild(td2);
   //Column 4: Line Item Price
-  //TODO: update price when quantity is updated
   let td3 = document.createElement("td");
   let price = orderARRAY[i].foodprice*orderARRAY[i].qty
   order_price = order_price + price;
@@ -77,7 +126,7 @@ tr.appendChild(td_order_price);
 orderlist.appendChild(tr);
 orderlist.childNodes[1].setAttribute("class","noborders");
 y=document.getElementById('orderdataJSON');  //For debugging
-get_orderJS() //TODO: see if we need to repeat after changes to order
+get_orderJS()
 
 function add_more_to_order(){
     //check for first item

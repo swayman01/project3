@@ -1,10 +1,13 @@
 {% extends "base_generic.html" %}
 {% block title %}<title>Place Order</title>{% endblock %}
 {% block content %}
-<div class="TODO">
-  <p>Center table on window, or add space (try css grid)</p>
-</div>
-  <div id="LoginOrGuest" style="overflow-x:auto;overflow-y:auto;">
+<table id="order_frame">
+  <tr class="place_order_page_header">
+    <td colspan="3"></td>
+  </tr>
+  <tr class="place_order_page_header">
+    <td class="place_order_page_left"></td>
+    <td class="place_order_page_middle">
     <table id="login_guest">
       <tr class="login_guest"><th>Login to rate your orders and save order history</th><th>or Continue as Guest</th></tr>
       <tr>
@@ -25,10 +28,19 @@
         <td class="login_guest"><span class="btn btn-primary" >
           <a style="color:white" href="/orders/signup.html">Sign Up</a>
         </span></td>
-        <td class="login_guest">
-        </td>
+
+          <th>Remember to Review and Place Order</th>
+        
       </tr>
     </table>
+</td>
+<br>
+<td class="place_order_page_right"></td>
+</tr>
+<tr class="place_order_page_header">
+<td colspan="3"></td>
+</tr>
+</table>
 
     {% load staticfiles %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>

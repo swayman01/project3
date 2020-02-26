@@ -23,7 +23,7 @@ from django.views.decorators.csrf import csrf_exempt # from https://stackoverflo
 from decimal import Decimal
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-#TODO Change timezone to Eastern
+
 special_pizzaDICT = { # 0 corresponds to Monday
     0:"Venison",
     1:"Duck Bacon",
@@ -283,7 +283,7 @@ def review_order(request):
 
 
 def place_order(request):
-    context = { #TODO Delete if not needed
+    context = {
     'user_is_authenticated':request.user.is_authenticated,
     'next': '/orders/review_order.html' #Needed because of how we pass json
     }
@@ -388,16 +388,17 @@ def order_history_to_JSON(order_query):
         orderJSON.append(x)
     orderJSONSTR = json.dumps(orderJSON)
     orderJSONSTR = orderJSONSTR.replace("'",'"')
-    # orderJSONSTR = json.dumps(orderJSONSTR) commented out for debugging 11/4/19
     return orderJSONSTR
 
 
 def add_to_Order_model(customer_id,customer_name, ordertime, order_item):
-    # TODO add definition in triple quotes
+    """
+    checks for initial order and calls either initializeOrders(foodtype,foodnameID,foodprice)
+    or add_next_item_to_order(foodtype,foodnameID,foodprice);
+    """
     foodnameID = order_item["foodnameID"]
     foodname = str(order_item["foodname"])
     if foodname == "regularpizza":
-        print("340: TODO update for toppings")
         if foodnameID != 8:
             foodname == "Reqular Pizza with " + "Topping names"
     order_item_model = Order(
@@ -428,14 +429,13 @@ def order_history(request):
         user_name = user.username
         if user_id == 2:
             is_manager = True
-        current_order = Order.objects.all() #TODO Filter
+        current_order = Order.objects.all()
         x1 = Order.objects.first().name
         current_order = Order.objects.filter(name=x1)
         my_orders = Order.objects.filter(customer_id=user.id)
         my_ratings = Rating.objects.filter(customer_id=user_id)
         if my_ratings.count()<1:
             print ("436 my_ratings.count()<1: do we need this if statement",my_ratings)
-        #(user_id, order1.foodtype, order1.foodname, customer_rating)
         for rating in my_ratings:
             x = {
             "customer_id":rating.customer_id,

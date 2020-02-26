@@ -1,33 +1,3 @@
-// File of common functions for project3
-function timestamp(){
-  //TODO: Do we use this?
-  d = new Date()
-  yr = d.getFullYear();
-  yrstr = yr.toString();
-  mnth = d.getMonth()+1;
-  mnthstr = mnth.toString();
-  if (mnth < 10) {
-    mnthstr = "0" + mnthstr;
-  }
-  day = d.getDate();
-  daystr = day.toString();
-  if (day < 10) {
-    day = "0" + daystr;
-  }
-  hr = d.getHours();
-  min = d.getMinutes();
-  hrstr = hr.toString();
-  minstr = min.toString();
-  if (hr < 10) {
-    hrstr = "0" + hrstr;
-  }
-  if (min < 10) {
-    minstr = "0" + minstr;
-  }
-  ts = yrstr + "-" + mnthstr + "-" + daystr + " " + hrstr + ":" + minstr;
-  return ts;
-}
-
 function restore_menu() {
   //This function restores the menu quantities to the values in the order object.
   let menuitems=document.getElementsByClassName("menuitem");
@@ -83,11 +53,6 @@ function restore_menu() {
           let tr = menuitem.parentElement;
           menuitem.removeChild(menuitem.childNodes[1])
           qty_plus_minus_buttons(itemID,orderARRAY[i1]["qty"],-1,tr)
-          //RESUME: Figure out i , i is td_index
-          //qty_plus_minus_buttons(itemID,orderARRAY[i]["qty"],-1,document.getElementById(itemID).parentNode)
-          //qty_plus_minus_buttons(itemID);
-          //RESUME HERE
-          //document.getElementById(itemID).childNodes[1].childNodes[1].value=orderARRAY[i]["qty"];
         }
         else {
         }
@@ -198,7 +163,7 @@ function update_orderARRAY(){
     return
   }
   let input = document.getElementById("order");
-  console.log("TODO: Add check for no input")
+  console.log("SOMEDAY: Add check for no input")
   for (i = 0; i < orderARRAY.length; i++) {
     let item_id = orderARRAY[i]["foodtype"]+"_"+(orderARRAY[i]["foodnameID"].toString());
     for (j=0; j<orderitems.length; j++){
@@ -213,7 +178,7 @@ function update_orderARRAY(){
 }
 
 function qty_plus_minus_buttons(td_id,qty,i,tr)
-//TODO eliminate i from argument list
+//SOMEDAY eliminate i from argument list
 {
   let td1 = document.createElement("td");
   td_id = td_id + "_BTN";

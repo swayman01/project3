@@ -13,7 +13,7 @@ function order_historyJS() {
 }
 
 function filter_by_dateJS() {
-  console.log("TODO filter_by_dateJS")
+  console.log("SOMEDAY filter_by_dateJS")
 }
 
 function json2xml() {

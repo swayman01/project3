@@ -6,22 +6,6 @@
   <p>Center table inside green or fix td space allocation</p>
 </div> -->
 <p id="my_ratingsJSONSTR" style = display:none>{{my_ratingsJSONSTR}}</p>
-<!-- <div id="order_data" class=TODO> commented out 2/19/2020
-  [
-    {% for order in current_order %}
-    {"foodtype":"{{order.foodtype}}",
-    "foodname":"{{order.foodname}}",
-    "qty":"{{order.qty}}","foodprice":"{{order.foodprice}}",
-    "customer_rating":"{{order.customer_rating}}"},
-{% endfor %}
-  {"end":"end"}]
-</div> -->
-<!-- <div class="SOMEDAY">
-  <p>for convert to csv or xml</p>
-  <p>Remove last comma</p>
-  <p>write file</p>
-  <p>test in excel</p>
-</div> -->
 
 {% if not user_is_authenticated %}
 <table id="order_frameNOT">  <!-- frameNOT is to see if the id is needed -->
